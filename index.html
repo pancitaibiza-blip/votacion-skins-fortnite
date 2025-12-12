@@ -85,6 +85,11 @@
       position: relative;
       border: 2px solid #333;
     }
+    .card.fainted {
+      opacity: 0.4;
+      filter: grayscale(100%);
+      cursor: not-allowed;
+    }
     .card img {
       width: 100%;
       border-radius: 8px;
@@ -108,48 +113,21 @@
       position: relative;
     }
 
-    /* Animaciones de ataque */
     .attack-effect {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
       z-index: 10;
     }
-    .fire { 
-      background: radial-gradient(circle, rgba(255,90,0,0.7) 0%, transparent 70%);
-      animation: fireBurst 0.8s forwards;
-    }
-    .ice {
-      background: radial-gradient(circle, rgba(0,200,255,0.6) 0%, transparent 70%);
-      animation: iceShatter 0.8s forwards;
-    }
-    .wind {
-      background: radial-gradient(circle, rgba(100,255,200,0.5) 0%, transparent 70%);
-      animation: windSwirl 0.8s forwards;
-    }
-    .arcane {
-      background: radial-gradient(circle, rgba(200,100,255,0.7) 0%, transparent 70%);
-      animation: arcanePulse 0.8s forwards;
-    }
+    .fire { background: radial-gradient(circle, rgba(255,90,0,0.7) 0%, transparent 70%); animation: fireBurst 0.8s forwards; }
+    .ice { background: radial-gradient(circle, rgba(0,200,255,0.6) 0%, transparent 70%); animation: iceShatter 0.8s forwards; }
+    .wind { background: radial-gradient(circle, rgba(100,255,200,0.5) 0%, transparent 70%); animation: windSwirl 0.8s forwards; }
+    .arcane { background: radial-gradient(circle, rgba(200,100,255,0.7) 0%, transparent 70%); animation: arcanePulse 0.8s forwards; }
 
-    @keyframes fireBurst {
-      0% { opacity: 0.8; transform: scale(0.5); }
-      100% { opacity: 0; transform: scale(2); }
-    }
-    @keyframes iceShatter {
-      0% { opacity: 0.9; transform: scale(0.3); }
-      50% { opacity: 0.9; }
-      100% { opacity: 0; transform: scale(1.5); }
-    }
-    @keyframes windSwirl {
-      0% { opacity: 0.7; transform: rotate(0) scale(0.5); }
-      100% { opacity: 0; transform: rotate(180deg) scale(2); }
-    }
-    @keyframes arcanePulse {
-      0% { opacity: 0.9; transform: scale(0.4); box-shadow: 0 0 10px #c864ff; }
-      50% { box-shadow: 0 0 20px #ff64c8, 0 0 30px #64c8ff; }
-      100% { opacity: 0; transform: scale(1.8); }
-    }
+    @keyframes fireBurst { 0% { opacity: 0.8; transform: scale(0.5); } 100% { opacity: 0; transform: scale(2); } }
+    @keyframes iceShatter { 0% { opacity: 0.9; transform: scale(0.3); } 50% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1.5); } }
+    @keyframes windSwirl { 0% { opacity: 0.7; transform: rotate(0) scale(0.5); } 100% { opacity: 0; transform: rotate(180deg) scale(2); } }
+    @keyframes arcanePulse { 0% { opacity: 0.9; transform: scale(0.4); box-shadow: 0 0 10px #c864ff; } 50% { box-shadow: 0 0 20px #ff64c8, 0 0 30px #64c8ff; } 100% { opacity: 0; transform: scale(1.8); } }
 
     .battle-area {
       margin: 20px auto;
@@ -164,7 +142,7 @@
       padding: 12px;
       border-radius: 10px;
       margin: 15px 0;
-      min-height: 60px;
+      min-height: 80px;
       font-size: 1.1em;
       color: #feca57;
     }
@@ -185,47 +163,19 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
 
-    .credits-bar {
-      background: rgba(10,10,26,0.6);
-      padding: 10px;
-      border-radius: 10px;
-      margin: 15px 0;
-      font-size: 1.2em;
-      color: #4ecdc4;
-    }
-
-    .store-countdown {
-      margin: 30px auto;
+    .coming-soon {
+      margin: 40px auto;
       max-width: 500px;
-      background: rgba(10,10,26,0.5);
+      background: rgba(0,0,0,0.4);
       padding: 20px;
       border-radius: 15px;
       text-align: center;
-      border: 1px dashed gold;
+      border: 2px dashed gold;
     }
-    .store-section {
-      margin: 30px auto;
-      max-width: 500px;
-      background: rgba(10,10,26,0.5);
-      padding: 15px;
-      border-radius: 15px;
-      border: 1px solid #ff6b6b;
-      display: none;
+    .coming-soon h3 {
+      color: gold;
+      font-family: 'Bebas Neue';
     }
-    .store-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-top: 15px;
-    }
-    .store-item {
-      background: rgba(25,25,45,0.8);
-      padding: 10px;
-      border-radius: 10px;
-    }
-    .store-item.gold { border-left: 4px solid gold; }
-    .store-item.orange { border-left: 4px solid #ff6b35; }
-    .store-item.purple { border-left: 4px solid #a29bfe; }
 
     @media (max-width: 500px) {
       .card { width: 120px; }
@@ -238,45 +188,21 @@
   <div class="content">
     <h1>FORTNITE SKIN BATTLE: ¡DERROTA AL JEFÉ!</h1>
     
-    <div class="credits-bar">
-      Créditos: <span id="userCredits">100</span> 💎
-    </div>
-
     <div class="battle-area" id="battleArea">
     </div>
 
-    <div class="store-countdown" id="storeCountdown">
-      <h3 style="color: gold; font-family:'Bebas Neue';">⏳ ¡TIENDA DISPONIBLE HOY A LA 1:00 AM! ⏳</h3>
-      <div id="storeTimer" style="font-size:1.4em; color:gold; margin:10px 0; font-weight:bold;"></div>
-    </div>
-
-    <div class="store-section" id="storeSection">
-      <h3 style="color:gold; font-family:'Bebas Neue'">🛒 TIENDA DE BATALLA</h3>
-      <div class="store-items">
-        <div class="store-item gold">
-          <div style="font-weight:bold;">Skin Dorada</div>
-          <div class="power">+30 DEF</div>
-          <div style="color:gold; font-weight:bold;">50 💎</div>
-          <button class="action-btn" onclick="buyItem('golden_skin',50)" style="font-size:0.85em; padding:4px 8px; margin-top:5px;">Comprar</button>
-        </div>
-        <div class="store-item purple">
-          <div style="font-weight:bold;">Confeti Épico</div>
-          <div class="power">Ataque Sorpresa</div>
-          <div style="color:gold; font-weight:bold;">30 💎</div>
-          <button class="action-btn" onclick="buyItem('epic_confetti',30)" style="font-size:0.85em; padding:4px 8px; margin-top:5px;">Comprar</button>
-        </div>
-        <div class="store-item orange">
-          <div style="font-weight:bold;">Doble Voto</div>
-          <div class="power">Doble Ataque</div>
-          <div style="color:gold; font-weight:bold;">70 💎</div>
-          <button class="action-btn" onclick="buyItem('double_vote',70)" style="font-size:0.85em; padding:4px 8px; margin-top:5px;">Comprar</button>
-        </div>
-      </div>
-      <p id="storeMessage" style="margin-top:10px; color:#4ecdc4; font-style:italic;"></p>
+    <!-- ✨ PRÓXIMA ACTUALIZACIÓN: MAÑANA A LAS 15:00 ✨ -->
+    <div class="coming-soon">
+      <h3>🔔 ¡PRÓXIMA ACTUALIZACIÓN! 🔔</h3>
+      <p><strong>Mañana a las 15:00</strong></p>
+      <p>¡Llegan los <span style="color:gold; font-weight:bold;">Cofres Épicos</span>! 🎁</p>
+      <p>Obtén skins raras, mejoras y más.</p>
+      <div id="updateTimer" style="font-size:1.3em; color:#4ecdc4; margin:10px 0; font-weight:bold;"></div>
     </div>
   </div>
 
   <audio id="hitSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+  <audio id="loseSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-lose-2027.mp3" preload="auto"></audio>
   <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
 
   <script>
@@ -299,7 +225,7 @@
       }
     }
 
-    // 🎴 CARTAS CON TIPO DE ATAQUE
+    // 🃏 CARTAS CON VIDAS
     const CARDS = [
       { id:0, name:"Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:50, power:"Paso Firme", attackType:"wind" },
       { id:1, name:"Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:55, power:"Confeti Ácido", attackType:"fire" },
@@ -317,40 +243,10 @@
     let enemyCard = null;
     let round = 1;
     let gameActive = true;
+    let playerTurn = true; // true = tu turno, false = IA
 
-    function getDailyCredits() {
-      const today = new Date().toDateString();
-      const last = localStorage.getItem('lastClaim');
-      let credits = parseInt(localStorage.getItem('credits')) || 0;
-      if (last !== today) {
-        credits = 100;
-        localStorage.setItem('credits', credits);
-        localStorage.setItem('lastClaim', today);
-      }
-      return credits;
-    }
-
-    function updateCredits() {
-      document.getElementById('userCredits').innerText = getDailyCredits();
-    }
-
-    function buyItem(id, cost) {
-      let credits = getDailyCredits();
-      if (credits >= cost) {
-        credits -= cost;
-        localStorage.setItem('credits', credits);
-        localStorage.setItem(`owned_${id}`, 'true');
-        updateCredits();
-        document.getElementById('storeMessage').innerText = '¡Compra exitosa! 🎉';
-        setTimeout(() => document.getElementById('storeMessage').innerText = '', 3000);
-      } else {
-        document.getElementById('storeMessage').innerText = '❌ Créditos insuficientes.';
-        setTimeout(() => document.getElementById('storeMessage').innerText = '', 3000);
-      }
-    }
-
-    function renderCard(card, isEnemy = false) {
-      const rarityClass = `rarity-${card.rarity}`;
+    function renderCard(card, isEnemy = false, isFainted = false) {
+      const rarityClass = `rarity-${card.rarity} ${isFainted ? 'fainted' : ''}`;
       const rarityName = { common:"Común", rare:"Rara", epic:"Épica", legendary:"Legendaria" };
       return `
         <div class="card ${rarityClass}" style="${isEnemy ? 'transform:scale(1.1);' : ''}">
@@ -362,7 +258,6 @@
       `;
     }
 
-    // ✨ NUEVA FUNCIÓN: Animación de ataque
     function playAttackAnimation(type, targetElement) {
       const effect = document.createElement('div');
       effect.className = `attack-effect ${type}`;
@@ -379,27 +274,38 @@
       const pool = [...nonBoss];
       while (playerCards.length < 3 && pool.length > 0) {
         const idx = Math.floor(Math.random() * pool.length);
-        playerCards.push(pool.splice(idx, 1)[0]);
+        playerCards.push({...pool.splice(idx, 1)[0], alive: true});
       }
       const enemyIndex = Math.min(round + 3, 9);
-      enemyCard = CARDS[enemyIndex];
+      enemyCard = {...CARDS[enemyIndex], alive: true};
+      playerTurn = true;
       renderBattle();
     }
 
     function renderBattle() {
       if (!gameActive) return;
-      let html = `<div class="enemy-card">${renderCard(enemyCard, true)}</div>`;
-      html += `<div class="battle-log" id="battleLog">¡Ronda ${round}! Elige tu carta para atacar:</div>`;
+      let html = `<div class="enemy-card">${renderCard(enemyCard, true, !enemyCard.alive)}</div>`;
+      html += `<div class="battle-log" id="battleLog">`;
+      if (playerTurn) {
+        html += `¡Tu turno! Elige una carta para atacar:`;
+      } else {
+        html += `¡Turno de la IA!`;
+      }
+      html += `</div>`;
       html += `<div class="player-hand">`;
       playerCards.forEach((card, i) => {
-        html += `<div onclick="playerAttack(${i})">${renderCard(card)}</div>`;
+        if (card.alive) {
+          html += `<div onclick="playerAttack(${i})">${renderCard(card, false, false)}</div>`;
+        } else {
+          html += renderCard(card, false, true);
+        }
       });
       html += `</div>`;
       document.getElementById('battleArea').innerHTML = html;
     }
 
     function playerAttack(cardIndex) {
-      if (!gameActive || cardIndex >= playerCards.length) return;
+      if (!gameActive || !playerTurn || cardIndex >= playerCards.length || !playerCards[cardIndex].alive) return;
       
       const playerCard = playerCards[cardIndex];
       const log = document.getElementById('battleLog');
@@ -408,60 +314,124 @@
       let playerAtk = playerCard.atk;
       let enemyDef = enemyCard.def;
 
-      if (localStorage.getItem('owned_golden_skin')) playerAtk += 30;
-      if (localStorage.getItem('owned_double_vote')) playerAtk *= 2;
-      if (localStorage.getItem('owned_epic_confetti')) playerAtk += Math.floor(playerAtk * 0.3);
+      const damage = Math.max(5, playerAtk - enemyDef);
+      log.innerHTML = `¡${playerCard.name} ataca con <strong>${playerCard.power}</strong>!`;
 
-      const damage = Math.max(10, playerAtk - enemyDef);
-      log.innerHTML = `¡${playerCard.name} lanza <strong>${playerCard.power}</strong>!`;
-
-      // ✅ ¡ANIMACIÓN DE ATAQUE!
       if (enemyEl) {
         playAttackAnimation(playerCard.attackType, enemyEl);
         document.getElementById('hitSound').play().catch(()=>{});
       }
 
       setTimeout(() => {
-        round++;
-        if (round > 5) {
-          gameActive = false;
-          document.getElementById('battleArea').innerHTML = `
-            <div style="text-align:center; padding:30px;">
-              <h2 style="color:gold; text-shadow:0 0 10px gold;">🎉 ¡VICTORIA ROYALE! 🎉</h2>
-              <p style="font-size:1.2em;">¡Derrotaste al Jefe Final Legendaria!</p>
-              <button class="action-btn" onclick="location.reload()">🔄 Jugar de Nuevo</button>
-            </div>
-          `;
-          document.getElementById('winSound').play();
+        // Si derrotas al enemigo
+        if (damage >= enemyCard.def) {
+          enemyCard.alive = false;
+          log.innerHTML = `¡${playerCard.name} derrotó a ${enemyCard.name}!`;
+          round++;
+          if (round > 5) {
+            endGame(true);
+            return;
+          }
+          setTimeout(() => startBattle(), 1500);
         } else {
-          startBattle();
+          // La IA contraataca
+          log.innerHTML += `<br>¡La IA contraataca!`;
+          setTimeout(() => iaAttack(), 1000);
         }
-      }, 1000);
+        playerTurn = false;
+      }, 800);
     }
 
-    function updateStoreCountdown() {
+    function iaAttack() {
+      if (!gameActive || playerTurn) return;
+      
+      const log = document.getElementById('battleLog');
+      const aliveCards = playerCards.filter(c => c.alive);
+      
+      if (aliveCards.length === 0) {
+        endGame(false);
+        return;
+      }
+
+      // Elegir carta al azar para atacar
+      const targetIndex = Math.floor(Math.random() * aliveCards.length);
+      const targetCard = aliveCards[targetIndex];
+      const playerDef = targetCard.def;
+      const enemyAtk = enemyCard.atk;
+
+      const damage = Math.max(5, enemyAtk - playerDef);
+      log.innerHTML = `¡${enemyCard.name} ataca a ${targetCard.name}!`;
+
+      const playerEl = document.querySelectorAll('.player-hand .card')[playerCards.indexOf(targetCard)];
+      if (playerEl) {
+        playAttackAnimation(enemyCard.attackType, playerEl);
+        document.getElementById('hitSound').play().catch(()=>{});
+      }
+
+      setTimeout(() => {
+        if (damage >= playerDef) {
+          targetCard.alive = false;
+          log.innerHTML = `¡${targetCard.name} fue eliminada!`;
+          
+          // Verificar si el jugador perdió
+          if (playerCards.filter(c => c.alive).length === 0) {
+            endGame(false);
+            return;
+          }
+        } else {
+          log.innerHTML = `¡${targetCard.name} resistió el ataque!`;
+        }
+        
+        // Siguiente ronda
+        round++;
+        if (round > 5) {
+          endGame(true);
+        } else {
+          setTimeout(() => startBattle(), 1500);
+        }
+      }, 800);
+    }
+
+    function endGame(isWin) {
+      gameActive = false;
+      const sound = isWin ? 'winSound' : 'loseSound';
+      document.getElementById(sound).play();
+      
+      document.getElementById('battleArea').innerHTML = `
+        <div style="text-align:center; padding:30px;">
+          <h2 style="color:${isWin ? 'gold' : '#ff6b6b'}; text-shadow:0 0 10px ${isWin ? 'gold' : 'red'};">
+            ${isWin ? '🎉 ¡VICTORIA ROYALE!' : '💀 DERROTA'} 
+          </h2>
+          <p style="font-size:1.2em;">${isWin ? '¡Derrotaste al Jefe Final!' : '¡Todas tus cartas fueron eliminadas!'}</p>
+          <button class="action-btn" onclick="location.reload()">🔄 Jugar de Nuevo</button>
+        </div>
+      `;
+    }
+
+    // ✨ CONTADOR: MAÑANA A LAS 15:00
+    function updateUpdateCountdown() {
       const now = new Date();
       const target = new Date(now);
-      target.setHours(1, 0, 0, 0);
-      if (now > target) target.setDate(target.getDate() + 1);
+      target.setHours(15, 0, 0, 0); // 15:00 (3 PM)
+      if (now >= target) {
+        target.setDate(target.getDate() + 1);
+      }
       const diff = target - now;
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
       if (diff <= 0) {
-        document.getElementById('storeCountdown').style.display = 'none';
-        document.getElementById('storeSection').style.display = 'block';
-        updateCredits();
+        document.getElementById('updateTimer').innerText = '¡Los cofres ya están disponibles! 🎁';
       } else {
-        document.getElementById('storeCountdown').style.display = 'block';
-        document.getElementById('storeTimer').innerText = 
+        document.getElementById('updateTimer').innerText = 
           `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       }
     }
 
     createParticles();
-    updateStoreCountdown();
-    setInterval(updateStoreCountdown, 1000);
+    updateUpdateCountdown();
+    setInterval(updateUpdateCountdown, 1000);
     startBattle();
   </script>
 </body>
