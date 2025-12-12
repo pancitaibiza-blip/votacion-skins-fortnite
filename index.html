@@ -6,7 +6,6 @@
   <title>FORTNITE SKIN BATTLE: ¡DERROTA AL JEFÉ!</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oxanium:wght@600&display=swap" rel="stylesheet">
   <style>
-    /* Fondo Fortnite */
     body {
       font-family: 'Oxanium', sans-serif;
       color: white;
@@ -36,15 +35,11 @@
       animation: pulseGlow 8s infinite alternate;
       z-index: -2;
     }
-    @keyframes pulseGlow {
-      0% { opacity: 0.4; transform: scale(1); }
-      100% { opacity: 0.8; transform: scale(1.1); }
-    }
+    @keyframes pulseGlow { 0% { opacity: 0.4; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.1); } }
     .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
     .particle { position: absolute; border-radius: 50%; animation: float 15s infinite linear; }
     @keyframes float { to { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity: 0; } }
 
-    /* Contenido */
     .content { position: relative; z-index: 10; opacity: 0; animation: fadeIn 1.5s forwards; }
     @keyframes fadeIn { to { opacity: 1; } }
 
@@ -56,19 +51,28 @@
       margin: 10px 0;
     }
 
-    /* Pantalla de batalla */
-    .battle-area {
-      margin: 20px auto;
-      max-width: 600px;
-      background: rgba(10,10,26,0.6);
-      border-radius: 15px;
-      padding: 20px;
-      border: 2px solid #4ecdc4;
-      backdrop-filter: blur(3px);
+    .rarity-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.7em;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.6);
     }
-    .enemy-card, .player-hand {
-      margin: 20px 0;
+    .rarity-common .rarity-badge { color: white; }
+    .rarity-rare .rarity-badge { color: #ff6b35; }
+    .rarity-epic .rarity-badge { color: #a29bfe; }
+    .rarity-legendary .rarity-badge { 
+      color: transparent;
+      background: linear-gradient(45deg, red, gold, blue, purple);
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: rainbow 3s linear infinite;
     }
+    @keyframes rainbow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
     .card {
       background: rgba(20,20,40,0.8);
       border-radius: 12px;
@@ -77,23 +81,39 @@
       display: inline-block;
       width: 140px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.3s;
-      border: 2px solid #45b7d1;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 15px #45b7d1;
+      transition: transform 0.2s;
+      position: relative;
+      border: 2px solid #333;
     }
     .card img {
       width: 100%;
       border-radius: 8px;
-      border: 2px solid #333;
     }
-    .stats { font-size: 0.9em; color: #96ceb4; margin: 5px 0; }
-    .power { font-size: 0.85em; color: gold; font-style: italic; }
+
+    .rarity-common { border-color: white; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+    .rarity-rare { border-color: #ff6b35; box-shadow: 0 0 12px rgba(255,107,53,0.6); }
+    .rarity-epic { border-color: #a29bfe; box-shadow: 0 0 15px rgba(162,155,254,0.7); }
+    .rarity-legendary { 
+      border-color: gold;
+      box-shadow: 0 0 20px gold;
+      animation: legendaryGlow 2s infinite alternate;
+    }
+    @keyframes legendaryGlow {
+      0% { box-shadow: 0 0 15px gold; }
+      100% { box-shadow: 0 0 25px gold, 0 0 35px rgba(255,0,0,0.5), 0 0 35px rgba(0,0,255,0.5); }
+    }
+
     .enemy-card .card {
-      border-color: #ff6b6b;
-      background: rgba(40,10,20,0.8);
+      transform: scale(1.1);
+    }
+
+    .battle-area {
+      margin: 20px auto;
+      max-width: 600px;
+      background: rgba(10,10,26,0.6);
+      border-radius: 15px;
+      padding: 20px;
+      border: 2px solid #4ecdc4;
     }
     .battle-log {
       background: rgba(0,0,0,0.5);
@@ -121,7 +141,6 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
 
-    /* Tienda y créditos */
     .credits-bar {
       background: rgba(10,10,26,0.6);
       padding: 10px;
@@ -129,7 +148,17 @@
       margin: 15px 0;
       font-size: 1.2em;
       color: #4ecdc4;
-      backdrop-filter: blur(2px);
+    }
+
+    /* Tienda bloqueada */
+    .store-countdown {
+      margin: 30px auto;
+      max-width: 500px;
+      background: rgba(10,10,26,0.5);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      border: 1px dashed gold;
     }
     .store-section {
       margin: 30px auto;
@@ -138,6 +167,7 @@
       padding: 15px;
       border-radius: 15px;
       border: 1px solid #ff6b6b;
+      display: none;
     }
     .store-items {
       display: grid;
@@ -149,12 +179,11 @@
       background: rgba(25,25,45,0.8);
       padding: 10px;
       border-radius: 10px;
-      border: 1px solid #45b7d1;
     }
-    .store-item.gold { border-color: gold; }
-    .store-item.red { border-color: #ff6b6b; }
+    .store-item.gold { border-left: 4px solid gold; }
+    .store-item.orange { border-left: 4px solid #ff6b35; }
+    .store-item.purple { border-left: 4px solid #a29bfe; }
 
-    /* Efectos de batalla */
     @keyframes hit {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-10px); }
@@ -175,14 +204,19 @@
     
     <div class="credits-bar">
       Créditos: <span id="userCredits">100</span> 💎
-      <button class="action-btn" onclick="showStore()" style="font-size:0.9em; padding:5px 12px;">🛒 Tienda</button>
     </div>
 
     <div class="battle-area" id="battleArea">
       <!-- Se llena con JavaScript -->
     </div>
 
-    <div class="store-section" id="storeSection" style="display:none;">
+    <!-- CONTADOR PARA TIENDA: HOY A LA 1:00 AM -->
+    <div class="store-countdown" id="storeCountdown">
+      <h3 style="color: gold; font-family:'Bebas Neue';">⏳ ¡TIENDA DISPONIBLE HOY A LA 1:00 AM! ⏳</h3>
+      <div id="storeTimer" style="font-size:1.4em; color:gold; margin:10px 0; font-weight:bold;"></div>
+    </div>
+
+    <div class="store-section" id="storeSection">
       <h3 style="color:gold; font-family:'Bebas Neue'">🛒 TIENDA DE BATALLA</h3>
       <div class="store-items">
         <div class="store-item gold">
@@ -191,13 +225,13 @@
           <div style="color:gold; font-weight:bold;">50 💎</div>
           <button class="action-btn" onclick="buyItem('golden_skin',50)" style="font-size:0.85em; padding:4px 8px; margin-top:5px;">Comprar</button>
         </div>
-        <div class="store-item">
+        <div class="store-item purple">
           <div style="font-weight:bold;">Confeti Épico</div>
           <div class="power">Ataque Sorpresa</div>
           <div style="color:gold; font-weight:bold;">30 💎</div>
           <button class="action-btn" onclick="buyItem('epic_confetti',30)" style="font-size:0.85em; padding:4px 8px; margin-top:5px;">Comprar</button>
         </div>
-        <div class="store-item red">
+        <div class="store-item orange">
           <div style="font-weight:bold;">Doble Voto</div>
           <div class="power">Doble Ataque</div>
           <div style="color:gold; font-weight:bold;">70 💎</div>
@@ -208,7 +242,7 @@
     </div>
   </div>
 
-  <audio id="hitSound" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmYuCz2R1/LMejQNJm298OeYPQ0obLvz66A8DSZsuu7onT8NJmu67+mSPQ4oarju6Y9ADidpt+zqj0EOKWq47OiNQg0qaLbs6ItDDido+O3oiEINKWa26+mIRQ4nZ7Xq6IRFDSZlterphEYLJWS06eiCRQslY7Po54JHCiViseblgkgLI2Gw5eOARwojX67k4oFJCyNetOTigUoLJV2s4+GASwskXKv" preload="auto"></audio>
+  <audio id="hitSound" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmYuCz2R1/LMejQNJmu98OeYPQ0obLvz66A8DSZsuu7onT8NJmu67+mSPQ4oarju6Y9ADidpt+zqj0EOKWq47OiNQg0qaLbs6ItDDido+O3oiEINKWa26+mIRQ4nZ7Xq6IRFDSZlterphEYLJWS06eiCRQslY7Po54JHCiViseblgkgLI2Gw5eOARwojX67k4oFJCyNetOTigUoLJV2s4+GASwskXKv" preload="auto"></audio>
   <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
 
   <script>
@@ -232,18 +266,18 @@
       }
     }
 
-    // Cartas (skins) con estadísticas
+    // CARTAS CON RAREZA
     const CARDS = [
-      { id:0, name:"Skin 1", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", atk:70, def:50, power:"Confeti Cegador", desc:"Ignora defensa enemiga" },
-      { id:1, name:"Skin 2", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", atk:65, def:55, power:"Paso Sigiloso", desc:"+15 ATK si atacas primero" },
-      { id:2, name:"Skin 3", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", atk:80, def:45, power:"Ataque Relámpago", desc:"50% de atacar 2 veces" },
-      { id:3, name:"Skin 4", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", atk:60, def:70, power:"Fortaleza", desc:"+20 DEF si defiendes" },
-      { id:4, name:"Skin 5", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", atk:75, def:50, power:"Danza de Pies", desc:"25% de esquivar ataque" },
-      { id:5, name:"Skin 6", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", atk:85, def:40, power:"Furia", desc:"+10 ATK por cada 10% de vida perdida" },
-      { id:6, name:"Skin 7", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", atk:55, def:65, power:"Refuerzos", desc:"+10 DEF si pierdes" },
-      { id:7, name:"Skin 8", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", atk:90, def:30, power:"Asesino", desc:"Daño crítico si ATK > 80" },
-      { id:8, name:"Skin 9", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", atk:50, def:80, power:"Escudo", desc:"Absorbe 20 daño la primera vez" },
-      { id:9, name:"Skin 10", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", atk:95, def:25, power:"Jefe Final", desc:"El enemigo más fuerte" }
+      { id:0, name:"Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:50, power:"Paso Firme" },
+      { id:1, name:"Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:55, power:"Confeti Ácido" },
+      { id:2, name:"Tormenta", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", rarity:"epic", atk:80, def:45, power:"Torbellino" },
+      { id:3, name:"Fortaleza", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", rarity:"rare", atk:60, def:70, power:"Muralla" },
+      { id:4, name:"Danza", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", rarity:"epic", atk:75, def:50, power:"Baile Épico" },
+      { id:5, name:"Furia", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", rarity:"legendary", atk:90, def:40, power:"Ira Incontenible" },
+      { id:6, name:"Escudera", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", rarity:"common", atk:55, def:65, power:"Protección" },
+      { id:7, name:"Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:30, power:"Golpe Letal" },
+      { id:8, name:"Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:80, power:"Escudo Energético" },
+      { id:9, name:"JEFE FINAL", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:35, power:"Tirano" }
     ];
 
     let playerCards = [];
@@ -251,7 +285,7 @@
     let round = 1;
     let gameActive = true;
 
-    // Sistema de créditos
+    // Créditos diarios
     function getDailyCredits() {
       const today = new Date().toDateString();
       const last = localStorage.getItem('lastClaim');
@@ -265,8 +299,7 @@
     }
 
     function updateCredits() {
-      const c = getDailyCredits();
-      document.getElementById('userCredits').innerText = c;
+      document.getElementById('userCredits').innerText = getDailyCredits();
     }
 
     function buyItem(id, cost) {
@@ -284,92 +317,83 @@
       }
     }
 
-    function showStore() {
-      document.getElementById('storeSection').style.display = 
-        document.getElementById('storeSection').style.display === 'none' ? 'block' : 'none';
+    // Renderizar carta
+    function renderCard(card, isEnemy = false) {
+      const rarityClass = `rarity-${card.rarity}`;
+      const rarityName = { common:"Común", rare:"Rara", epic:"Épica", legendary:"Legendaria" };
+      return `
+        <div class="card ${rarityClass}" style="${isEnemy ? 'transform:scale(1.1);' : ''}">
+          <div class="rarity-badge">${rarityName[card.rarity]}</div>
+          <img src="${card.img}" alt="${card.name}">
+          <div class="stats">ATK: ${card.atk} | DEF: ${card.def}</div>
+          <div class="power">${card.power}</div>
+        </div>
+      `;
     }
 
-    // Lógica de combate
+    // INICIAR BATALLA
     function startBattle() {
-      // Elegir 3 cartas al azar para el jugador (menos el jefe)
       const nonBoss = CARDS.slice(0, -1);
       playerCards = [];
-      while (playerCards.length < 3 && nonBoss.length > 0) {
-        const idx = Math.floor(Math.random() * nonBoss.length);
-        playerCards.push(nonBoss.splice(idx, 1)[0]);
+      const pool = [...nonBoss];
+      while (playerCards.length < 3 && pool.length > 0) {
+        const idx = Math.floor(Math.random() * pool.length);
+        playerCards.push(pool.splice(idx, 1)[0]);
       }
 
-      // Enemigo: más fuerte según la ronda
-      const bossIndex = Math.min(round, 9); // Ronda 1: skin 1, Ronda 5: skin 5, etc.
-      enemyCard = CARDS[bossIndex];
+      // Enemigo según ronda
+      const enemyIndex = Math.min(round + 3, 9);
+      enemyCard = CARDS[enemyIndex];
 
       renderBattle();
     }
 
     function renderBattle() {
       if (!gameActive) return;
-
-      let html = `<div class="enemy-card"><div class="card">
-        <img src="${enemyCard.img}" alt="${enemyCard.name}">
-        <div class="stats">ATK: ${enemyCard.atk} | DEF: ${enemyCard.def}</div>
-        <div class="power">${enemyCard.power}</div>
-      </div></div>`;
-
+      let html = `<div class="enemy-card">${renderCard(enemyCard, true)}</div>`;
       html += `<div class="battle-log" id="battleLog">¡Ronda ${round}! Elige tu carta para atacar:</div>`;
-
       html += `<div class="player-hand">`;
       playerCards.forEach((card, i) => {
-        html += `<div class="card" onclick="playerAttack(${i})">
-          <img src="${card.img}" alt="${card.name}">
-          <div class="stats">ATK: ${card.atk} | DEF: ${card.def}</div>
-          <div class="power">${card.power}</div>
-        </div>`;
+        html += `<div onclick="playerAttack(${i})">${renderCard(card)}</div>`;
       });
       html += `</div>`;
-
       document.getElementById('battleArea').innerHTML = html;
     }
 
+    // ✅ ATAQUE CORREGIDO
     function playerAttack(cardIndex) {
-      if (!game-active) return;
+      if (!gameActive || cardIndex >= playerCards.length) return;
+      
       const playerCard = playerCards[cardIndex];
       const log = document.getElementById('battleLog');
 
-      // Aplicar mejoras de la tienda
       let playerAtk = playerCard.atk;
       let enemyDef = enemyCard.def;
 
-      if (localStorage.getItem('owned_golden_skin')) {
-        playerAtk += 30; // +30 DEF para el jugador → se traduce en +30 ATK en ataque ofensivo
-      }
-      if (localStorage.getItem('owned_double_vote')) {
-        playerAtk *= 2;
-        log.innerHTML = "¡Doble Ataque activado! 💥<br>";
-      }
-      if (localStorage.getItem('owned_epic_confetti')) {
-        playerAtk += Math.floor(playerAtk * 0.3); // +30% ataque sorpresa
-        log.innerHTML += "¡Ataque Sorpresa! ✨<br>";
-      }
+      // Bonus de la tienda
+      if (localStorage.getItem('owned_golden_skin')) playerAtk += 30;
+      if (localStorage.getItem('owned_double_vote')) playerAtk *= 2;
+      if (localStorage.getItem('owned_epic_confetti')) playerAtk += Math.floor(playerAtk * 0.3);
 
-      // Daño = ataque - defensa (mínimo 10)
-      let damage = Math.max(10, playerAtk - enemyDef);
-      log.innerHTML += `¡${playerCard.name} ataca a ${enemyCard.name} por ${damage} de daño!`;
+      const damage = Math.max(10, playerAtk - enemyDef);
+      log.innerHTML = `¡${playerCard.name} ataca a ${enemyCard.name} por ${damage} de daño!`;
 
       // Efecto visual
-      document.querySelector('.enemy-card .card').classList.add('hit');
-      document.getElementById('hitSound').play().catch(()=>{});
+      const enemyEl = document.querySelector('.enemy-card .card');
+      if (enemyEl) {
+        enemyEl.classList.add('hit');
+        document.getElementById('hitSound').play().catch(()=>{});
+      }
 
       setTimeout(() => {
-        document.querySelector('.enemy-card .card').classList.remove('hit');
-        // Si el enemigo "muere" (simplificado: siempre gana el jugador en esta versión)
+        if (enemyEl) enemyEl.classList.remove('hit');
         round++;
         if (round > 5) {
-          // Victoria final
           gameActive = false;
           document.getElementById('battleArea').innerHTML = `
             <div style="text-align:center; padding:30px;">
               <h2 style="color:gold; text-shadow:0 0 10px gold;">🎉 ¡VICTORIA ROYALE! 🎉</h2>
-              <p style="font-size:1.2em;">¡Derrotaste al Jefe Final!</p>
+              <p style="font-size:1.2em;">¡Derrotaste al Jefe Final Legendaria!</p>
               <button class="action-btn" onclick="location.reload()">🔄 Jugar de Nuevo</button>
             </div>
           `;
@@ -380,9 +404,36 @@
       }, 800);
     }
 
+    // ✅ CONTADOR PARA TIENDA: HOY A LA 1:00 AM
+    function updateStoreCountdown() {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(1, 0, 0, 0); // 1:00 AM
+
+      if (now > target) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      const diff = target - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      if (diff <= 0) {
+        document.getElementById('storeCountdown').style.display = 'none';
+        document.getElementById('storeSection').style.display = 'block';
+        updateCredits();
+      } else {
+        document.getElementById('storeCountdown').style.display = 'block';
+        document.getElementById('storeTimer').innerText = 
+          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+    }
+
     // Iniciar
     createParticles();
-    updateCredits();
+    updateStoreCountdown();
+    setInterval(updateStoreCountdown, 1000);
     startBattle();
   </script>
 </body>
