@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chicas Más Guapas 2025</title>
   <style>
     body {
@@ -18,27 +18,6 @@
       opacity: 1;
       overflow: auto;
     }
-
-    /* Lightbox (zoom) */
-    #lightbox {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    #lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    }
-
     header {
       text-align: center;
       padding: 2rem 1rem;
@@ -73,8 +52,7 @@
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       padding: 1.2rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       transition: transform 0.2s;
     }
     .profile-card:hover {
@@ -101,28 +79,10 @@
       font-size: 0.9rem;
       color: #666;
     }
-    .top-list {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 1.2rem;
-    }
-    .top-list ul {
-      list-style: none;
-      padding: 0;
-    }
-    .top-list li {
-      padding: 0.8rem 0;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-    }
-    .top-list li:last-child {
-      border-bottom: none;
-    }
-    .top-list .rank {
-      font-weight: bold;
-      color: #e91e63;
+    .comments {
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+      margin-top: 1rem;
     }
     footer {
       text-align: center;
@@ -136,43 +96,24 @@
 
   <header>
     <h1>✨ Top Chicas Más Guapas 2025</h1>
-    <p>Haz clic en las fotos para verlas en grande</p>
+    <p>¡Vota, comenta y comparte!</p>
   </header>
 
   <div class="container">
-    <div class="section">
-      <h2 class="section-title">Vota por tu favorita</h2>
-      <div id="voting-area"></div>
+    <div class="section" id="voting-area">
+      <!-- Las chicas se generarán aquí -->
     </div>
-    <div class="section">
-      <h2 class="section-title">🏆 Top 10 Más Votadas</h2>
-      <div class="top-list">
-        <ul id="top-list"></ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Lightbox para ver fotos grandes -->
-  <div id="lightbox" onclick="this.style.display='none'">
-    <img id="lightbox-img">
   </div>
 
   <footer>
-    &copy; 2025 • Ranking basado en tus votos locales
+    &copy; 2025 • Comentarios con GitHub
   </footer>
 
   <script>
     const girls = [
       { id: "sophie", name: "Sophie Rain", img: "https://i.ibb.co/tpx5b907/9d084f56732a8c4f996543695744ff94.jpg" },
-      { id: "camila", name: "Camila Ruiz", img: "https://images.unsplash.com/photo-1529626455594-4ff0802e3620?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "daniela", name: "Daniela Morales", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "valeria", name: "Valeria Castro", img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "sofia", name: "Sofía Méndez", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "isabel", name: "Isabel Navarro", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "mariana", name: "Mariana López", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "ana", name: "Ana Pérez", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "elena", name: "Elena Díaz", img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" },
-      { id: "nadia", name: "Nadia Gómez", img: "https://images.unsplash.com/photo-1529626455594-4ff0802e3620?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" }
+      { id: "camila", name: "Camila Ruiz", img: "https://images.unsplash.com/photo-1529626455594-4ff0802e3620?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300&q=80" }
+      // Puedes añadir más chicas aquí
     ];
 
     window.addEventListener('load', () => {
@@ -188,13 +129,6 @@
       localStorage.setItem('votes', JSON.stringify(votes));
     }
 
-    function openLightbox(src) {
-      const lightbox = document.getElementById('lightbox');
-      const img = document.getElementById('lightbox-img');
-      img.src = src;
-      lightbox.style.display = 'flex';
-    }
-
     function renderVotingCards() {
       const container = document.getElementById('voting-area');
       const votes = getVotes();
@@ -206,10 +140,25 @@
         }
         return `
           <div class="profile-card">
-            <img src="${girl.img}" alt="${girl.name}" onclick="openLightbox('${girl.img}')">
+            <img src="${girl.img}" alt="${girl.name}">
             <h3>${girl.name}</h3>
             <div class="stars" data-id="${girl.id}">${stars}</div>
             <p class="rating-text">Tu voto: <span>${userRating}</span></p>
+
+            <!-- Comentarios con Utterances -->
+            <div class="comments">
+              <script src="https://utteranc.es/client.js"
+                      repo="pancitaibiza-blip/chicas-2025"
+                      issue-term="title"
+                      label="comentario"
+                      theme="github-light"
+                      crossorigin="anonymous"
+                      async>
+                {
+                  "title": "${girl.name}"
+                }
+              </script>
+            </div>
           </div>
         `;
       }).join('');
@@ -223,35 +172,12 @@
             votes[girlId] = rating;
             saveVotes(votes);
             renderVotingCards();
-            renderTopList();
           });
         });
       });
     }
 
-    function renderTopList() {
-      const votes = getVotes();
-      const ranked = girls
-        .map(girl => ({ ...girl, rating: votes[girl.id] || 0 }))
-        .filter(girl => girl.rating > 0)
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 10);
-
-      const list = document.getElementById('top-list');
-      if (ranked.length === 0) {
-        list.innerHTML = '<li>No hay votos aún.</li>';
-        return;
-      }
-      list.innerHTML = ranked.map((girl, index) => `
-        <li>
-          <span class="rank">${index + 1}. ${girl.name}</span>
-          <span>⭐ ${girl.rating}</span>
-        </li>
-      `).join('');
-    }
-
     renderVotingCards();
-    renderTopList();
   </script>
 </body>
 </html>
