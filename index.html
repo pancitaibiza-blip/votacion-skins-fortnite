@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Torneo de Skins de Fortnite</title>
+  <title>FORTNITE SKIN WARS: ¿QUIÉN TIENE LOS MEJORES PIES?</title>
+  <!-- Fuente tipo Fortnite -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oxanium:wght@600&display=swap" rel="stylesheet">
   <style>
     /* Transición de entrada */
     body {
-      font-family: 'Segoe UI', 'Arial', sans-serif;
-      background: #0a0a1a;
+      font-family: 'Oxanium', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a1a, #1a1a2e);
       color: white;
       text-align: center;
       padding: 10px;
       margin: 0;
       opacity: 0;
-      animation: fadeIn 1s forwards;
+      animation: fadeIn 1.2s forwards;
     }
 
     @keyframes fadeIn {
@@ -22,15 +24,18 @@
     }
 
     h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2em;
       color: #ff6b6b;
+      text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
       margin: 10px 0;
-      font-size: 1.8em;
     }
     .round-indicator {
-      font-size: 1.3em;
+      font-size: 1.4em;
       font-weight: bold;
       color: #4ecdc4;
       margin: 10px 0;
+      text-shadow: 0 0 8px rgba(78, 205, 196, 0.5);
     }
     .voting-container {
       display: flex;
@@ -51,35 +56,39 @@
       border-radius: 12px;
       border: 3px solid #333;
       object-fit: cover;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     }
     .option:hover {
-      transform: scale(1.03);
+      transform: scale(1.05);
     }
     .vs {
-      font-size: 1.8em;
+      font-size: 2em;
       font-weight: bold;
       color: #feca57;
       margin: 0 10px;
+      text-shadow: 0 0 10px gold;
     }
     .results {
       margin: 15px 0;
-      font-size: 1em;
+      font-size: 1.1em;
       color: #ff9ff3;
     }
     .winner-section {
       display: none;
-      padding: 20px;
-      background: rgba(78, 115, 223, 0.15);
-      border-radius: 15px;
+      padding: 25px;
+      background: radial-gradient(circle, rgba(78,115,223,0.2), transparent);
+      border-radius: 20px;
       margin: 20px auto;
-      max-width: 500px;
+      max-width: 520px;
+      border: 2px solid gold;
+      box-shadow: 0 0 25px rgba(255,215,0,0.6);
     }
     .winner-img {
-      width: 240px;
+      width: 260px;
       max-width: 100%;
       border-radius: 15px;
       border: 5px solid gold;
-      box-shadow: 0 0 15px gold;
+      box-shadow: 0 0 20px gold;
       margin: 15px auto;
     }
     .confetti {
@@ -93,14 +102,17 @@
     }
     .leaderboard {
       margin: 30px auto;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 15px;
-      border-radius: 10px;
-      max-width: 500px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 18px;
+      border-radius: 15px;
+      max-width: 520px;
+      border: 1px solid #4ecdc4;
     }
     .leaderboard h2 {
       color: #4caf50;
       margin: 10px 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8em;
     }
     .leaderboard ul {
       list-style: none;
@@ -109,99 +121,97 @@
     .leaderboard li {
       display: flex;
       align-items: center;
-      padding: 12px;
+      padding: 14px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      gap: 12px;
+      gap: 14px;
     }
     .leaderboard li:last-child {
       border-bottom: none;
     }
     .skin-thumb {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
+      width: 65px;
+      height: 65px;
+      border-radius: 10px;
       border: 2px solid #4ecdc4;
       object-fit: cover;
     }
     .rank {
       font-weight: bold;
-      min-width: 30px;
-      color: #feca57;
+      min-width: 40px;
+      font-size: 1.4em;
     }
+    .rank-1 { color: gold; text-shadow: 0 0 8px gold; }
+    .rank-2 { color: silver; }
+    .rank-3 { color: #cd7f32; }
     .votes {
       margin-left: auto;
       color: #ff6b6b;
+      font-weight: bold;
     }
     .chart-container {
       margin: 20px auto;
-      background: rgba(0,0,0,0.2);
-      border-radius: 10px;
-      padding: 10px;
-      max-width: 500px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 12px;
+      max-width: 520px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      min-height: 180px;
     }
     .bar {
-      width: 30px;
+      width: 32px;
       background: linear-gradient(to top, #ff6b6b, #ff9ff3);
-      border-radius: 5px 5px 0 0;
-      margin: 0 6px;
-      transition: height 1s ease;
+      border-radius: 6px 6px 0 0;
+      margin: 0 7px;
+      transition: height 1.2s ease;
       position: relative;
     }
     .bar-label {
       position: absolute;
-      bottom: -25px;
+      bottom: -28px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.7em;
+      font-size: 0.75em;
       white-space: nowrap;
+      color: #feca57;
     }
-    .restart-btn {
+    .restart-btn, .share-btn {
       background: #4ecdc4;
       color: #0a0a1a;
       border: none;
-      padding: 12px 25px;
-      font-size: 1.1em;
+      padding: 12px 28px;
+      font-size: 1.15em;
       font-weight: bold;
       border-radius: 50px;
       cursor: pointer;
-      margin: 20px 0;
+      margin: 12px 5px;
       transition: all 0.3s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      font-family: 'Oxanium', sans-serif;
     }
-    .restart-btn:hover {
+    .share-btn {
       background: #feca57;
-      transform: scale(1.05);
+      color: #0a0a1a;
+    }
+    .restart-btn:hover, .share-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.5);
     }
     @media (max-width: 500px) {
-      .voting-container {
-        flex-direction: column;
-      }
-      .vs {
-        font-size: 2em;
-        margin: 10px 0;
-      }
-      .option {
-        max-width: 240px;
-      }
-      .winner-img {
-        width: 180px;
-      }
-      .chart-container {
-        height: 200px;
-      }
-      .skin-thumb {
-        width: 50px;
-        height: 50px;
-      }
+      h1 { font-size: 1.8em; }
+      .voting-container { flex-direction: column; }
+      .vs { font-size: 2.2em; margin: 12px 0; }
+      .option { max-width: 240px; }
+      .winner-img { width: 200px; }
+      .skin-thumb { width: 55px; height: 55px; }
+      .rank { font-size: 1.2em; }
     }
   </style>
 </head>
 <body>
-  <h1>🏆 Torneo de Skins de Fortnite 🏆</h1>
+  <h1>FORTNITE SKIN WARS: ¿QUIÉN TIENE LOS MEJORES PIES?</h1>
   <div class="round-indicator" id="roundIndicator">Ronda 1</div>
 
   <div class="voting-container" id="votingContainer">
@@ -217,27 +227,28 @@
   <div class="results" id="results"></div>
 
   <div class="winner-section" id="winnerSection">
-    <h2>🎉 ¡GANADOR DEL TORNEO! 🎉</h2>
+    <h2>🎉 ¡VICTORY ROYALE! 🎉</h2>
     <img class="winner-img" id="winnerImg" src="" alt="Ganador">
-    <h3>🥇 NÚMERO 1 🥇</h3>
+    <h3>👑 ¡NÚMERO 1 DEL TORNEO! 👑</h3>
+    <button class="share-btn" onclick="shareWinner()">📤 Compartir Ganador</button>
     <button class="restart-btn" onclick="restartTournament()">🔄 Jugar de Nuevo</button>
   </div>
 
   <div class="chart-container" id="chartContainer"></div>
 
   <div class="leaderboard" id="leaderboard">
-    <h2>📊 Tabla de Clasificación Final</h2>
+    <h2>📊 TABLA DE CLASIFICACIÓN FINAL</h2>
     <ul id="leaderboardList"></ul>
   </div>
 
   <button class="restart-btn" onclick="restartTournament()">🔄 Reiniciar Torneo</button>
 
-  <!-- Sonido -->
-  <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
+  <!-- Sonidos -->
+  <audio id="winSound" src="https://github.com/pancitaibiza-blip/assets/raw/main/victory-royale.mp3" preload="auto"></audio>
+
   <div class="confetti" id="confetti"></div>
 
   <script>
-    // ✅ ¡10 SKINS ACTUALIZADAS!
     const skins = [
       'https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894',
       'https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871',
@@ -310,9 +321,10 @@
       document.getElementById('votingContainer').style.display = 'none';
       document.getElementById('roundIndicator').style.display = 'none';
 
+      // Sonido VICTORY ROYALE
       const sound = document.getElementById('winSound');
       sound.currentTime = 0;
-      sound.play();
+      sound.play().catch(e => console.log("Audio autoplay blocked, but it's OK!"));
 
       createConfetti();
       updateChart();
@@ -322,7 +334,7 @@
     function createConfetti() {
       const confettiContainer = document.getElementById('confetti');
       confettiContainer.innerHTML = '';
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 180; i++) {
         const confetti = document.createElement('div');
         confetti.style.position = 'absolute';
         confetti.style.width = Math.random() * 10 + 5 + 'px';
@@ -337,27 +349,26 @@
       const style = document.createElement('style');
       style.textContent = `
         @keyframes fall {
-          to { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+          to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
         }
       `;
       document.head.appendChild(style);
     }
 
     function getRandomColor() {
-      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#5f27cd'];
-      return colors[Math.floor(Math.random() * colors.length)];
+      return ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#5f27cd'][Math.floor(Math.random() * 7)];
     }
 
     function updateChart() {
       const container = document.getElementById('chartContainer');
-      container.innerHTML = '<h3 style="margin-bottom:10px;color:#4ecdc4;">Votos por Skin</h3>';
+      container.innerHTML = '<h3 style="margin-bottom:12px;color:#feca57;">Votos por Skin</h3>';
       const sortedSkins = Object.keys(votes).sort((a, b) => votes[b] - votes[a]);
       const maxVotes = Math.max(...Object.values(votes), 1);
 
       sortedSkins.forEach(skin => {
         const bar = document.createElement('div');
         bar.className = 'bar';
-        bar.style.height = `${(votes[skin] / maxVotes) * 180}px`;
+        bar.style.height = `${(votes[skin] / maxVotes) * 150}px`;
         const label = document.createElement('div');
         label.className = 'bar-label';
         label.innerText = `Skin ${Object.keys(votes).indexOf(skin) + 1}`;
@@ -372,14 +383,29 @@
       const sortedSkins = Object.keys(votes).sort((a, b) => votes[b] - votes[a]);
 
       sortedSkins.forEach((skin, index) => {
+        const rankText = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
+        const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+        
         const li = document.createElement('li');
         li.innerHTML = `
-          <span class="rank">${index + 1}º</span>
+          <span class="rank ${rankClass}">${rankText}</span>
           <img class="skin-thumb" src="${skin}" alt="Skin ${index + 1}">
           <span class="votes">${votes[skin]} votos</span>
         `;
         list.appendChild(li);
       });
+    }
+
+    function shareWinner() {
+      const url = window.location.href;
+      const title = '¡VICTORY ROYALE en el Torneo de Skins! 🏆';
+      if (navigator.share) {
+        navigator.share({ title, url }).catch(console.error);
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          alert('¡Enlace copiado! Pégalo en redes y comparte el ganador 🥳');
+        });
+      }
     }
 
     function restartTournament() {
