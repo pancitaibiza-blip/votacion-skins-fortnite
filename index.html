@@ -206,7 +206,7 @@
       padding: 25px;
       max-width: 520px;
       background: rgba(0, 0, 0, 0.4);
-      border: 2px dashed #feca57;
+      border: 2px dashed gold;
       border-radius: 15px;
       text-align: center;
       opacity: 0;
@@ -223,16 +223,6 @@
       margin: 10px 0;
       color: #4ecdc4;
       font-size: 1.1em;
-    }
-    .coming-soon ul {
-      list-style: none;
-      padding: 0;
-      margin: 15px 0;
-    }
-    .coming-soon li {
-      padding: 6px 0;
-      color: #96ceb4;
-      font-size: 1em;
     }
     @keyframes fadeInSection {
       to { opacity: 1; }
@@ -289,18 +279,16 @@
 
   <button class="restart-btn" onclick="restartTournament()">🔄 Reiniciar Torneo</button>
 
-  <!-- ✨ APARTADO PRÓXIMAMENTE ✨ -->
+  <!-- ✨ APARTADO PRÓXIMAMENTE: ACTUALIZACIÓN MAÑANA 10:00 AM ✨ -->
   <div class="coming-soon" id="comingSoon">
-    <h2>🔜 PRÓXIMAMENTE 🔜</h2>
-    <p>¡Estamos trabajando en nuevas funciones para hacer este torneo aún más épico!</p>
-    <ul>
-      <li>🔥 Modo multijugador en tiempo real</li>
-      <li>🎮 Votación con skins personalizadas</li>
-      <li>🏆 Torneos semanales con recompensas</li>
-      <li>📱 App móvil exclusiva</li>
-    </ul>
+    <h2>⏰ ¡PRÓXIMA ACTUALIZACIÓN! ⏰</h2>
+    <p style="font-size: 1.3em; color: gold; margin: 12px 0;">
+      <strong>Mañana a las 10:00 AM</strong>
+    </p>
+    <p>¡Nuevas skins, mejoras y sorpresas épicas llegan al torneo!</p>
+    <div id="countdown" style="margin: 15px 0; font-size: 1.2em; color: #4ecdc4; font-weight: bold;"></div>
     <p style="margin-top: 15px; font-style: italic; color: #feca57;">
-      ¡Sigue nuestras redes para no perderte nada!
+      ¡No te lo pierdas!
     </p>
   </div>
 
@@ -382,7 +370,6 @@
       document.getElementById('votingContainer').style.display = 'none';
       document.getElementById('roundIndicator').style.display = 'none';
 
-      // Sonido VICTORY ROYALE
       const sound = document.getElementById('winSound');
       sound.currentTime = 0;
       sound.play().catch(e => console.log("Audio autoplay blocked, but it's OK!"));
@@ -420,6 +407,7 @@
       return ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#5f27cd'][Math.floor(Math.random() * 7)];
     }
 
+    // ✅ CORRECCIÓN: Gráfico siempre visible
     function updateChart() {
       const container = document.getElementById('chartContainer');
       container.innerHTML = '<h3 style="margin-bottom:12px;color:#feca57;">Votos por Skin</h3>';
@@ -427,9 +415,11 @@
       const maxVotes = Math.max(...Object.values(votes), 1);
 
       sortedSkins.forEach(skin => {
+        const voteCount = votes[skin];
+        const height = Math.max(30, (voteCount / maxVotes) * 150);
         const bar = document.createElement('div');
         bar.className = 'bar';
-        bar.style.height = `${(votes[skin] / maxVotes) * 150}px`;
+        bar.style.height = `${height}px`;
         const label = document.createElement('div');
         label.className = 'bar-label';
         label.innerText = `Skin ${Object.keys(votes).indexOf(skin) + 1}`;
@@ -473,6 +463,37 @@
       initTournament();
     }
 
+    // ✨ Contador para "mañana a las 10:00 AM"
+    function getNextUpdate() {
+      const now = new Date();
+      let nextUpdate = new Date(now);
+      nextUpdate.setHours(10, 0, 0, 0); // 10:00 AM
+      if (now >= nextUpdate) {
+        nextUpdate.setDate(nextUpdate.getDate() + 1);
+      }
+      return nextUpdate;
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const nextUpdate = getNextUpdate();
+      const diff = nextUpdate - now;
+
+      const countdownEl = document.getElementById('countdown');
+      if (diff <= 0) {
+        countdownEl.innerText = '¡La actualización ya está en vivo! 🎉';
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      countdownEl.innerHTML = `⏱️ Faltan: <strong>${hours}h ${minutes}m</strong>`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+
+    // Iniciar torneo
     initTournament();
   </script>
 </body>
