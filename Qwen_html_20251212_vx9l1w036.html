@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¿Cuál skin te gusta más?</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f23;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #4e73df;
+      margin-bottom: 30px;
+    }
+    .voting-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    .option {
+      cursor: pointer;
+      transition: transform 0.2s;
+      max-width: 200px;
+    }
+    .option img {
+      width: 100%;
+      border-radius: 12px;
+      border: 3px solid #333;
+    }
+    .option:hover {
+      transform: scale(1.05);
+    }
+    .option:hover img {
+      border-color: #4e73df;
+    }
+    .results {
+      margin-top: 30px;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>¿Cuál skin de Fortnite te gusta más?</h1>
+  <div class="voting-container">
+    <div class="option" id="optionA" onclick="vote('A')">
+      <img id="imgA" src="" alt="Skin A">
+    </div>
+    <div style="font-size: 2em; align-self: center;">VS</div>
+    <div class="option" id="optionB" onclick="vote('B')">
+      <img id="imgB" src="" alt="Skin B">
+    </div>
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    // Lista de skins (ajusta las rutas a tus imágenes)
+    const skins = [
+      'img/skin1.jpg',
+      'img/skin2.jpg',
+      'img/skin3.jpg',
+      'img/skin4.jpg',
+      'img/skin5.jpg',
+      // Añade más...
+    ];
+
+    // Contador de votos (opcional, solo en memoria)
+    const votes = {};
+    skins.forEach(skin => votes[skin] = 0);
+
+    let currentA, currentB;
+
+    function getRandomPair() {
+      const shuffled = [...skins].sort(() => 0.5 - Math.random());
+      return [shuffled[0], shuffled[1]];
+    }
+
+    function displayPair() {
+      [currentA, currentB] = getRandomPair();
+      document.getElementById('imgA').src = currentA;
+      document.getElementById('imgB').src = currentB;
+    }
+
+    function vote(choice) {
+      if (choice === 'A') votes[currentA]++;
+      if (choice === 'B') votes[currentB]++;
+
+      // Mostrar resultado parcial
+      const total = votes[currentA] + votes[currentB];
+      document.getElementById('results').innerHTML = `
+        <p>Resultados actuales:</p>
+        <p>✔️ ${votes[currentA]} votos | ❌ ${votes[currentB]} votos</p>
+        <p><em>Próxima ronda en 1 segundo...</em></p>
+      `;
+      
+      // Cambiar a nueva pareja después de un breve delay
+      setTimeout(displayPair, 1000);
+    }
+
+    // Iniciar
+    displayPair();
+  </script>
+</body>
+</html>
