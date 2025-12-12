@@ -105,6 +105,50 @@
 
     .enemy-card .card {
       transform: scale(1.1);
+      position: relative;
+    }
+
+    /* Animaciones de ataque */
+    .attack-effect {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .fire { 
+      background: radial-gradient(circle, rgba(255,90,0,0.7) 0%, transparent 70%);
+      animation: fireBurst 0.8s forwards;
+    }
+    .ice {
+      background: radial-gradient(circle, rgba(0,200,255,0.6) 0%, transparent 70%);
+      animation: iceShatter 0.8s forwards;
+    }
+    .wind {
+      background: radial-gradient(circle, rgba(100,255,200,0.5) 0%, transparent 70%);
+      animation: windSwirl 0.8s forwards;
+    }
+    .arcane {
+      background: radial-gradient(circle, rgba(200,100,255,0.7) 0%, transparent 70%);
+      animation: arcanePulse 0.8s forwards;
+    }
+
+    @keyframes fireBurst {
+      0% { opacity: 0.8; transform: scale(0.5); }
+      100% { opacity: 0; transform: scale(2); }
+    }
+    @keyframes iceShatter {
+      0% { opacity: 0.9; transform: scale(0.3); }
+      50% { opacity: 0.9; }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+    @keyframes windSwirl {
+      0% { opacity: 0.7; transform: rotate(0) scale(0.5); }
+      100% { opacity: 0; transform: rotate(180deg) scale(2); }
+    }
+    @keyframes arcanePulse {
+      0% { opacity: 0.9; transform: scale(0.4); box-shadow: 0 0 10px #c864ff; }
+      50% { box-shadow: 0 0 20px #ff64c8, 0 0 30px #64c8ff; }
+      100% { opacity: 0; transform: scale(1.8); }
     }
 
     .battle-area {
@@ -150,7 +194,6 @@
       color: #4ecdc4;
     }
 
-    /* Tienda bloqueada */
     .store-countdown {
       margin: 30px auto;
       max-width: 500px;
@@ -184,13 +227,6 @@
     .store-item.orange { border-left: 4px solid #ff6b35; }
     .store-item.purple { border-left: 4px solid #a29bfe; }
 
-    @keyframes hit {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-    .hit { animation: hit 0.5s; }
-
     @media (max-width: 500px) {
       .card { width: 120px; }
       h1 { font-size: 1.9em; }
@@ -207,10 +243,8 @@
     </div>
 
     <div class="battle-area" id="battleArea">
-      <!-- Se llena con JavaScript -->
     </div>
 
-    <!-- CONTADOR PARA TIENDA: HOY A LA 1:00 AM -->
     <div class="store-countdown" id="storeCountdown">
       <h3 style="color: gold; font-family:'Bebas Neue';">⏳ ¡TIENDA DISPONIBLE HOY A LA 1:00 AM! ⏳</h3>
       <div id="storeTimer" style="font-size:1.4em; color:gold; margin:10px 0; font-weight:bold;"></div>
@@ -242,11 +276,10 @@
     </div>
   </div>
 
-  <audio id="hitSound" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmYuCz2R1/LMejQNJmu98OeYPQ0obLvz66A8DSZsuu7onT8NJmu67+mSPQ4oarju6Y9ADidpt+zqj0EOKWq47OiNQg0qaLbs6ItDDido+O3oiEINKWa26+mIRQ4nZ7Xq6IRFDSZlterphEYLJWS06eiCRQslY7Po54JHCiViseblgkgLI2Gw5eOARwojX67k4oFJCyNetOTigUoLJV2s4+GASwskXKv" preload="auto"></audio>
+  <audio id="hitSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
   <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
 
   <script>
-    // Crear partículas
     function createParticles() {
       const c = document.getElementById('particles');
       const n = window.innerWidth > 768 ? 25 : 15;
@@ -266,18 +299,18 @@
       }
     }
 
-    // CARTAS CON RAREZA
+    // 🎴 CARTAS CON TIPO DE ATAQUE
     const CARDS = [
-      { id:0, name:"Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:50, power:"Paso Firme" },
-      { id:1, name:"Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:55, power:"Confeti Ácido" },
-      { id:2, name:"Tormenta", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", rarity:"epic", atk:80, def:45, power:"Torbellino" },
-      { id:3, name:"Fortaleza", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", rarity:"rare", atk:60, def:70, power:"Muralla" },
-      { id:4, name:"Danza", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", rarity:"epic", atk:75, def:50, power:"Baile Épico" },
-      { id:5, name:"Furia", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", rarity:"legendary", atk:90, def:40, power:"Ira Incontenible" },
-      { id:6, name:"Escudera", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", rarity:"common", atk:55, def:65, power:"Protección" },
-      { id:7, name:"Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:30, power:"Golpe Letal" },
-      { id:8, name:"Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:80, power:"Escudo Energético" },
-      { id:9, name:"JEFE FINAL", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:35, power:"Tirano" }
+      { id:0, name:"Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:50, power:"Paso Firme", attackType:"wind" },
+      { id:1, name:"Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:55, power:"Confeti Ácido", attackType:"fire" },
+      { id:2, name:"Tormenta", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", rarity:"epic", atk:80, def:45, power:"Torbellino", attackType:"wind" },
+      { id:3, name:"Fortaleza", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", rarity:"rare", atk:60, def:70, power:"Muralla", attackType:"ice" },
+      { id:4, name:"Danza", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", rarity:"epic", atk:75, def:50, power:"Baile Épico", attackType:"wind" },
+      { id:5, name:"Furia", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", rarity:"legendary", atk:90, def:40, power:"Ira Incontenible", attackType:"fire" },
+      { id:6, name:"Escudera", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", rarity:"common", atk:55, def:65, power:"Protección", attackType:"ice" },
+      { id:7, name:"Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:30, power:"Golpe Letal", attackType:"fire" },
+      { id:8, name:"Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:80, power:"Escudo Energético", attackType:"ice" },
+      { id:9, name:"JEFE FINAL", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:35, power:"Tirano", attackType:"arcane" }
     ];
 
     let playerCards = [];
@@ -285,7 +318,6 @@
     let round = 1;
     let gameActive = true;
 
-    // Créditos diarios
     function getDailyCredits() {
       const today = new Date().toDateString();
       const last = localStorage.getItem('lastClaim');
@@ -317,7 +349,6 @@
       }
     }
 
-    // Renderizar carta
     function renderCard(card, isEnemy = false) {
       const rarityClass = `rarity-${card.rarity}`;
       const rarityName = { common:"Común", rare:"Rara", epic:"Épica", legendary:"Legendaria" };
@@ -331,7 +362,17 @@
       `;
     }
 
-    // INICIAR BATALLA
+    // ✨ NUEVA FUNCIÓN: Animación de ataque
+    function playAttackAnimation(type, targetElement) {
+      const effect = document.createElement('div');
+      effect.className = `attack-effect ${type}`;
+      targetElement.style.position = 'relative';
+      targetElement.appendChild(effect);
+      setTimeout(() => {
+        if (effect.parentNode) effect.parentNode.removeChild(effect);
+      }, 800);
+    }
+
     function startBattle() {
       const nonBoss = CARDS.slice(0, -1);
       playerCards = [];
@@ -340,11 +381,8 @@
         const idx = Math.floor(Math.random() * pool.length);
         playerCards.push(pool.splice(idx, 1)[0]);
       }
-
-      // Enemigo según ronda
       const enemyIndex = Math.min(round + 3, 9);
       enemyCard = CARDS[enemyIndex];
-
       renderBattle();
     }
 
@@ -360,33 +398,30 @@
       document.getElementById('battleArea').innerHTML = html;
     }
 
-    // ✅ ATAQUE CORREGIDO
     function playerAttack(cardIndex) {
       if (!gameActive || cardIndex >= playerCards.length) return;
       
       const playerCard = playerCards[cardIndex];
       const log = document.getElementById('battleLog');
+      const enemyEl = document.querySelector('.enemy-card .card');
 
       let playerAtk = playerCard.atk;
       let enemyDef = enemyCard.def;
 
-      // Bonus de la tienda
       if (localStorage.getItem('owned_golden_skin')) playerAtk += 30;
       if (localStorage.getItem('owned_double_vote')) playerAtk *= 2;
       if (localStorage.getItem('owned_epic_confetti')) playerAtk += Math.floor(playerAtk * 0.3);
 
       const damage = Math.max(10, playerAtk - enemyDef);
-      log.innerHTML = `¡${playerCard.name} ataca a ${enemyCard.name} por ${damage} de daño!`;
+      log.innerHTML = `¡${playerCard.name} lanza <strong>${playerCard.power}</strong>!`;
 
-      // Efecto visual
-      const enemyEl = document.querySelector('.enemy-card .card');
+      // ✅ ¡ANIMACIÓN DE ATAQUE!
       if (enemyEl) {
-        enemyEl.classList.add('hit');
+        playAttackAnimation(playerCard.attackType, enemyEl);
         document.getElementById('hitSound').play().catch(()=>{});
       }
 
       setTimeout(() => {
-        if (enemyEl) enemyEl.classList.remove('hit');
         round++;
         if (round > 5) {
           gameActive = false;
@@ -401,24 +436,18 @@
         } else {
           startBattle();
         }
-      }, 800);
+      }, 1000);
     }
 
-    // ✅ CONTADOR PARA TIENDA: HOY A LA 1:00 AM
     function updateStoreCountdown() {
       const now = new Date();
       const target = new Date(now);
-      target.setHours(1, 0, 0, 0); // 1:00 AM
-
-      if (now > target) {
-        target.setDate(target.getDate() + 1);
-      }
-
+      target.setHours(1, 0, 0, 0);
+      if (now > target) target.setDate(target.getDate() + 1);
       const diff = target - now;
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
       if (diff <= 0) {
         document.getElementById('storeCountdown').style.display = 'none';
         document.getElementById('storeSection').style.display = 'block';
@@ -430,7 +459,6 @@
       }
     }
 
-    // Iniciar
     createParticles();
     updateStoreCountdown();
     setInterval(updateStoreCountdown, 1000);
