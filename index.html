@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 2025 - Estilo Insta</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        :root {
+            --primary: #E1306C; /* Rosa Instagram */
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #262626;
+            --gold: #ffc107;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .app-container {
+            width: 100%;
+            max-width: 470px; /* Ancho típico de feed móvil */
+            background: var(--bg);
+            padding-bottom: 60px;
+        }
+
+        /* --- CABECERA --- */
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid #dbdbdb;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-family: 'Cookie', cursive; /* Fuente estilo logo Insta si la importas */
+            letter-spacing: 1px;
+        }
+
+        /* --- TARJETAS DE PERFIL --- */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #dbdbdb;
+            margin-bottom: 20px;
+            border-radius: 3px;
+        }
+
+        .card-header {
+            padding: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #eee;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary); /* Anillo de historia */
+            padding: 2px;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .card-image {
+            width: 100%;
+            display: block;
+            height: auto;
+            min-height: 300px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        /* --- SECCIÓN DE VOTACIÓN --- */
+        .card-actions {
+            padding: 10px 14px;
+        }
+
+        .rating-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stars {
+            display: flex;
+            flex-direction: row-reverse; /* Truco para hover CSS */
+            justify-content: flex-end;
+        }
+
+        .stars input {
+            display: none;
+        }
+
+        .stars label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* Lógica visual de las estrellas */
+        .stars label:hover,
+        .stars label:hover ~ label,
+        .stars input:checked ~ label {
+            color: var(--gold);
+        }
+
+        .vote-count {
+            font-weight: 600;
+            margin-top: 8px;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .caption {
+            padding: 0 14px 14px 14px;
+            font-size: 0.9rem;
+        }
+
+        .caption span {
+            font-weight: 600;
+        }
+
+        /* --- MEDIA QUERIES --- */
+        @media (max-width: 500px) {
+            .card { border: none; border-bottom: 1px solid #dbdbdb; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>Top 2025 Awards 👑</h1>
+        </header>
+
+        <div id="feed">
+            </div>
+    </div>
+
+    <script>
+        // DATOS DE EJEMPLO (Aquí pones la info real)
+        // Usa fotos de Unsplash para la demostración
+        const perfiles = [
+            {
+                id: 1,
+                user: "sofia_2025",
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+                img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                desc: "Lista para el verano ☀️ #2025 #Vibes",
+                votos: 1240
+            },
+            {
+                id: 2,
+                user: "laura_style",
+                avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+                img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                desc: "Madrid city lights ✨ Vota por mi outfit!",
+                votos: 895
+            },
+            {
+                id: 3,
+                user: "ana_fitness",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+                img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                desc: "Gym time 💪🏻 ¿Cuántas estrellas para este look?",
+                votos: 2100
+            }
+        ];
+
+        const feedContainer = document.getElementById('feed');
+
+        // FUNCIÓN PARA GENERAR EL HTML
+        function renderFeed() {
+            feedContainer.innerHTML = perfiles.map(perfil => `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${perfil.avatar}" alt="Avatar" class="avatar">
+                        <span class="username">${perfil.user}</span>
+                    </div>
+
+                    <img src="${perfil.img}" alt="Foto concursante" class="card-image">
+
+                    <div class="card-actions">
+                        <div class="rating-container">
+                            <div class="stars">
+                                <input type="radio" id="star5-${perfil.id}" name="rating-${perfil.id}" value="5" onclick="votar(${perfil.id}, 5)"><label for="star5-${perfil.id}">★</label>
+                                <input type="radio" id="star4-${perfil.id}" name="rating-${perfil.id}" value="4" onclick="votar(${perfil.id}, 4)"><label for="star4-${perfil.id}">★</label>
+                                <input type="radio" id="star3-${perfil.id}" name="rating-${perfil.id}" value="3" onclick="votar(${perfil.id}, 3)"><label for="star3-${perfil.id}">★</label>
+                                <input type="radio" id="star2-${perfil.id}" name="rating-${perfil.id}" value="2" onclick="votar(${perfil.id}, 2)"><label for="star2-${perfil.id}">★</label>
+                                <input type="radio" id="star1-${perfil.id}" name="rating-${perfil.id}" value="1" onclick="votar(${perfil.id}, 1)"><label for="star1-${perfil.id}">★</label>
+                            </div>
+                            <span class="material-icons" style="cursor:pointer;" onclick="alert('Guardado en favoritos')">bookmark_border</span>
+                        </div>
+                        <span class="vote-count" id="votos-${perfil.id}">${perfil.votos} votos totales</span>
+                    </div>
+
+                    <div class="caption">
+                        <span>${perfil.user}</span> ${perfil.desc}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // LÓGICA DE VOTACIÓN (Simulada)
+        function votar(id, estrellas) {
+            // Aquí conectarías con tu base de datos
+            const contadorElement = document.getElementById(`votos-${id}`);
+            
+            // Simulación visual: Sumamos 1 voto al contador actual
+            // En una app real, enviarías esto al servidor
+            let votosActuales = parseInt(contadorElement.innerText);
+            contadorElement.innerText = `${votosActuales + 1} votos totales`;
+            
+            // Feedback al usuario
+            // alert(`¡Has dado ${estrellas} estrellas a la participante ${id}!`);
+            console.log(`Usuario votó ${estrellas} estrellas al ID ${id}`);
+        }
+
+        // Iniciar la app
+        renderFeed();
+    </script>
+</body>
+</html>
