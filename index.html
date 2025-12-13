@@ -796,66 +796,69 @@
       document.getElementById('cardPreview').classList.remove('show');
     };
 
-    function renderCollection() {
-      const grid = document.getElementById('collectionGrid');
-      grid.innerHTML = '';
-      CARDS.slice(0, -1).forEach(card => {
-        const isLocked = (card.id === 10) ? true : !card.unlocked;
-        const div = document.createElement('div');
-        div.className = `collection-card ${isLocked ? 'locked' : 'unlocked'}`;
-        if (card.id === 10) {
-          const img = document.createElement('img');
-          img.src = card.img;
-          img.alt = card.name;
-          img.style.cursor = 'pointer';
-          div.appendChild(img);
-          div.onclick = () => showCardPreview(card);
-        } else if (!isLocked) {
-          const img = document.createElement('img');
-          img.src = card.img;
-          img.alt = card.name;
-          img.style.cursor = 'pointer';
-          img.onclick = () => showCardPreview(card);
-          div.appendChild(img);
-        } else {
-          const img = document.createElement('img');
-          img.src = card.img;
-          img.alt = card.name;
-          img.style.filter = 'grayscale(100%)';
-          img.style.cursor = 'not-allowed';
-          div.appendChild(img);
-          div.onclick = () => showCardPreview(card);
-        }
-        grid.appendChild(div);
-      });
-
-      const deckEl = document.getElementById('currentDeck');
-      deckEl.innerHTML = '';
-      currentDeck.forEach(id => {
-        const card = CARDS.find(c => c.id === id);
-        if (card) {
-          const cardEl = document.createElement('div');
-          cardEl.style.width = '100px';
-          cardEl.style.margin = '5px';
-          if (card.id === 10) {
-            cardEl.innerHTML = `
-              <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
-              <div style="color:#ff6b6b; font-size:0.7em; margin-top:2px; text-align:center;">🔒 Bloqueada</div>
-            `;
-            cardEl.onclick = () => alert('¡Sellamara Gemelas se desbloqueará mañana a las 15:00!');
-          } else if (card.unlocked) {
-            cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
-          } else {
-            cardEl.innerHTML = `
-              <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
-              <div style="color:#ff6b6b; font-size:0.7em; margin-top:2px; text-align:center;">🔒 Bloqueada</div>
-            `;
-            cardEl.onclick = () => alert('¡Esta carta se desbloquea ganando batallas!');
-          }
-          deckEl.appendChild(cardEl);
-        }
-      });
+    function function renderCollection() {
+  const grid = document.getElementById('collectionGrid');
+  grid.innerHTML = '';
+  
+  // Mostrar cartas del jugador (0-8) + Sellamara (10)
+  const playerCardsToShow = [...CARDS.slice(0, 9), CARDS[10]];
+  playerCardsToShow.forEach(card => {
+    const isLocked = (card.id === 10) ? true : !card.unlocked;
+    const div = document.createElement('div');
+    div.className = `collection-card ${isLocked ? 'locked' : 'unlocked'}`;
+    if (card.id === 10) {
+      const img = document.createElement('img');
+      img.src = card.img;
+      img.alt = card.name;
+      img.style.cursor = 'pointer';
+      div.appendChild(img);
+      div.onclick = () => showCardPreview(card);
+    } else if (!isLocked) {
+      const img = document.createElement('img');
+      img.src = card.img;
+      img.alt = card.name;
+      img.style.cursor = 'pointer';
+      img.onclick = () => showCardPreview(card);
+      div.appendChild(img);
+    } else {
+      const img = document.createElement('img');
+      img.src = card.img;
+      img.alt = card.name;
+      img.style.filter = 'grayscale(100%)';
+      img.style.cursor = 'not-allowed';
+      div.appendChild(img);
+      div.onclick = () => showCardPreview(card);
     }
+    grid.appendChild(div);
+  });
+
+  const deckEl = document.getElementById('currentDeck');
+  deckEl.innerHTML = '';
+  currentDeck.forEach(id => {
+    const card = CARDS.find(c => c.id === id);
+    if (card) {
+      const cardEl = document.createElement('div');
+      cardEl.style.width = '100px';
+      cardEl.style.margin = '5px';
+      if (card.id === 10) {
+        cardEl.innerHTML = `
+          <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
+          <div style="color:#ff6b6b; font-size:0.7em; margin-top:2px; text-align:center;">🔒 Bloqueada</div>
+        `;
+        cardEl.onclick = () => alert('¡Sellamara Gemelas se desbloqueará mañana a las 15:00!');
+      } else if (card.unlocked) {
+        cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
+      } else {
+        cardEl.innerHTML = `
+          <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
+          <div style="color:#ff6b6b; font-size:0.7em; margin-top:2px; text-align:center;">🔒 Bloqueada</div>
+        `;
+        cardEl.onclick = () => alert('¡Esta carta se desbloquea ganando batallas!');
+      }
+      deckEl.appendChild(cardEl);
+    }
+  });
+}
 
     function addToDeck(cardId) {
       if (currentDeck.length >= 3) {
