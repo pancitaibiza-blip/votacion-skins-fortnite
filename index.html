@@ -411,38 +411,7 @@
           <div class="hp-text">HP: 70/70</div>
         </div>
       </div>
-      <div class="battle-player-cards">
-        <div class="player-card">
-          <img src="https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" alt="Ramírez">
-          <div class="name">Ramírez</div>
-          <div class="stats">
-            <span>⚔️ 60</span>
-            <span>🛡️ 50</span>
-          </div>
-          <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
-          <div class="hp-text">HP: 50/50</div>
-        </div>
-        <div class="player-card">
-          <img src="https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177" alt="Fortaleza">
-          <div class="name">Fortaleza</div>
-          <div class="stats">
-            <span>⚔️ 60</span>
-            <span>🛡️ 70</span>
-          </div>
-          <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
-          <div class="hp-text">HP: 70/70</div>
-        </div>
-        <div class="player-card">
-          <img src="https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677" alt="Escudera">
-          <div class="name">Escudera</div>
-          <div class="stats">
-            <span>⚔️ 55</span>
-            <span>🛡️ 65</span>
-          </div>
-          <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
-          <div class="hp-text">HP: 65/65</div>
-        </div>
-      </div>
+      <div class="battle-player-cards" id="battlePlayerCards"></div>
       <div class="text-center mt-6">
         <button class="attack-button" onclick="playerAttack()">🔥 ATACAR</button>
         <button class="defend-button" onclick="playerDefend()">🛡️ DEFENDER</button>
@@ -528,6 +497,7 @@
       return endTime;
     }
     const GEMS_OFFER_END = getGemsOfferEndTime();
+    const DECK_MAX_SIZE = 3;
     // ✅ CARTAS (con nivel de mejora)
     const ALL_CARDS = [
       { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null },
@@ -661,13 +631,16 @@
         alert("¡Compra exitosa! Has recibido 1000 gemas 💎");
       }
     }
-    // ✅ SIN LÍMITE DE 3 CARTAS
+    // ✅ AGREGAR/QUITAR DEL MAZO CON LÍMITE
     function addToDeck(cardId) {
-      if (!gameState.currentDeck.includes(cardId)) {
-        gameState.currentDeck.push(cardId);
-        saveGame();
-        renderDeck();
+      if (gameState.currentDeck.includes(cardId)) return;
+      if (gameState.currentDeck.length >= DECK_MAX_SIZE) {
+        alert(`¡El mazo está lleno! Máximo ${DECK_MAX_SIZE} cartas.`);
+        return;
       }
+      gameState.currentDeck.push(cardId);
+      saveGame();
+      renderDeck();
     }
     function removeFromDeck(cardId) {
       gameState.currentDeck = gameState.currentDeck.filter(id => id !== cardId);
@@ -696,7 +669,7 @@
     function closeCardModal() {
       document.getElementById('cardModal').style.display = 'none';
     }
-    // ✅ RENDER CON FILTRO
+    // ✅ RENDER CON FILTRO Y BOTONES DE EDICIÓN
     function renderDeck() {
       const container = document.getElementById('deckCards');
       container.innerHTML = '';
@@ -708,6 +681,10 @@
       cardsToShow.forEach(card => {
         const cardEl = document.createElement('div');
         cardEl.className = `card-container ${card.rarity}`;
+        const inDeck = gameState.currentDeck.includes(card.id);
+        const buttonText = inDeck ? 'Quitar del Mazo' : 'Añadir al Mazo';
+        const buttonAction = inDeck ? `removeFromDeck(${card.id})` : `addToDeck(${card.id})`;
+        const buttonDisabled = !inDeck && gameState.currentDeck.length >= DECK_MAX_SIZE ? 'disabled' : '';
         cardEl.innerHTML = `
           <div class="card-base">
             <div class="card-glow"></div>
@@ -715,10 +692,13 @@
               <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/555/fff?text=${card.name}'" style="width:100%; height:170px; object-fit:cover; border-radius:6px;">
               <div class="font-bold text-xs mt-1 truncate">${card.name}</div>
               <div class="text-[10px]">⚔️${card.atk} 🛡️${card.def}</div>
+              <button class="btn bg-${inDeck ? 'red' : 'green'}-600 text-xs mt-2" onclick="${buttonAction}" ${buttonDisabled}>${buttonText}</button>
             </div>
           </div>
         `;
-        cardEl.onclick = () => showCardModal(card);
+        cardEl.querySelector('.card-base').onclick = (e) => {
+          if (!e.target.closest('button')) showCardModal(card);
+        };
         container.appendChild(cardEl);
       });
     }
@@ -761,12 +741,12 @@
         if (!gameState.ownedCardIds.includes(cardId)) {
           gameState.ownedCardIds.push(cardId);
         }
-        addToDeck(cardId); // La añade al mazo automáticamente
+        // No añadir automáticamente al mazo, dejar que el usuario edite
         saveGame();
         updateUI();
         renderShop(); // Actualiza la tienda
         renderDeck(); // Actualiza el mazo
-        alert(`¡${card.name} comprada exitosamente! 🎉`);
+        alert(`¡${card.name} comprada exitosamente! 🎉 Ve al mazo para añadirla.`);
       }
     }
     function saveGame() {
@@ -873,13 +853,9 @@
       document.querySelector('.battle-ia-card .name').textContent = `IA ${tournament.name}`;
       document.querySelector('.battle-ia-card .stats span:nth-child(1)').textContent = `⚔️ ${iaAtk}`;
       document.querySelector('.battle-ia-card .stats span:nth-child(2)').textContent = `🛡️ ${iaDef}`;
+      renderBattleCards();
       playerCards.forEach(card => {
-        const allCard = ALL_CARDS.find(c => c.name === card.name);
-        card.atk = allCard.atk;
-        card.def = allCard.def;
         card.hp = card.maxHp;
-        card.element.querySelector('.stats span:nth-child(1)').textContent = `⚔️ ${card.atk}`;
-        card.element.querySelector('.stats span:nth-child(2)').textContent = `🛡️ ${card.def}`;
       });
       updateHpBars();
       showView('battle');
@@ -893,6 +869,7 @@
       if (view === 'shop') renderShop();
       if (view === 'ranking') updateRanking();
       if (view === 'tournament') renderTournaments();
+      if (view === 'battle') renderBattleCards();
     }
     // Battle logic
     let iaHp = 70;
@@ -902,18 +879,45 @@
     let selectedPlayerCard = null;
     let isTournament = false;
     let currentTournamentId = null;
-    let playerCards = [
-      {name: "Ramírez", atk: 60, def: 50, hp: 50, maxHp: 50, element: document.querySelector('.battle-player-cards .player-card:nth-child(1)')},
-      {name: "Fortaleza", atk: 60, def: 70, hp: 70, maxHp: 70, element: document.querySelector('.battle-player-cards .player-card:nth-child(2)')},
-      {name: "Escudera", atk: 55, def: 65, hp: 65, maxHp: 65, element: document.querySelector('.battle-player-cards .player-card:nth-child(3)')}
-    ];
-    document.querySelectorAll('.player-card').forEach((el, index) => {
-      el.onclick = () => {
-        selectedPlayerCard = playerCards[index];
-        document.querySelectorAll('.player-card').forEach(e => e.style.borderColor = '#00bcd4');
-        el.style.borderColor = 'yellow';
+    let playerCards = [];
+    function renderBattleCards() {
+      const container = document.getElementById('battlePlayerCards');
+      container.innerHTML = '';
+      playerCards = [];
+      gameState.currentDeck.forEach((id, index) => {
+        const card = ALL_CARDS.find(c => c.id === id);
+        if (!card) return;
+        const cardEl = document.createElement('div');
+        cardEl.className = 'player-card';
+        cardEl.innerHTML = `
+          <img src="${card.img}" alt="${card.name}">
+          <div class="name">${card.name}</div>
+          <div class="stats">
+            <span>⚔️ ${card.atk}</span>
+            <span>🛡️ ${card.def}</span>
+          </div>
+          <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
+          <div class="hp-text">HP: ${card.def}/${card.def}</div>
+        `;
+        cardEl.onclick = () => {
+          selectedPlayerCard = playerCards[index];
+          document.querySelectorAll('.player-card').forEach(e => e.style.borderColor = '#00bcd4');
+          cardEl.style.borderColor = 'yellow';
+        };
+        container.appendChild(cardEl);
+        playerCards.push({
+          name: card.name,
+          atk: card.atk,
+          def: card.def,
+          hp: card.def,
+          maxHp: card.def,
+          element: cardEl
+        });
+      });
+      if (playerCards.length === 0) {
+        container.innerHTML = '<p class="text-center">¡Añade cartas a tu mazo para batallar!</p>';
       }
-    });
+    }
     function updateHpBars() {
       document.querySelector('.battle-ia-card .hp-fill').style.width = `${(iaHp / iaMaxHp) * 100}%`;
       document.querySelector('.battle-ia-card .hp-text').textContent = `HP: ${iaHp}/${iaMaxHp}`;
@@ -1024,6 +1028,7 @@
     updateUI();
     showView('battle');
     createSnowflakes(); // Llama a la función para generar la nieve
+    renderBattleCards(); // Inicializar cartas de batalla
   </script>
 </body>
 </html>
