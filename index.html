@@ -515,6 +515,7 @@
       return endTime;
     }
     const GEMS_OFFER_END = getGemsOfferEndTime();
+    const SABRINA_START = new Date('2025-12-14T15:00:00');
     const DECK_MAX_SIZE = 3;
     // ✅ CARTAS (con nivel de mejora)
     const ALL_CARDS = [
@@ -596,7 +597,7 @@
         trophies: 800,
         diamonds: 250,
         cards: [21],
-        description: "¡Especial! Gana la carta épica Sabrina Carpente La Diva. Disponible mañana a las 15:00.",
+        description: "¡Especial! Gana la carta épica Sabrina Carpente La Diva.",
         image: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg"
       }
     ];
@@ -629,21 +630,40 @@
       document.getElementById('cups').textContent = gameState.cups;
       updateRanking(); // ✅ Actualizar ranking al cambiar algo
     }
-    // ✅ CONTADOR DE OFERTA
+    // ✅ CONTADOR DE OFERTA Y TORNEO SABRINA
     function updateGemsCountdown() {
       const now = new Date();
-      const diff = GEMS_OFFER_END - now;
-      if (diff <= 0) {
+      const gemsDiff = GEMS_OFFER_END - now;
+      if (gemsDiff <= 0) {
         document.getElementById('offerBanner').style.display = 'none';
         document.getElementById('gemsOffer').style.display = 'none';
-        return;
+      } else {
+        const h = Math.floor(gemsDiff / 3600000);
+        const m = Math.floor((gemsDiff % 3600000) / 60000);
+        const s = Math.floor((gemsDiff % 60000) / 1000);
+        const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+        document.getElementById('gemsCountdown').textContent = timeStr;
+        document.getElementById('shopGemsCountdown').textContent = timeStr;
       }
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
-      document.getElementById('gemsCountdown').textContent = timeStr;
-      document.getElementById('shopGemsCountdown').textContent = timeStr;
+
+      // Contador para Torneo Sabrina
+      const sabrinaSpan = document.getElementById('sabrinaCountdown');
+      if (sabrinaSpan) {
+        const sabrinaDiff = SABRINA_START - now;
+        if (sabrinaDiff <= 0) {
+          const button = sabrinaSpan.parentElement;
+          button.disabled = false;
+          button.classList.remove('bg-gray-600');
+          button.classList.add('bg-gradient-to-r', 'from-red-700', 'to-green-700');
+          button.innerHTML = '🎁 ENTRAR AL TORNEO';
+          button.onclick = () => startSpecificTournament(6);
+        } else {
+          const h = Math.floor(sabrinaDiff / 3600000);
+          const m = Math.floor((sabrinaDiff % 3600000) / 60000);
+          const s = Math.floor((sabrinaDiff % 60000) / 1000);
+          sabrinaSpan.textContent = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+        }
+      }
     }
     setInterval(updateGemsCountdown, 1000);
     updateGemsCountdown();
@@ -786,7 +806,7 @@
       localStorage.setItem('cardUpgrades', JSON.stringify(gameState.cardUpgrades));
       localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
       localStorage.setItem('completedTournaments', JSON.stringify(gameState.completedTournaments));
-   
+  
       // ✅ Guardar en ranking
       let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
       const existingIndex = rankings.findIndex(r => r.name === gameState.playerName);
@@ -835,9 +855,9 @@
         }
         let buttonHtml = `<button class="btn bg-gradient-to-r from-red-700 to-green-700" onclick="startSpecificTournament(${tournament.id})">🎁 ENTRAR AL TORNEO</button>`;
         if (tournament.id === 6) {
-          const tournamentStart = new Date('2025-12-14T15:00:00');
+          const tournamentStart = SABRINA_START;
           if (now < tournamentStart) {
-            buttonHtml = `<button class="btn bg-gray-600" disabled>Disponible mañana a las 15:00</button>`;
+            buttonHtml = `<button class="btn bg-gray-600" disabled>Disponible en: <span id="sabrinaCountdown">--h --m --s</span></button>`;
           }
         }
         const tournamentEl = document.createElement('div');
@@ -867,6 +887,7 @@
         `;
         container.appendChild(tournamentEl);
       });
+      updateGemsCountdown(); // Actualizar contador inmediatamente después de renderizar
     }
     // ✅ INICIAR TORNEO ESPECÍFICO
     function startSpecificTournament(tournamentId) {
