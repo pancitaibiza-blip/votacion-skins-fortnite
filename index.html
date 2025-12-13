@@ -141,6 +141,8 @@
     }
     .rarity-idolos .card-base { box-shadow: 0 0 20px #ff9800, 0 0 30px #ff4081; }
     .rarity-tournament .card-glow { background: #f44336; }
+    .rarity-paises .card-glow { background: linear-gradient(45deg, #ff0000, #ffffff, #0000ff); opacity: 0.8; filter: blur(15px); animation: glowPulse 1.5s infinite alternate; }
+    .rarity-paises .card-base { box-shadow: 0 0 20px #ff0000, 0 0 30px #0000ff; }
     .card-content {
       padding: 8px;
       text-align: center;
@@ -566,6 +568,7 @@
           <option value="exotic">Exótica</option>
           <option value="idolos">Ídolos</option>
           <option value="tournament">Torneo</option>
+          <option value="paises">Países</option>
         </select>
       </div>
       <div class="card-grid" id="deckCards"></div>
@@ -581,6 +584,10 @@
         <p class="text-xl">¡1000 GEMAS por tiempo limitado!</p>
         <p class="text-md text-yellow-200">Oferta termina en: <span id="shopGemsCountdown">--h --m --s</span></p>
         <button class="btn bg-yellow-500 text-black mt-4" onclick="buyGemsPackage()">Comprar por $4.99</button>
+      </div>
+      <div class="bg-gradient-to-r from-red-600 to-blue-600 p-6 rounded-2xl text-center mb-8 mx-auto max-w-3xl shadow-xl">
+        <h3 class="text-2xl font-bold text-white">🌍 ¡NUEVA RAREZA: PAÍSES! 🌍</h3>
+        <p class="text-lg text-white">La nueva rareza "Países" representa mujeres icónicas de cada país. ¡Colecciona cartas únicas inspiradas en culturas del mundo!</p>
       </div>
       <div class="card-grid" id="shopCards"></div>
     </div>
@@ -640,6 +647,7 @@
     }
     const GEMS_OFFER_END = getGemsOfferEndTime();
     const SABRINA_START = new Date('2025-12-14T15:00:00');
+    const CARMELA_AVAILABLE = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 1, 0, 0); // 1:00 AM del día siguiente
     const DECK_MAX_SIZE = 3;
     const MAX_LEVEL = 10;
     const UPGRADE_COST_BASE = 50;
@@ -662,7 +670,8 @@
       { id: 18, name: "Briar", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2510/sample_ea2393689e00c9127748cc78a08ef6b5.jpg?15205865", shopPrice: 700 },
       { id: 19, name: "Torrenta", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1506/sample_b060c3279b1a9b0a7da0e19bb15fa2d5.jpg?15273482", shopPrice: 700 },
       { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700 },
-      { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: null }
+      { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: null },
+      { id: 22, name: "Carmela", rarity: "paises", baseAtk: 100, baseDef: 60, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 500 }
     ];
     // ✅ TORNEOS MÚLTIPLES
     const TOURNAMENTS = [
@@ -863,7 +872,8 @@
       document.getElementById('cardModalName').textContent = card.name;
       const rarityLabels = {
         common: "Común", rare: "Rara", epic: "Épica", legendary: "Legendaria",
-        ultra: "Ultra Raro", exotic: "Exótica", idolos: "Ídolos", tournament: "Torneo"
+        ultra: "Ultra Raro", exotic: "Exótica", idolos: "Ídolos", tournament: "Torneo",
+        paises: "Países"
       };
       const rarityText = rarityLabels[card.rarity] || card.rarity;
       const rarityClass = `rarity-tag-${card.rarity}`;
@@ -943,7 +953,12 @@
     // ✅ FUNCIÓN PARA COMPRAR CARTA
     function buyCard(cardId) {
       const card = ALL_CARDS.find(c => c.id === cardId);
-      if (!card || gameState.diamonds < card.shopPrice) {
+      if (!card) return;
+      if (card.id === 22 && new Date() < CARMELA_AVAILABLE) {
+        alert("¡Esta carta no está disponible para compra hasta las 1:00 AM!");
+        return;
+      }
+      if (gameState.diamonds < card.shopPrice) {
         alert("¡No tienes suficientes gemas! 💎");
         return;
       }
