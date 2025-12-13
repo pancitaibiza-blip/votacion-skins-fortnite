@@ -852,45 +852,45 @@
     };
 
     function renderCollection() {
-      const grid = document.getElementById('collectionGrid');
-      grid.innerHTML = '';
-      CARDS.slice(0, -1).forEach(card => {
-        const isLocked = (card.id === 10) ? true : !card.unlocked;
-        const div = document.createElement('div');
-        div.className = `collection-card ${isLocked ? 'locked' : 'unlocked'}`;
-        if (!isLocked) {
-          const img = document.createElement('img');
-          img.src = card.img;
-          img.alt = card.name;
-          img.style.cursor = 'pointer';
-          img.onclick = () => showCardPreview(card);
-          div.appendChild(img);
-        } else if (card.id === 10) {
-          const img = document.createElement('img');
-          img.src = card.img;
-          img.alt = card.name;
-          img.style.filter = 'grayscale(100%)';
-          img.style.cursor = 'not-allowed';
-          div.appendChild(img);
-          div.onclick = () => showCardPreview(card);
-        }
-        grid.appendChild(div);
-      });
-
-      const deckEl = document.getElementById('currentDeck');
-      deckEl.innerHTML = '';
-      currentDeck.forEach(id => {
-        if (id === 10) return;
-        const card = CARDS.find(c => c.id === id && c.unlocked);
-        if (card) {
-          const cardEl = document.createElement('div');
-          cardEl.style.width = '100px';
-          cardEl.style.margin = '5px';
-          cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
-          deckEl.appendChild(cardEl);
-        }
-      });
+  const grid = document.getElementById('collectionGrid');
+  grid.innerHTML = '';
+  CARDS.slice(0, -1).forEach(card => {
+    const isLocked = (card.id === 10) ? true : !card.unlocked;
+    const div = document.createElement('div');
+    div.className = `collection-card ${isLocked ? 'locked' : 'unlocked'}`;
+    if (!isLocked) {
+      const img = document.createElement('img');
+      img.src = card.img;
+      img.alt = card.name;
+      img.style.cursor = 'pointer';
+      img.onclick = () => showCardPreview(card);
+      div.appendChild(img);
+    } else if (card.id === 10) {
+      const img = document.createElement('img');
+      img.src = card.img;
+      img.alt = card.name;
+      img.style.filter = 'grayscale(100%)';
+      img.style.cursor = 'not-allowed';
+      div.appendChild(img);
+      div.onclick = () => showCardPreview(card);
     }
+    grid.appendChild(div);
+  });
+
+  const deckEl = document.getElementById('currentDeck');
+  deckEl.innerHTML = '';
+  currentDeck.forEach(id => {
+    if (id === 10) return;
+    const card = CARDS.find(c => c.id === id && c.unlocked);
+    if (card) {
+      const cardEl = document.createElement('div');
+      cardEl.style.width = '100px';
+      cardEl.style.margin = '5px';
+      cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
+      deckEl.appendChild(cardEl);
+    }
+  });
+}
 
     function addToDeck(cardId) {
       if (cardId === 10) {
