@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Votación Skins Fortnite - Juego de Cartas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0); opacity: 1; }
+      100% { transform: translateY(100px) rotate(360deg); opacity: 0; }
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: confetti 2s ease-out forwards;
+    }
+    .card-img {
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .rarity-common { border-top: 4px solid #9e9e9e; }
+    .rarity-rare { border-top: 4px solid #4caf50; }
+    .rarity-epic { border-top: 4px solid #9c27b0; }
+    .rarity-legendary { border-top: 4px solid #ff9800; }
+    .rarity-tournament { border-top: 4px solid #f44336; }
+    .btn-glow {
+      box-shadow: 0 0 10px rgba(255,255,255,0.6);
+      transition: all 0.3s ease;
+    }
+    .btn-glow:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.9);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div id="app" class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <header class="text-center mb-6">
+      <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 bg-clip-text text-transparent">
+        🛡️ JUEGO DE CARTAS FORTNITE 🛡️
+      </h1>
+      <p class="text-gray-300">¡Batalla, colecciona y domina el torneo!</p>
+    </header>
+
+    <!-- Player Stats -->
+    <div id="playerStats" class="bg-gray-800 rounded-xl p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="text-yellow-400 font-bold">Jugador:</span> <span id="playerName">Jugador</span>
+      </div>
+      <div>
+        <i class="fas fa-trophy text-yellow-500"></i> <span id="trophies">0</span> trofeos |
+        <i class="fas fa-crown text-amber-400"></i> <span id="cups">0</span> copas |
+        <i class="fas fa-gem text-blue-400"></i> <span id="diamonds">100</span> diamantes
+      </div>
+      <div>
+        <span class="font-bold">Liga:</span>
+        <span id="leagueBadge" class="px-2 py-1 rounded text-white">Bronce</span>
+      </div>
+    </div>
+
+    <!-- Main Views -->
+    <div id="viewBattle" class="hidden">
+      <h2 class="text-2xl font-bold mb-4 text-center">⚔️ BATALLA CONTRA LA IA</h2>
+      <div id="battleLog" class="bg-gray-800 p-4 rounded-lg mb-4 min-h-[80px] text-center text-lg"></div>
+
+      <!-- Enemy -->
+      <div class="text-center mb-6">
+        <h3 class="text-red-400 font-bold">IA</h3>
+        <div id="enemyCard" class="inline-block bg-gray-700 p-2 rounded-lg"></div>
+      </div>
+
+      <!-- Player Cards -->
+      <div class="text-center mb-6">
+        <h3 class="text-green-400 font-bold">TUS CARTAS</h3>
+        <div id="playerCards" class="flex flex-wrap justify-center gap-2"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="text-center">
+        <button id="btnAttack" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg mr-2 btn-glow">Atacar</button>
+        <button id="btnDefend" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg mr-2 btn-glow">Defender</button>
+        <button id="btnExitBattle" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg btn-glow">Salir</button>
+      </div>
+    </div>
+
+    <!-- Deck View -->
+    <div id="viewDeck" class="hidden">
+      <h2 class="text-2xl font-bold mb-4 text-center">🎴 EDITAR MAZO (3 cartas)</h2>
+      <div id="currentDeck" class="bg-gray-800 p-3 rounded mb-4 flex justify-center gap-2 min-h-[120px]"></div>
+      <button id="btnSaveDeck" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded mb-6 btn-glow">Guardar Mazo</button>
+      <h3 class="text-xl mb-3">Todas tus cartas:</h3>
+      <div id="allCards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
+    </div>
+
+    <!-- Shop View -->
+    <div id="viewShop" class="hidden">
+      <h2 class="text-2xl font-bold mb-4 text-center">💎 TIENDA</h2>
+      <h3 class="text-lg mb-3">Cartas disponibles:</h3>
+      <div id="shopCards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6"></div>
+      <h3 class="text-lg mb-3">Skins (rotación cada 5 días):</h3>
+      <div id="shopSkins" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+    </div>
+
+    <!-- Tournament View -->
+    <div id="viewTournament" class="hidden">
+      <h2 class="text-2xl font-bold mb-4 text-center">🏆 TORNEO ÉPICO</h2>
+      <p class="text-center mb-4">¡Necesitas <strong>1 copa</strong> para entrar! ¡5 rondas, 1 campeón!</p>
+      <div class="text-center">
+        <button id="btnStartTournament" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg btn-glow">Iniciar Torneo</button>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="fixed bottom-4 left-0 right-0 flex justify-center gap-4">
+      <button class="view-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg" data-view="battle">Batalla</button>
+      <button class="view-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg" data-view="deck">Mazo</button>
+      <button class="view-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg" data-view="shop">Tienda</button>
+      <button class="view-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg" data-view="tournament">Torneo</button>
+    </div>
+  </div>
+
+  <script>
+    // ======================
+    // CONFIGURACIÓN INICIAL
+    // ======================
+    const IA_CARDS = [
+      { id:101, name:"IA Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:80, power:"Paso Firme Mejorado", attackType:"wind" },
+      { id:102, name:"IA Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:85, power:"Confeti Ácido Doble", attackType:"fire" },
+      { id:103, name:"IA Tormenta", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", rarity:"epic", atk:80, def:75, power:"Torbellino Destructor", attackType:"wind" },
+      { id:104, name:"IA Fortaleza", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", rarity:"rare", atk:60, def:100, power:"Muralla Imbatible", attackType:"ice" },
+      { id:105, name:"IA Danza", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", rarity:"epic", atk:75, def:80, power:"Baile Mortal", attackType:"wind" },
+      { id:106, name:"IA Furia", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", rarity:"legendary", atk:90, def:70, power:"Ira Absoluta", attackType:"fire" },
+      { id:107, name:"IA Escudera", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", rarity:"common", atk:55, def:95, power:"Protección Total", attackType:"ice" },
+      { id:108, name:"IA Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:60, power:"Golpe Aniquilador", attackType:"fire" },
+      { id:109, name:"IA Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:110, power:"Escudo Divino", attackType:"ice" },
+      { id:110, name:"IA ÉLITE", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:65, power:"Tirano Supremo", attackType:"arcane" },
+      { id:201, name:"Campeón Sombra", img:"https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", rarity:"tournament", atk:140, def:100, power:"Aniquilación Oscura", attackType:"arcane" },
+      { id:202, name:"Maestro del Fuego", img:"https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", rarity:"tournament", atk:150, def:90, power:"Inferno Eterno", attackType:"fire" },
+      { id:203, name:"Rey del Hielo", img:"https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", rarity:"tournament", atk:135, def:110, power:"Edad de Hielo", attackType:"ice" }
+    ];
+
+    const CARDS = [
+      { id:0, name:"Ramírez", img:"https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", rarity:"common", atk:60, def:50, power:"Paso Firme", attackType:"wind", shopPrice: undefined },
+      { id:1, name:"Azulita", img:"https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", rarity:"rare", atk:70, def:55, power:"Confeti Ácido", attackType:"fire", shopPrice: undefined },
+      { id:2, name:"Tormenta", img:"https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", rarity:"epic", atk:80, def:45, power:"Torbellino", attackType:"wind", shopPrice: undefined },
+      { id:3, name:"Fortaleza", img:"https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", rarity:"rare", atk:60, def:70, power:"Muralla", attackType:"ice", shopPrice: undefined },
+      { id:4, name:"Danza", img:"https://s93.erome.com/5472/K3IRZbxx/0VxSvgAl.jpeg?v=1764818017", rarity:"epic", atk:75, def:50, power:"Baile Épico", attackType:"wind", shopPrice: undefined },
+      { id:5, name:"Furia", img:"https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", rarity:"legendary", atk:90, def:40, power:"Ira Incontenible", attackType:"fire", shopPrice: undefined },
+      { id:6, name:"Escudera", img:"https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", rarity:"common", atk:55, def:65, power:"Protección", attackType:"ice", shopPrice: undefined },
+      { id:7, name:"Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:30, power:"Golpe Letal", attackType:"fire", shopPrice: undefined },
+      { id:8, name:"Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:80, power:"Escudo Energético", attackType:"ice", shopPrice: undefined },
+      { id:9, name:"IA ÉLITE", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:35, power:"Tirano", attackType:"arcane", shopPrice: undefined },
+      { id:10, name:"Sellamara Gemelas", img:"https://s326.erome.com/5139/YBnb1NTO/R8jmYVqr.jpeg?v=1750357395", rarity:"legendary", atk:120, def:60, power:"Desafío Final", attackType:"arcane", shopPrice: 250 },
+      { id:11, name:"Ice Spice", img:"https://s205.erome.com/4802/VjncXAEk/DLR6qZLg.jpeg?v=1746865143", rarity:"legendary", atk:150, def:70, power:"Colaboración Especial", attackType:"ice", shopPrice: 300 },
+      { id:12, name:"Chica Dark", img:"https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", rarity:"tournament", atk:130, def:80, power:"Sombras Eternas", attackType:"arcane", shopPrice: null },
+      { id:13, name:"Sellamara Fuego", img:"https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", rarity:"tournament", atk:140, def:70, power:"Inferno Gemelo", attackType:"fire", shopPrice: null },
+      { id:14, name:"Reina del Hielo", img:"https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", rarity:"tournament", atk:125, def:90, power:"Reino Helado", attackType:"ice", shopPrice: null },
+      { id:15, name:"Aria", img:"https://s204.erome.com/3104/X1PvmXSs/PUgKiHdH.jpeg?v=1724857575", rarity:"legendary", atk:110, def:65, power:"Melodía Letal", attackType:"arcane", shopPrice: 150 },
+      { id:16, name:"Luna Oscura", img:"https://s309.erome.com/5190/ma8av6BX/Ru2wq5ZP.jpeg?v=1750836495", rarity:"legendary", atk:135, def:75, power:"Eclipse Total", attackType:"arcane", shopPrice: 200 },
+      { id:17, name:"Guerrera Celestial", img:"https://rule34.xxx//samples/4693/sample_67848ddc39fee4a9612f4706c499eae6.jpg?15708457", rarity:"epic", atk:85, def:70, power:"Furia Divina", attackType:"wind", shopPrice: 100 },
+      { id:18, name:"Maga de las Sombras", img:"https://rule34.xxx//samples/2127/sample_f4f764e27412156cba99f7e82702f915.jpg?15676096", rarity:"epic", atk:90, def:60, power:"Hechizo Oscuro", attackType:"arcane", shopPrice: 120 },
+      { id:19, name:"Valquiria", img:"https://rule34.xxx//samples/1237/sample_78fd05003263e00e2f68b1c19d3f63b1.jpg?15676073", rarity:"rare", atk:75, def:65, power:"Grito de Batalla", attackType:"wind", shopPrice: 80 },
+      { id:20, name:"Sirena", img:"https://rule34.xxx//samples/1979/sample_6e2d539b916e10b4a54954e17bae5491.jpg?15676046", rarity:"rare", atk:70, def:70, power:"Canción Embrujada", attackType:"ice", shopPrice: 90 },
+      { id:21, name:"Druida", img:"https://rule34.xxx//samples/2127/sample_d187ad63657650249de625e87d71fc68.jpg?15673598", rarity:"epic", atk:80, def:75, power:"Furia de la Naturaleza", attackType:"wind", shopPrice: 110 },
+      { id:22, name:"Inquisidora", img:"https://rule34.xxx//samples/2127/sample_78e3bf58a2bc566f5e3fe627854baeda.jpg?15673414", rarity:"legendary", atk:125, def:55, power:"Juicio Final", attackType:"fire", shopPrice: 180 },
+      { id:23, name:"Cazadora", img:"https://rule34.xxx//samples/847/sample_33d11a4e679c03a1d85f2b48ecfa9d4f.jpg?15663822", rarity:"rare", atk:80, def:60, power:"Tiro Certero", attackType:"wind", shopPrice: 85 }
+    ];
+
+    const INITIAL_SKINS = [
+      { id: 1, name: "Skin de Fuego", img: "https://via.placeholder.com/100x100/ff4444/ffffff?text=Fuego", rarity: "rare", price: 50 },
+      { id: 2, name: "Skin de Hielo", img: "https://via.placeholder.com/100x100/4444ff/ffffff?text=Hielo", rarity: "rare", price: 50 },
+      { id: 3, name: "Skin de Tormenta", img: "https://via.placeholder.com/100x100/44ff44/ffffff?text=Tormenta", rarity: "epic", price: 100 },
+      { id: 4, name: "Skin de Sombra", img: "https://via.placeholder.com/100x100/444444/ffffff?text=Sombra", rarity: "epic", price: 100 },
+      { id: 5, name: "Skin Legendaria", img: "https://via.placeholder.com/100x100/ffaa00/ffffff?text=Legendaria", rarity: "legendary", price: 200 }
+    ];
+
+    const LEAGUES = [
+      { name: "Bronce", min: 0, max: 199, badgeClass: "bg-amber-600", iaMod: -20 },
+      { name: "Plata", min: 200, max: 399, badgeClass: "bg-gray-400", iaMod: 0 },
+      { name: "Oro", min: 400, max: 599, badgeClass: "bg-yellow-500", iaMod: 20 },
+      { name: "Élite", min: 600, max: 799, badgeClass: "bg-purple-500", iaMod: 40 },
+      { name: "Leyenda", min: 800, max: Infinity, badgeClass: "bg-gradient-to-r from-yellow-400 to-red-500", iaMod: 60 }
+    ];
+
+    // ======================
+    // ESTADO DEL JUEGO
+    // ======================
+    let gameState = {
+      player: {
+        name: '',
+        trophies: 0,
+        diamonds: 100,
+        cups: 0,
+        league: LEAGUES[0]
+      },
+      currentDeck: [0, 3, 6],
+      cards: [...CARDS],
+      skins: [...INITIAL_SKINS],
+      battle: {
+        active: false,
+        playerTurn: true,
+        playerCards: [],
+        enemyCard: null,
+        selectedCardIndex: 0
+      },
+      tournament: {
+        active: false,
+        round: 0
+      }
+    };
+
+    // ======================
+    // UTILIDADES
+    // ======================
+    function saveToStorage() {
+      localStorage.setItem('playerName', gameState.player.name);
+      localStorage.setItem('trophies', gameState.player.trophies);
+      localStorage.setItem('diamonds', gameState.player.diamonds);
+      localStorage.setItem('cups', gameState.player.cups);
+      localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
+      const cardStates = {};
+      gameState.cards.forEach(c => cardStates[c.id] = c.unlocked);
+      localStorage.setItem('cards', JSON.stringify(cardStates));
+    }
+
+    function loadFromStorage() {
+      const name = localStorage.getItem('playerName');
+      if (!name) {
+        gameState.player.name = prompt("¿Cómo te llamas, jugador/a?") || "Jugador";
+      } else {
+        gameState.player.name = name;
+      }
+
+      gameState.player.trophies = parseInt(localStorage.getItem('trophies') || '0');
+      gameState.player.diamonds = parseInt(localStorage.getItem('diamonds') || '100');
+      gameState.player.cups = parseInt(localStorage.getItem('cups') || '0');
+      gameState.currentDeck = JSON.parse(localStorage.getItem('currentDeck') || '[0,3,6]');
+
+      const savedCards = JSON.parse(localStorage.getItem('cards') || '{}');
+      gameState.cards = CARDS.map(c => {
+        const isShopCard = c.shopPrice !== undefined;
+        const unlocked = savedCards[c.id] !== undefined ? savedCards[c.id] : (!isShopCard && c.id !== 10);
+        return { ...c, unlocked };
+      });
+
+      updateLeague();
+    }
+
+    function updateLeague() {
+      const trophies = gameState.player.trophies;
+      for (let league of LEAGUES) {
+        if (trophies >= league.min && trophies <= league.max) {
+          gameState.player.league = league;
+          break;
+        }
+      }
+    }
+
+    // ======================
+    // RENDER
+    // ======================
+    function renderPlayerStats() {
+      document.getElementById('playerName').textContent = gameState.player.name;
+      document.getElementById('trophies').textContent = gameState.player.trophies;
+      document.getElementById('cups').textContent = gameState.player.cups;
+      document.getElementById('diamonds').textContent = gameState.player.diamonds;
+      const badge = document.getElementById('leagueBadge');
+      badge.textContent = gameState.player.league.name;
+      badge.className = `px-2 py-1 rounded ${gameState.player.league.badgeClass} text-white`;
+    }
+
+    function renderCard(card, isPlayer = false) {
+      const rarityClass = `rarity-${card.rarity}`;
+      const img = card.img || 'https://via.placeholder.com/100?text=Card';
+      return `
+        <div class="bg-gray-700 rounded-lg p-2 w-24 cursor-pointer ${rarityClass}" data-id="${card.id}">
+          <img src="${img}" class="card-img w-full" alt="${card.name}">
+          <div class="text-xs font-bold truncate">${card.name}</div>
+          <div class="flex justify-between text-xs">
+            <span>⚔️${card.atk}</span>
+            <span>🛡️${card.def}</span>
+          </div>
+          ${isPlayer ? `<div class="text-xs text-red-400">HP: ${card.currentHp || card.def}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderAllViews() {
+      renderPlayerStats();
+      renderDeckView();
+      renderAllCards();
+      renderShop();
+      if (gameState.battle.active) {
+        renderBattle();
+      }
+    }
+
+    function renderDeckView() {
+      const deckEl = document.getElementById('currentDeck');
+      deckEl.innerHTML = '';
+      gameState.currentDeck.forEach(id => {
+        const card = gameState.cards.find(c => c.id === id);
+        if (card) {
+          const cardEl = document.createElement('div');
+          cardEl.innerHTML = renderCard(card);
+          cardEl.querySelector('div').classList.add('relative');
+          cardEl.querySelector('div').insertAdjacentHTML('beforeend', 
+            `<button class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs">×</button>`
+          );
+          cardEl.querySelector('button').onclick = () => removeFromDeck(id);
+          deckEl.appendChild(cardEl);
+        }
+      });
+    }
+
+    function renderAllCards() {
+      const allCardsEl = document.getElementById('allCards');
+      allCardsEl.innerHTML = '';
+      gameState.cards.forEach(card => {
+        if (card.unlocked) {
+          const cardEl = document.createElement('div');
+          cardEl.innerHTML = renderCard(card);
+          if (!gameState.currentDeck.includes(card.id) && gameState.currentDeck.length < 3) {
+            cardEl.onclick = () => addToDeck(card.id);
+          }
+          allCardsEl.appendChild(cardEl);
+        }
+      });
+    }
+
+    function renderShop() {
+      const shopCardsEl = document.getElementById('shopCards');
+      shopCardsEl.innerHTML = '';
+      gameState.cards.forEach(card => {
+        if (card.shopPrice && !card.unlocked) {
+          const cardEl = document.createElement('div');
+          cardEl.innerHTML = `
+            <div class="bg-gray-700 rounded-lg p-2 w-24">
+              ${renderCard(card)}
+              <div class="text-center text-yellow-400 text-sm">💎${card.shopPrice}</div>
+              <button class="w-full bg-green-600 hover:bg-green-700 text-white text-xs py-1 rounded mt-1 buy-card" data-id="${card.id}">Comprar</button>
+            </div>
+          `;
+          cardEl.querySelector('.buy-card').onclick = () => buyCard(card.id);
+          shopCardsEl.appendChild(cardEl);
+        }
+      });
+
+      const shopSkinsEl = document.getElementById('shopSkins');
+      shopSkinsEl.innerHTML = '';
+      gameState.skins.forEach(skin => {
+        const skinEl = document.createElement('div');
+        skinEl.innerHTML = `
+          <div class="bg-gray-700 rounded-lg p-2 w-24 text-center">
+            <img src="${skin.img}" class="w-full h-20 object-cover rounded" alt="${skin.name}">
+            <div class="text-xs font-bold truncate">${skin.name}</div>
+            <div class="text-yellow-400 text-sm">💎${skin.price}</div>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs py-1 rounded mt-1 buy-skin" data-id="${skin.id}">Comprar</button>
+          </div>
+        `;
+        skinEl.querySelector('.buy-skin').onclick = () => buySkin(skin.id);
+        shopSkinsEl.appendChild(skinEl);
+      });
+    }
+
+    function renderBattle() {
+      document.getElementById('viewBattle').classList.remove('hidden');
+      
+      // Enemy
+      const enemyEl = document.getElementById('enemyCard');
+      if (gameState.battle.enemyCard) {
+        enemyEl.innerHTML = renderCard(gameState.battle.enemyCard);
+      }
+
+      // Player
+      const playerCardsEl = document.getElementById('playerCards');
+      playerCardsEl.innerHTML = '';
+      gameState.battle.playerCards.forEach((card, i) => {
+        const cardEl = document.createElement('div');
+        cardEl.innerHTML = renderCard(card, true);
+        if (card.alive) {
+          cardEl.onclick = () => selectPlayerCard(i);
+          if (i === gameState.battle.selectedCardIndex) {
+            cardEl.querySelector('div').style.border = '2px solid yellow';
+          }
+        } else {
+          cardEl.style.opacity = '0.5';
+        }
+        playerCardsEl.appendChild(cardEl);
+      });
+    }
+
+    function showBattleLog(html) {
+      document.getElementById('battleLog').innerHTML = html;
+    }
+
+    function showView(viewName) {
+      ['battle', 'deck', 'shop', 'tournament'].forEach(v => {
+        document.getElementById(`view${v.charAt(0).toUpperCase() + v.slice(1)}`).classList.add('hidden');
+      });
+      if (viewName === 'battle') {
+        document.getElementById('viewBattle').classList.remove('hidden');
+        if (!gameState.battle.active) {
+          startBattle();
+        } else {
+          renderBattle();
+        }
+      } else {
+        document.getElementById(`view${viewName.charAt(0).toUpperCase() + viewName.slice(1)}`).classList.remove('hidden');
+      }
+    }
+
+    // ======================
+    // LÓGICA DEL JUEGO
+    // ======================
+    function addToDeck(cardId) {
+      if (gameState.currentDeck.length >= 3) {
+        alert('¡Tu mazo solo puede tener 3 cartas!');
+        return;
+      }
+      if (!gameState.currentDeck.includes(cardId)) {
+        gameState.currentDeck.push(cardId);
+        saveToStorage();
+        renderDeckView();
+        renderAllCards();
+      }
+    }
+
+    function removeFromDeck(cardId) {
+      gameState.currentDeck = gameState.currentDeck.filter(id => id !== cardId);
+      saveToStorage();
+      renderDeckView();
+      renderAllCards();
+    }
+
+    function buyCard(cardId) {
+      const card = gameState.cards.find(c => c.id === cardId);
+      if (card && gameState.player.diamonds >= card.shopPrice) {
+        gameState.player.diamonds -= card.shopPrice;
+        card.unlocked = true;
+        saveToStorage();
+        renderPlayerStats();
+        renderAllViews();
+        alert(`¡Has comprado ${card.name}!`);
+      } else {
+        alert('¡No tienes suficientes diamantes!');
+      }
+    }
+
+    function buySkin(skinId) {
+      const skin = gameState.skins.find(s => s.id === skinId);
+      if (skin && gameState.player.diamonds >= skin.price) {
+        gameState.player.diamonds -= skin.price;
+        saveToStorage();
+        renderPlayerStats();
+        alert(`¡Has comprado ${skin.name}!`);
+      } else {
+        alert('¡No tienes suficientes diamantes!');
+      }
+    }
+
+    function startBattle() {
+      const playerCards = [];
+      gameState.currentDeck.forEach(id => {
+        const card = gameState.cards.find(c => c.id === id && c.unlocked);
+        if (card) {
+          playerCards.push({ ...card, currentHp: card.def, alive: true });
+        }
+      });
+
+      if (playerCards.length === 0) {
+        alert('¡Tu mazo está vacío! Ve a "Mazo" y arma tu mazo.');
+        showView('deck');
+        return;
+      }
+
+      let iaCard;
+      if (gameState.tournament.active) {
+        const tournamentCards = IA_CARDS.filter(c => c.rarity === 'tournament');
+        iaCard = { ...tournamentCards[Math.floor(Math.random() * tournamentCards.length)], currentHp: 120, alive: true };
+      } else {
+        const regularCards = IA_CARDS.filter(c => c.rarity !== 'tournament');
+        const card = regularCards[Math.floor(Math.random() * regularCards.length)];
+        iaCard = { ...card, currentHp: card.def, alive: true };
+      }
+
+      gameState.battle = {
+        active: true,
+        playerTurn: true,
+        playerCards,
+        enemyCard: iaCard,
+        selectedCardIndex: 0
+      };
+
+      showBattleLog('¡Elige una carta de tu mazo para atacar!');
+      renderBattle();
+    }
+
+    function selectPlayerCard(index) {
+      if (gameState.battle.playerCards[index].alive) {
+        gameState.battle.selectedCardIndex = index;
+        renderBattle();
+      }
+    }
+
+    function attackWithSelected() {
+      if (!gameState.battle.active || !gameState.battle.playerTurn) return;
+
+      const card = gameState.battle.playerCards[gameState.battle.selectedCardIndex];
+      const enemy = gameState.battle.enemyCard;
+      const damage = Math.max(5, card.atk - Math.floor(enemy.def * 0.3));
+
+      enemy.currentHp = Math.max(0, enemy.currentHp - damage);
+      showBattleLog(`¡${card.name} usa <strong>${card.power}</strong>!`);
+
+      setTimeout(() => {
+        if (enemy.currentHp <= 0) {
+          // Victoria
+          let trophyGain = gameState.tournament.active ? 50 : 30;
+          let cupGain = gameState.tournament.active ? 1 : (Math.random() < 0.1 ? 1 : 0);
+          gameState.player.trophies += trophyGain;
+          gameState.player.cups += cupGain;
+          updateLeague();
+          saveToStorage();
+          renderPlayerStats();
+
+          const msg = `¡Ganaste ${trophyGain} trofeos${cupGain > 0 ? ' y 1 copa' : ''}!<br>Total: ${gameState.player.trophies} trofeos, ${gameState.player.cups} copas.`;
+          showBattleLog(`
+            <div class="text-center">
+              <div class="text-6xl mb-4 animate-bounce">🎉</div>
+              <h3 class="text-3xl font-bold text-yellow-400 mb-2">¡VICTORIA!</h3>
+              <p>${msg}</p>
+            </div>
+          `);
+          setTimeout(() => {
+            gameState.battle.active = false;
+            if (gameState.tournament.active) {
+              if (gameState.tournament.round >= 5) {
+                completeTournament();
+              } else {
+                nextTournamentRound();
+              }
+            } else {
+              showView('battle');
+            }
+          }, 3000);
+        } else {
+          // Turno de la IA
+          gameState.battle.playerTurn = false;
+          showBattleLog(`¡Turno de la IA!`);
+          setTimeout(executeIATurn, 1500);
+        }
+      }, 1000);
+    }
+
+    function defendWithSelected() {
+      if (!gameState.battle.active || !gameState.battle.playerTurn) return;
+      const card = gameState.battle.playerCards[gameState.battle.selectedCardIndex];
+      showBattleLog(`¡${card.name} se defiende!`);
+      gameState.battle.playerDefenseBoost = Math.floor(card.def * 0.5);
+      gameState.battle.playerTurn = false;
+      setTimeout(() => {
+        showBattleLog(`¡${card.name} aumentó su defensa en ${gameState.battle.playerDefenseBoost} puntos!<br>¡Turno de la IA!`);
+        setTimeout(executeIATurn, 1000);
+      }, 1000);
+    }
+
+    function executeIATurn() {
+      if (!gameState.battle.active) return;
+
+      const card = gameState.battle.playerCards[gameState.battle.selectedCardIndex];
+      const enemy = gameState.battle.enemyCard;
+      const baseDamage = Math.max(5, enemy.atk - Math.floor((card.def + (gameState.battle.playerDefenseBoost || 0)) * 0.3));
+      const modifier = gameState.player.league.iaMod / 100;
+      const damage = Math.round(baseDamage * (1 + modifier));
+
+      card.currentHp = Math.max(0, card.currentHp - damage);
+      showBattleLog(`¡La IA ataca a ${card.name}!`);
+
+      setTimeout(() => {
+        if (card.currentHp <= 0) {
+          card.alive = false;
+          const aliveCards = gameState.battle.playerCards.filter(c => c.alive);
+          if (aliveCards.length === 0) {
+            // Derrota
+            const loss = gameState.tournament.active ? 25 : 15;
+            gameState.player.trophies = Math.max(0, gameState.player.trophies - loss);
+            updateLeague();
+            saveToStorage();
+            renderPlayerStats();
+            showBattleLog(`
+              <div class="text-center">
+                <div class="text-4xl mb-4">💀</div>
+                <h3 class="text-2xl font-bold text-red-500">DERROTA</h3>
+                <p>Perdiste ${loss} trofeos.<br>Total: ${gameState.player.trophies} trofeos.</p>
+              </div>
+            `);
+            setTimeout(() => {
+              gameState.battle.active = false;
+              if (gameState.tournament.active) {
+                exitTournament();
+              } else {
+                showView('battle');
+              }
+            }, 3000);
+            return;
+          }
+          gameState.battle.selectedCardIndex = 0;
+        }
+
+        gameState.battle.playerTurn = true;
+        gameState.battle.playerDefenseBoost = 0;
+        showBattleLog('¡Tu turno! Elige tu acción.');
+        renderBattle();
+      }, 1000);
+    }
+
+    function exitBattle() {
+      gameState.battle.active = false;
+      showView('battle');
+    }
+
+    // ======================
+    // TORNEO
+    // ======================
+    function startTournament() {
+      if (gameState.player.cups < 1) {
+        alert(`¡Necesitas 1 copa para entrar al torneo! Tienes ${gameState.player.cups}.`);
+        return;
+      }
+      gameState.player.cups -= 1;
+      gameState.tournament = { active: true, round: 1 };
+      saveToStorage();
+      renderPlayerStats();
+      showView('battle');
+    }
+
+    function nextTournamentRound() {
+      gameState.tournament.round++;
+      showBattleLog(`¡Ronda ${gameState.tournament.round} del torneo! ¡Derrota al enemigo!`);
+      startBattle();
+    }
+
+    function completeTournament() {
+      gameState.tournament.active = false;
+      gameState.player.trophies += 500;
+      gameState.player.cups += 5;
+      gameState.player.diamonds += 300;
+      // Desbloquear cartas de torneo
+      gameState.cards.forEach(c => {
+        if (c.rarity === 'tournament') c.unlocked = true;
+      });
+      updateLeague();
+      saveToStorage();
+      renderPlayerStats();
+      renderAllViews();
+      showBattleLog(`
+        <div class="text-center">
+          <div class="text-6xl mb-4">🎉</div>
+          <h3 class="text-3xl font-bold text-yellow-400">¡TORNEO COMPLETADO!</h3>
+          <p>¡Eres el campeón! Recibiste:<br>500 trofeos, 5 copas, 300 diamantes y cartas del torneo.</p>
+          <div class="text-4xl animate-bounce">👑</div>
+        </div>
+      `);
+      setTimeout(() => showView('tournament'), 4000);
+    }
+
+    function exitTournament() {
+      gameState.tournament.active = false;
+      showView('tournament');
+    }
+
+    // ======================
+    // INICIALIZAR
+    // ======================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFromStorage();
+      renderAllViews();
+      showView('battle');
+
+      // Eventos
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.onclick = () => showView(btn.dataset.view);
+      });
+      document.getElementById('btnAttack').onclick = attackWithSelected;
+      document.getElementById('btnDefend').onclick = defendWithSelected;
+      document.getElementById('btnExitBattle').onclick = exitBattle;
+      document.getElementById('btnSaveDeck').onclick = () => {
+        if (gameState.currentDeck.length !== 3) {
+          alert('¡Tu mazo debe tener exactamente 3 cartas!');
+        } else {
+          saveToStorage();
+          alert('¡Mazo guardado!');
+        }
+      };
+      document.getElementById('btnStartTournament').onclick = startTournament;
+    });
+  </script>
+</body>
+</html>
