@@ -31,7 +31,7 @@
       content: "❄️";
       position: absolute;
       bottom: 20px;
-      right: 20;
+      right: 20px;
       font-size: 28px;
       opacity: 0.6;
       z-index: -1;
@@ -156,7 +156,6 @@
     }
     #battle-area { display: none; }
     #battle.active #battle-area { display: block; }
-    #battle.active .battle-placeholder { display: none; }
     .card-battle {
       width: 140px;
       height: 180px;
@@ -336,40 +335,36 @@
     <div id="tournament">
       <h2 class="text-3xl font-bold text-center mb-2 text-yellow-400">🏆 TORNEOS NAVIDEÑOS</h2>
 
-      <!-- Torneo Original -->
       <div class="tournament-card">
         <h3 class="text-xl font-bold text-yellow-300">🎁 TORNEO NAVIDEÑO</h3>
-        <p>Consigue <strong>Francine Smith</strong> ganando 5 rondas.</p>
+        <p>Gana 5 batallas reales → <strong>Francine Smith</strong></p>
         <img src="https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062" class="w-20 h-20 rounded mx-auto my-2">
         <button class="btn bg-gradient-to-r from-red-700 to-green-700 mt-2" onclick="startTournament('navidad')">
           🎁 ENTRAR
         </button>
       </div>
 
-      <!-- Torneo Estelar -->
       <div class="tournament-card">
         <h3 class="text-xl font-bold text-blue-300">✨ TORNEO ESTELAR</h3>
-        <p>Gana 4 rondas y obtén <strong>Aria Ídolo</strong> (Ídolos).</p>
+        <p>Gana 4 batallas → <strong>Aria Ídolo</strong></p>
         <img src="https://via.placeholder.com/150/ff9800/ffffff?text=Ídolos" class="w-20 h-20 rounded mx-auto my-2">
         <button class="btn bg-gradient-to-r from-purple-600 to-blue-600 mt-2" onclick="startTournament('estelar')">
           🌟 ENTRAR
         </button>
       </div>
 
-      <!-- Torneo Reyes del Hielo -->
       <div class="tournament-card">
         <h3 class="text-xl font-bold text-cyan-300">❄️ TORNEO REYES DEL HIELO</h3>
-        <p>Gana 3 rondas y desbloquea <strong>Rey del Hielo</strong> (Torneo).</p>
+        <p>Gana 3 batallas → <strong>Rey del Hielo</strong></p>
         <img src="https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026" class="w-20 h-20 rounded mx-auto my-2">
         <button class="btn bg-gradient-to-r from-cyan-600 to-blue-800 mt-2" onclick="startTournament('hielo')">
           ❄️ ENTRAR
         </button>
       </div>
 
-      <!-- Torneo Épico Navideño -->
       <div class="tournament-card">
         <h3 class="text-xl font-bold text-pink-300">💥 TORNEO ÉPICO NAVIDEÑO</h3>
-        <p>Gana 6 rondas y obtén <strong>Felina</strong> GRATIS (Épica).</p>
+        <p>Gana 6 batallas → <strong>Felina GRATIS</strong></p>
         <img src="https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020" class="w-20 h-20 rounded mx-auto my-2">
         <button class="btn bg-gradient-to-r from-pink-600 to-red-700 mt-2" onclick="startTournament('felina')">
           🐾 ENTRAR
@@ -386,7 +381,7 @@
     <!-- Modo Copas -->
     <div id="cupMode">
       <h2 class="text-2xl font-bold text-center mb-4">🏅 CONSEGUIR COPAS</h2>
-      <p class="text-center">¡Gana batallas fáciles para obtener copas!</p>
+      <p class="text-center">¡Gana una batalla real para obtener 1 copa!</p>
       <div class="text-center mt-4">
         <button class="btn bg-yellow-600" onclick="startCupBattle()">Iniciar Batalla por Copas</button>
       </div>
@@ -400,7 +395,6 @@
       <h2 id="cardModalName" class="text-2xl font-bold"></h2>
       <div id="cardModalRarity" class="font-bold"></div>
       <div id="cardModalStats" class="text-lg mt-2"></div>
-      <div id="cardModalPower" class="text-yellow-300 mt-2"></div>
       <button class="btn bg-gray-700 mt-4" onclick="closeCardModal()">Cerrar</button>
     </div>
   </div>
@@ -416,7 +410,7 @@
   </div>
 
   <script>
-    // ✅ CONFIGURACIÓN DE OFERTA
+    // CONFIGURACIÓN DE OFERTA
     function getGemsOfferEndTime() {
       const now = new Date();
       const endTime = new Date(now);
@@ -426,7 +420,7 @@
     }
     const GEMS_OFFER_END = getGemsOfferEndTime();
 
-    // ✅ CARTAS (ya incluye Felina sin espacios)
+    // CARTAS COMPLETAS
     const ALL_CARDS = [
       { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null },
       { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null },
@@ -456,6 +450,16 @@
       currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]')
     };
 
+    // Sistema de batalla real
+    let battleMode = null; // null, 'cup', 'tournament'
+    let tournamentType = null;
+    let winsNeeded = 0;
+    let currentWins = 0;
+    let currentEnemy = { name: "IA Básica", atk: 65, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" };
+    let playerCurrentHp = {};
+    let enemyHp = 70;
+    let playerTurn = true;
+
     function applyCardUpgrades() {
       ALL_CARDS.forEach(card => {
         const level = gameState.cardUpgrades[card.id] || 1;
@@ -472,7 +476,7 @@
       document.getElementById('trophies').textContent = gameState.trophies;
       document.getElementById('diamonds').textContent = gameState.diamonds;
       document.getElementById('cups').textContent = gameState.cups;
-      updateRanking();
+      // Update ranking here if needed
     }
 
     function updateGemsCountdown() {
@@ -506,16 +510,25 @@
       }
     }
 
-    let currentEnemy = { name: "IA Básica", atk: 65, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" };
-    let playerCurrentHp = {};
-    let enemyHp = 70;
-    let playerTurn = true;
-
-    function startBattle() {
+    // ✅ BATALLA REAL
+    function startBattle(mode = null, tourType = null) {
       if (gameState.currentDeck.length === 0) {
         alert("¡Tu mazo está vacío! Añade cartas en el Mazo.");
         return;
       }
+
+      battleMode = mode;
+      tournamentType = tourType;
+
+      if (mode === 'tournament') {
+        if (tourType === 'navidad') winsNeeded = 5;
+        else if (tourType === 'estelar') winsNeeded = 4;
+        else if (tourType === 'hielo') winsNeeded = 3;
+        else if (tourType === 'felina') winsNeeded = 6;
+        currentWins = 0;
+        alert(`¡Empieza el torneo ${tourType}! Necesitas ganar ${winsNeeded} batallas.`);
+      }
+
       enemyHp = 70;
       playerCurrentHp = {};
       gameState.currentDeck.forEach(id => {
@@ -570,11 +583,43 @@
       alert(`¡${card.name} ataca por ${damage} de daño!`);
       
       if (enemyHp <= 0) {
-        gameState.trophies += 30;
-        saveGame();
-        updateUI();
-        alert("¡Victoria! +30 trofeos");
-        startBattle();
+        if (battleMode === 'cup') {
+          alert("¡Victoria! Has ganado 1 copa 🏆");
+          gameState.cups += 1;
+          saveGame();
+          updateUI();
+          endBattle();
+        } else if (battleMode === 'tournament') {
+          currentWins++;
+          if (currentWins >= winsNeeded) {
+            let rewards = [];
+            if (tournamentType === 'navidad') rewards = [7];
+            if (tournamentType === 'estelar') rewards = [10];
+            if (tournamentType === 'hielo') rewards = [13];
+            if (tournamentType === 'felina') rewards = [14];
+            rewards.forEach(id => {
+              if (!gameState.ownedCardIds.includes(id)) {
+                gameState.ownedCardIds.push(id);
+              }
+            });
+            gameState.trophies += winsNeeded * 50;
+            gameState.cups -= 1;
+            saveGame();
+            updateUI();
+            renderDeck();
+            alert(`¡FELICIDADES! Has completado el torneo ${tournamentType.toUpperCase()} 🎄`);
+            endBattle();
+          } else {
+            alert(`¡Victoria! ${currentWins}/${winsNeeded} rondas ganadas.`);
+            startBattle('tournament', tournamentType);
+          }
+        } else {
+          gameState.trophies += 30;
+          saveGame();
+          updateUI();
+          alert("¡Victoria! +30 trofeos");
+          endBattle();
+        }
       } else {
         playerTurn = false;
         setTimeout(() => {
@@ -588,6 +633,10 @@
             if (playerCurrentHp[targetId] <= 0) {
               alert(`¡${targetCard.name} fue eliminada!`);
             }
+          } else {
+            alert("¡Derrota! Mejora tu mazo.");
+            endBattle();
+            return;
           }
           playerTurn = true;
           renderBattle();
@@ -610,13 +659,40 @@
           if (playerCurrentHp[targetId] <= 0) {
             alert(`¡${targetCard.name} fue eliminada!`);
           }
+        } else {
+          alert("¡Derrota! Mejora tu mazo.");
+          endBattle();
+          return;
         }
         playerTurn = true;
         renderBattle();
       }, 1000);
     }
 
-    // ✅ COMPRA CORREGIDA
+    function endBattle() {
+      battleMode = null;
+      tournamentType = null;
+      document.getElementById('battle-area').style.display = 'none';
+      document.querySelector('#battle .battle-placeholder').style.display = 'block';
+    }
+
+    function startCupBattle() {
+      if (gameState.cups < 1) {
+        alert("¡Necesitas 1 copa para desafiar a un oponente fuerte!");
+        return;
+      }
+      startBattle('cup');
+    }
+
+    function startTournament(type) {
+      if (gameState.cups < 1) {
+        alert("¡Necesitas 1 copa para entrar al torneo!");
+        return;
+      }
+      startBattle('tournament', type);
+    }
+
+    // ✅ COMPRA DE CARTAS
     function buyCard(cardId) {
       const card = ALL_CARDS.find(c => c.id === cardId);
       if (!card) return;
@@ -661,6 +737,7 @@
       };
       const rarityText = rarityLabels[card.rarity] || card.rarity;
       document.getElementById('cardModalRarity').textContent = rarityText;
+      document.getElementById('cardModalRarity').className = `font-bold rarity-${card.rarity}`;
       document.getElementById('cardModalStats').textContent = `⚔️ ${card.atk}  🛡️ ${card.def}`;
       document.getElementById('cardModal').style.display = 'flex';
     }
@@ -695,7 +772,6 @@
       });
     }
 
-    // ✅ FUNCIÓN TIENDA 100% FUNCIONAL
     function renderShop() {
       const container = document.getElementById('shopCards');
       container.innerHTML = '';
@@ -739,79 +815,19 @@
       localStorage.setItem('ownedCardIds', JSON.stringify(gameState.ownedCardIds));
       localStorage.setItem('cardUpgrades', JSON.stringify(gameState.cardUpgrades));
       localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
-      
-      let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
-      const existingIndex = rankings.findIndex(r => r.name === gameState.playerName);
-      const playerData = {
-        name: gameState.playerName,
-        trophies: gameState.trophies,
-        avatar: gameState.avatar
-      };
-      if (existingIndex >= 0) {
-        rankings[existingIndex] = playerData;
-      } else {
-        rankings.push(playerData);
-      }
-      rankings.sort((a, b) => b.trophies - a.trophies);
-      rankings = rankings.slice(0, 10);
-      localStorage.setItem('rankings', JSON.stringify(rankings));
     }
 
     function updateRanking() {
-      const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+      // Simplified - you can enhance later
       const container = document.getElementById('rankingList');
-      container.innerHTML = '';
-      rankings.forEach((player, i) => {
-        const item = document.createElement('div');
-        item.className = 'ranking-item';
-        item.innerHTML = `
-          <div class="ranking-avatar" style="background-image: url('${player.avatar}');"></div>
-          <div class="ranking-info">
-            <div class="ranking-name">${player.name}</div>
-            <div class="ranking-trophies">🪙 ${player.trophies} trofeos</div>
-          </div>
-          <div class="ranking-pos text-2xl font-bold">${i + 1}</div>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    // ✅ TORNEOS MÚLTIPLES
-    function startTournament(type) {
-      let requiredCups = 1;
-      let requiredWins = type === 'hielo' ? 3 : type === 'estelar' ? 4 : type === 'felina' ? 6 : 5;
-      let rewards = [];
-
-      if (gameState.cups < requiredCups) {
-        alert("¡Necesitas " + requiredCups + " copa(s) para entrar al torneo!");
-        return;
-      }
-
-      if (type === 'navidad') rewards = [7];
-      if (type === 'estelar') rewards = [10];
-      if (type === 'hielo') rewards = [13];
-      if (type === 'felina') rewards = [14]; // Felina gratis
-
-      alert(`¡FELICIDADES! Has ganado el torneo ${type.toUpperCase()} 🎄`);
-
-      rewards.forEach(id => {
-        if (!gameState.ownedCardIds.includes(id)) {
-          gameState.ownedCardIds.push(id);
-        }
-      });
-
-      gameState.cups -= requiredCups;
-      gameState.trophies += requiredWins * 50;
-      saveGame();
-      updateUI();
-      renderDeck();
-    }
-
-    function startCupBattle() {
-      alert("¡Has ganado 1 copa!");
-      gameState.cups += 1;
-      saveGame();
-      updateUI();
+      container.innerHTML = `<div class="ranking-item">
+        <div class="ranking-avatar" style="background-image: url('${gameState.avatar}');"></div>
+        <div class="ranking-info">
+          <div class="ranking-name">${gameState.playerName}</div>
+          <div class="ranking-trophies">🪙 ${gameState.trophies} trofeos</div>
+        </div>
+        <div class="ranking-pos text-2xl font-bold">1</div>
+      </div>`;
     }
 
     function showView(view) {
@@ -822,7 +838,6 @@
       if (view === 'deck') renderDeck();
       if (view === 'shop') renderShop();
       if (view === 'ranking') updateRanking();
-      // No auto-iniciar batalla aquí; ahora hay botón explícito
     }
 
     updateUI();
