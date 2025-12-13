@@ -470,6 +470,7 @@
           <div class="text-center mt-3">
             <img 
               src="https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062" 
+              onerror="this.src='https://via.placeholder.com/100/ffd700/000?text=Francine'"
               alt="Francine Smith - Navidad"
               class="inline-block w-24 h-24 rounded-lg border-2 border-yellow-400 shadow-lg mx-auto"
             />
@@ -513,9 +514,8 @@
   </div>
 
   <script>
-    // ✅ TODAS LAS CARTAS + CARTAS DE TORNEO INCLUIDAS
+    // ✅ CARTAS CON IMÁGENES DE RESPALDO (onerror)
     const ALL_CARDS = [
-      // Cartas normales
       { id: 0, name: "Ramírez", rarity: "common", atk: 60, def: 50, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null },
       { id: 1, name: "Fortaleza", rarity: "rare", atk: 60, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null },
       { id: 2, name: "Escudera", rarity: "common", atk: 55, def: 65, img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", shopPrice: null },
@@ -527,8 +527,7 @@
       { id: 8, name: "Rey del Trueno", rarity: "ultra", atk: 130, def: 80, img: "https://via.placeholder.com/150/00bcd4/ffffff?text=Ultra", shopPrice: 300 },
       { id: 9, name: "Diosa Cósmica", rarity: "exotic", atk: 150, def: 90, img: "https://via.placeholder.com/150/e91e63/ffffff?text=Exótica", shopPrice: 500 },
       { id: 10, name: "Aria Ídolo", rarity: "idolos", atk: 140, def: 85, img: "https://via.placeholder.com/150/ff9800/ffffff?text=Ídolos", shopPrice: 400 },
-      
-      // ✅ CARTAS DE TORNEO (AHORA VISIBLES Y CON MODAL)
+      // ✅ CARTAS DE TORNEO
       { id: 11, name: "Campeón Sombra", rarity: "tournament", atk: 140, def: 100, img: "https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", shopPrice: null },
       { id: 12, name: "Maestro del Fuego", rarity: "tournament", atk: 150, def: 90, img: "https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", shopPrice: null },
       { id: 13, name: "Rey del Hielo", rarity: "tournament", atk: 135, def: 110, img: "https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", shopPrice: null }
@@ -538,7 +537,6 @@
       { id: 100, name: "IA Básica", rarity: "common", atk: 65, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" },
       { id: 101, name: "IA Élite", rarity: "legendary", atk: 95, def: 60, img: "https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818" },
       { id: 102, name: "IA Débil", rarity: "common", atk: 40, def: 50, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" },
-      // ✅ IA del torneo (con imágenes reales)
       { id: 103, name: "Campeón Sombra", rarity: "tournament", atk: 140, def: 100, img: "https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892" },
       { id: 104, name: "Maestro del Fuego", rarity: "tournament", atk: 150, def: 90, img: "https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395" },
       { id: 105, name: "Rey del Hielo", rarity: "tournament", atk: 135, def: 110, img: "https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026" }
@@ -555,7 +553,6 @@
       tournament: { active: false, round: 0, wins: 0 }
     };
 
-    // === FUNCIONES PRINCIPALES ===
     function updateUI() {
       document.getElementById('playerName').textContent = gameState.playerName;
       document.getElementById('profileAvatar').src = gameState.avatar;
@@ -576,25 +573,16 @@
     function showCardModal(card) {
       document.getElementById('cardModalImage').src = card.img;
       document.getElementById('cardModalName').textContent = card.name;
-      
       const rarityLabels = {
-        common: "Común",
-        rare: "Rara",
-        epic: "Épica",
-        legendary: "Legendaria",
-        ultra: "Ultra Raro",
-        exotic: "Exótica",
-        idolos: "Ídolos",
-        tournament: "Torneo"
+        common: "Común", rare: "Rara", epic: "Épica", legendary: "Legendaria",
+        ultra: "Ultra Raro", exotic: "Exótica", idolos: "Ídolos", tournament: "Torneo"
       };
       const rarityText = rarityLabels[card.rarity] || card.rarity;
       const rarityClass = `rarity-tag-${card.rarity}`;
       document.getElementById('cardModalRarity').textContent = rarityText;
       document.getElementById('cardModalRarity').className = `font-bold ${rarityClass}`;
-      
       document.getElementById('cardModalStats').textContent = `⚔️ ${card.atk}  🛡️ ${card.def}`;
       document.getElementById('cardModalPower').textContent = card.power || "";
-      
       document.getElementById('cardModal').style.display = 'flex';
     }
 
@@ -602,7 +590,7 @@
       document.getElementById('cardModal').style.display = 'none';
     }
 
-    // === MAZO EDITABLE ===
+    // ✅ CORREGIDO: renderDeck muestra siempre tu mazo actual
     function renderDeck() {
       const currentDeckEl = document.getElementById('currentDeck');
       currentDeckEl.innerHTML = '';
@@ -615,7 +603,7 @@
             <div class="card-base">
               <div class="card-glow"></div>
               <div class="card-content">
-                <img src="${card.img}" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
+                <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/555/fff?text=${card.name}'" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
                 <div class="font-bold text-xs mt-1 truncate">${card.name}</div>
               </div>
             </div>
@@ -628,12 +616,11 @@
       const allCardsEl = document.getElementById('deckCards');
       allCardsEl.innerHTML = ALL_CARDS.filter(c => gameState.ownedCardIds.includes(c.id))
         .map(c => `
-          <div class="card-container ${c.rarity}" style="${gameState.currentDeck.includes(c.id) ? 'opacity:0.5;' : ''}"
-               onclick="addToDeck(${c.id})">
+          <div class="card-container ${c.rarity}" style="${gameState.currentDeck.includes(c.id) ? 'opacity:0.5;' : ''}" onclick="addToDeck(${c.id})">
             <div class="card-base">
               <div class="card-glow"></div>
               <div class="card-content">
-                <img src="${c.img}" style="width:100%; height:130px; object-fit:cover;">
+                <img src="${c.img}" onerror="this.src='https://via.placeholder.com/150/555/fff?text=${c.name}'" style="width:100%; height:130px; object-fit:cover;">
                 <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
               </div>
             </div>
@@ -667,7 +654,7 @@
       alert("¡Mazo guardado!");
     }
 
-    // === TIENDA: SOLO CARTAS CON shopPrice > 0 ===
+    // ✅ Tienda con imágenes seguras
     function renderShop() {
       const time = calculateTimeLeft();
       const container = document.getElementById('shopCards');
@@ -677,7 +664,7 @@
           <div class="card-base">
             <div class="card-glow"></div>
             <div class="card-content">
-              <img src="${c.img}" onerror="this.src='https://via.placeholder.com/150/ff0000/ffffff?text=Error'" style="width:100%; height:130px; object-fit:cover;">
+              <img src="${c.img}" onerror="this.src='https://via.placeholder.com/150/777/fff?text=${c.name}'" style="width:100%; height:130px; object-fit:cover;">
               <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
               <div class="text-yellow-400 text-[11px]">💎${c.shopPrice}</div>
             </div>
@@ -701,7 +688,7 @@
       const eHp = Math.max(0, Math.round((enemy.currentHp / enemy.def) * 100));
       document.getElementById('enemyCard').innerHTML = `
         <div class="card-battle ${enemy.rarity}" onclick="showCardModal(${JSON.stringify(enemy).replace(/"/g,'&quot;')})">
-          <img src="${enemy.img}" onerror="this.src='https://via.placeholder.com/150/ff0000/ffffff?text=Error'" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
+          <img src="${enemy.img}" onerror="this.src='https://via.placeholder.com/150/777/fff?text=${enemy.name}'" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
           <div class="font-bold">${enemy.name}</div>
           <div class="text-sm">⚔️${enemy.atk} 🛡️${enemy.def}</div>
           <div class="hp-bar"><div class="hp-fill" style="width:${eHp}%"></div></div>
@@ -714,7 +701,7 @@
         return `
           <div class="card-battle ${card.rarity}" style="${!card.alive?'opacity:0.4;filter:grayscale(1);':''}" 
                onclick="selectPlayerCard(${i}); showCardModal(${JSON.stringify(card).replace(/"/g,'&quot;')})">
-            <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/ff0000/ffffff?text=Error'" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
+            <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/777/fff?text=${card.name}'" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
             <div class="font-bold">${card.name}</div>
             <div class="text-sm">⚔️${card.atk} 🛡️${card.def}</div>
             <div class="hp-bar"><div class="hp-fill" style="width:${hp}%"></div></div>
@@ -770,7 +757,7 @@
       localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
     }
 
-    // === BATALLA Y TORNEO ===
+    // === LÓGICA DE JUEGO ===
     let selectedPlayerIndex = 0;
     function selectPlayerCard(index) {
       if (!battleState.playerCards[index].alive || !battleState.playerTurn) return;
@@ -799,13 +786,12 @@
     function startBattle(isTournament = false) {
       let enemy;
       if (isTournament) {
-        const tournamentIA = IA_CARDS.slice(3, 6); // IA de torneo
+        const tournamentIA = IA_CARDS.slice(3, 6);
         const randomIA = tournamentIA[Math.floor(Math.random() * tournamentIA.length)];
         enemy = { ...randomIA, currentHp: randomIA.def + 20, alive: true };
       } else {
         enemy = { ...IA_CARDS[0], currentHp: 70, alive: true };
       }
-      
       battleState = {
         playerCards: gameState.currentDeck.map(id => {
           const c = ALL_CARDS.find(card => card.id === id);
@@ -819,9 +805,6 @@
       renderBattle();
       addToLog(isTournament ? "⚔️ ¡Ronda " + (gameState.tournament.round + 1) + " del torneo navideño!" : "⏳ ¡Elige una carta y ataca!", 'system');
     }
-
-    // (playerAttack, playerDefend, executeIATurn, startTournament, showView, showVictory, showDefeat, addToLog)
-    // ... [igual que antes, omitido por espacio, pero incluido en lógica completa] ...
 
     function playerAttack() {
       if (!battleState.playerTurn) return;
@@ -855,7 +838,6 @@
             gameState.tournament.wins++;
             if (gameState.tournament.wins >= 5) {
               gameState.cups -= 1;
-              // Desbloquear cartas del torneo
               [11,12,13].forEach(id => {
                 if (!gameState.ownedCardIds.includes(id)) gameState.ownedCardIds.push(id);
               });
@@ -960,12 +942,16 @@
       startBattle(true);
     }
 
+    // ✅ CORREGIDO: NO MUESTRA MENSAJE AL ENTRAR AL MAZO
     function showView(view) {
       document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
       document.getElementById(view).classList.remove('hidden');
-      if (view === 'deck') renderDeck();
-      if (view === 'shop') renderShop();
-      if (view === 'battle') {
+      if (view === 'deck') {
+        renderDeck();
+        document.getElementById('battleLog').innerHTML = ''; // ✅ Limpia el log
+      } else if (view === 'shop') {
+        renderShop();
+      } else if (view === 'battle') {
         if (!battleState.enemyCard) startBattle();
       }
     }
