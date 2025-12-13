@@ -52,30 +52,6 @@
       transform: translateY(-5px);
       box-shadow: 0 0 15px rgba(100, 100, 255, 0.6);
     }
-    .reactions-bar {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-      margin-top: 4px;
-    }
-    .reaction-btn {
-      background: rgba(255,255,255,0.15);
-      border: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .reaction-btn:hover {
-      background: rgba(255,255,255,0.3);
-      transform: scale(1.2);
-    }
-    .reaction-count {
-      font-size: 10px;
-      margin-top: -2px;
-    }
     .card-battle {
       width: 160px;
       height: 240px;
@@ -91,7 +67,7 @@
       position: relative;
     }
     .card-battle.attacking {
-      animation: attackPulse 0.8s 3;
+      animation: attackPulse 0.8s 1;
     }
     @keyframes attackPulse {
       0%, 100% { transform: scale(1); filter: brightness(1); }
@@ -126,18 +102,8 @@
     .rarity-epic { border-top: 4px solid #9c27b0; }
     .rarity-legendary { border-top: 4px solid #ff9800; }
     .rarity-tournament { border-top: 4px solid #f44336; }
-    #battleLog {
-      min-height: 80px;
-      background: rgba(0,0,0,0.5);
-      padding: 15px;
-      border-radius: 12px;
-      margin: 20px 0;
-      text-align: center;
-      font-size: 18px;
-      line-height: 1.4;
-    }
 
-    /* === CONTADOR DE COFRES === */
+    /* BANNER DE COFRES */
     #chestsBanner {
       background: linear-gradient(to right, #ff416c, #ff4b2b);
       color: white;
@@ -172,7 +138,7 @@
       font-weight: bold;
     }
 
-    /* === EFECTO DE CALAVERA === */
+    /* CALAVERA */
     .skull-effect {
       position: fixed;
       top: 0;
@@ -202,7 +168,7 @@
       to { text-shadow: 0 0 40px rgba(255, 0, 85, 1), 0 0 60px rgba(255, 0, 150, 1); }
     }
 
-    /* === PERFIL === */
+    /* PERFIL */
     #playerProfile {
       display: flex;
       align-items: center;
@@ -222,18 +188,61 @@
     #profileAvatar:hover {
       transform: scale(1.1);
     }
+
+    /* LOG DE BATALLA DETALLADO */
+    #battleLog {
+      min-height: 100px;
+      background: rgba(0,0,0,0.5);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.5;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      margin: 4px 0;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .log-player { background: rgba(50, 150, 255, 0.2); }
+    .log-ia { background: rgba(255, 80, 80, 0.2); }
+    .log-system { background: rgba(150, 150, 255, 0.2); }
+
+    /* REACCIONES EN BATALLA */
+    #reactionPanel {
+      text-align: center;
+      margin-top: 12px;
+    }
+    .emoji-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      margin: 0 4px;
+      transition: transform 0.2s;
+    }
+    .emoji-btn:hover {
+      transform: scale(1.3);
+      background: rgba(255,255,255,0.3);
+    }
   </style>
 </head>
 <body>
-  <!-- CONTADOR DE COFRES -->
+  <!-- BANNER DE COFRES -->
   <div id="chestsBanner">
     <span id="tickerText">
       🔔 ¡LLEGAN LOS COFRES! 🔔 ¿Qué carta nueva te tocará? 
-      <span id="countdownTimer">Cargando...</span>
+      <span id="countdownTimer">--d --h --m --s</span>
     </span>
   </div>
 
-  <!-- EFECTO DE CALAVERA -->
+  <!-- EFECTO CALAVERA -->
   <div id="skullEffect" class="skull-effect">
     <i class="fas fa-skull skull-icon"></i>
   </div>
@@ -255,18 +264,33 @@
     <div id="content" class="mb-24">
       <!-- Batalla -->
       <div id="battle" class="view">
-        <div id="battleLog">¡Elige una carta y ataca!</div>
-        <div class="text-center mb-8">
-          <h3 class="text-xl font-bold text-red-400 mb-3">IA</h3>
+        <div id="battleLog"></div>
+        
+        <div class="text-center mb-6">
+          <h3 class="text-xl font-bold text-red-400">IA</h3>
           <div id="enemyCard" class="inline-block"></div>
         </div>
+
         <div class="text-center">
-          <h3 class="text-xl font-bold text-green-400 mb-3">TU MAZO</h3>
+          <h3 class="text-xl font-bold text-green-400">TU MAZO</h3>
           <div id="playerCards" class="flex flex-wrap justify-center gap-4"></div>
         </div>
-        <div class="text-center mt-6">
+
+        <div class="text-center mt-4">
           <button class="btn bg-red-600" onclick="playerAttack()">🔥 ATACAR</button>
           <button class="btn bg-blue-600" onclick="playerDefend()">🛡️ DEFENDER</button>
+        </div>
+
+        <!-- PANEL DE REACCIONES -->
+        <div id="reactionPanel" class="mt-6">
+          <button class="btn bg-gray-700" onclick="toggleReactionPanel()">💬 Reaccionar</button>
+          <div id="emojiButtons" class="hidden mt-2">
+            <button class="emoji-btn" onclick="sendReaction('🔥')">🔥</button>
+            <button class="emoji-btn" onclick="sendReaction('💀')">💀</button>
+            <button class="emoji-btn" onclick="sendReaction('😎')">😎</button>
+            <button class="emoji-btn" onclick="sendReaction('😈')">😈</button>
+            <button class="emoji-btn" onclick="sendReaction('🤯')">🤯</button>
+          </div>
         </div>
       </div>
 
@@ -278,7 +302,7 @@
 
       <!-- Tienda -->
       <div id="shop" class="view hidden">
-        <h2 class="text-2xl text-center mb-4">💎 TIENDA (Rotación: 5 días)</h2>
+        <h2 class="text-2xl text-center mb-4">💎 TIENDA (Rotación en tiempo real)</h2>
         <div id="shopCards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center"></div>
       </div>
 
@@ -323,61 +347,56 @@
   </div>
 
   <script>
-    // === PERFIL Y AVATAR ===
+    // === PERFIL ===
     let playerProfile = {
       name: localStorage.getItem('playerName') || 'Jugador',
       avatar: localStorage.getItem('playerAvatar') || 'https://via.placeholder.com/50/4f46e5/ffffff?text=👤'
     };
-
+    document.getElementById('playerName').textContent = playerProfile.name;
+    document.getElementById('profileAvatar').src = playerProfile.avatar;
     function changeAvatar() {
-      const newAvatar = prompt("Pega la URL de tu imagen (debe ser directa, tipo .jpg/.png):", playerProfile.avatar);
-      if (newAvatar && newAvatar.trim() !== '') {
-        playerProfile.avatar = newAvatar;
-        localStorage.setItem('playerAvatar', newAvatar);
-        document.getElementById('profileAvatar').src = newAvatar;
+      const url = prompt("Pega URL de tu avatar:", playerProfile.avatar);
+      if (url && url.trim()) {
+        playerProfile.avatar = url;
+        localStorage.setItem('playerAvatar', url);
+        document.getElementById('profileAvatar').src = url;
       }
     }
 
-    document.getElementById('playerName').textContent = playerProfile.name;
-    document.getElementById('profileAvatar').src = playerProfile.avatar;
-
-    // === REACCIONES ===
+    // === REACCIONES DE CARTAS ===
     let cardReactions = JSON.parse(localStorage.getItem('cardReactions') || '{}');
-
     function addReaction(cardId, emoji) {
       if (!cardReactions[cardId]) cardReactions[cardId] = {};
-      if (!cardReactions[cardId][emoji]) cardReactions[cardId][emoji] = 0;
-      cardReactions[cardId][emoji]++;
+      cardReactions[cardId][emoji] = (cardReactions[cardId][emoji] || 0) + 1;
       localStorage.setItem('cardReactions', JSON.stringify(cardReactions));
-      renderDeck(); // o renderShop si es desde tienda
+      renderDeck();
     }
-
     function getReactionCount(cardId, emoji) {
       return cardReactions[cardId]?.[emoji] || 0;
     }
 
-    // === CONTADOR DE COFRES ===
+    // === CONTADOR DE COFRES (AHORA CON H:M:S) ===
     function updateChestCountdown() {
-      const lastUpdate = localStorage.getItem('lastShopUpdate') || new Date().toISOString();
-      const nextUpdate = new Date(new Date(lastUpdate).getTime() + 5 * 24 * 60 * 60 * 1000);
-      const now = new Date();
-      let diff = nextUpdate - now;
+      const last = localStorage.getItem('lastShopUpdate') || new Date().toISOString();
+      const next = new Date(new Date(last).getTime() + 5 * 24 * 60 * 60 * 1000);
+      const diff = next - new Date();
       if (diff <= 0) {
         localStorage.setItem('lastShopUpdate', new Date().toISOString());
-        document.getElementById('countdownTimer').textContent = '¡AHORA!';
+        document.getElementById('countdownTimer').textContent = '¡YA DISPONIBLE!';
         setTimeout(() => location.reload(), 3000);
         return;
       }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diff % (1000 * 60)) / 1000);
-      document.getElementById('countdownTimer').textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countdownTimer').textContent = 
+        `${d}d ${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
     }
     setInterval(updateChestCountdown, 1000);
     updateChestCountdown();
 
-    // === EFECTO DE CALAVERA ===
+    // === CALAVERA ===
     function showSkullEffect() {
       const skull = document.getElementById('skullEffect');
       skull.style.opacity = '1';
@@ -388,7 +407,17 @@
       }, 2000);
     }
 
-    // === DATOS DEL JUEGO ===
+    // === LOG DE BATALLA ===
+    function addToLog(message, type = 'system') {
+      const log = document.getElementById('battleLog');
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      entry.innerHTML = message;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // === DATOS ===
     const ALL_CARDS = [
       { id: 0, name: "Ramírez", rarity: "common", atk: 60, def: 50, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null },
       { id: 1, name: "Fortaleza", rarity: "rare", atk: 60, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null },
@@ -412,13 +441,13 @@
       ],
       enemyCard: { ...IA_CARDS[0], currentHp: 70, alive: true },
       diamonds: 100,
-      ownedCardIds: [0, 1, 2]
+      ownedCardIds: [0, 1, 2],
+      playerTurn: true
     };
 
     function saveGame() {
       localStorage.setItem('ownedCardIds', JSON.stringify(gameState.ownedCardIds));
       localStorage.setItem('diamonds', gameState.diamonds);
-      localStorage.setItem('lastShopUpdate', new Date().toISOString());
     }
 
     function loadGame() {
@@ -438,27 +467,17 @@
         <div class="card-small ${c.rarity}">
           <img src="${c.img}" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
           <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
-          <div class="reactions-bar">
-            <button class="reaction-btn" onclick="addReaction(${c.id}, '❤️')">❤️</button>
-            <button class="reaction-btn" onclick="addReaction(${c.id}, '🔥')">🔥</button>
-            <button class="reaction-btn" onclick="addReaction(${c.id}, '💀')">💀</button>
-          </div>
-          <div class="reaction-count">
-            ❤️${getReactionCount(c.id, '❤️')} 
-            🔥${getReactionCount(c.id, '🔥')}
-          </div>
+          <div class="text-[10px]">❤️${getReactionCount(c.id, '❤️')}</div>
         </div>
       `).join('');
     }
 
     function renderShop() {
       const container = document.getElementById('shopCards');
-      const lastUpdate = localStorage.getItem('lastShopUpdate');
+      const last = localStorage.getItem('lastShopUpdate');
       const now = new Date();
-      let daysPassed = 0;
-      if (lastUpdate) daysPassed = Math.floor((now - new Date(lastUpdate)) / (1000 * 60 * 60 * 24));
+      const daysPassed = last ? Math.floor((now - new Date(last)) / 86400000) : 0;
       const daysLeft = Math.max(0, 5 - daysPassed);
-
       container.innerHTML = ALL_CARDS.filter(c => c.shopPrice && !gameState.ownedCardIds.includes(c.id)).map(c => `
         <div class="card-small ${c.rarity} relative">
           <div class="timer-badge">${daysLeft}d</div>
@@ -466,75 +485,72 @@
           <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
           <div class="text-yellow-400 text-[11px]">💎${c.shopPrice}</div>
           <button class="btn w-full mt-1 py-1 text-[10px]" onclick="buyCard(${c.id})">Comprar</button>
-          <div class="reactions-bar">
-            <button class="reaction-btn" onclick="addReaction(${c.id}, '👀')">👀</button>
-          </div>
         </div>
       `).join('');
     }
 
     function renderBattle() {
       const enemy = gameState.enemyCard;
-      const enemyHpPercent = Math.max(0, Math.round((enemy.currentHp / enemy.def) * 100));
+      const eHp = Math.max(0, Math.round((enemy.currentHp / enemy.def) * 100));
       document.getElementById('enemyCard').innerHTML = `
         <div class="card-battle ${enemy.rarity}" style="${!enemy.alive ? 'opacity:0.4; filter: grayscale(1);' : ''}">
           <img src="${enemy.img}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
           <div class="font-bold">${enemy.name}</div>
           <div class="text-sm">⚔️${enemy.atk} 🛡️${enemy.def}</div>
-          <div class="hp-bar"><div class="hp-fill" style="width:${enemyHpPercent}%"></div></div>
+          <div class="hp-bar"><div class="hp-fill" style="width:${eHp}%"></div></div>
           <div class="text-xs">HP: ${enemy.currentHp}/${enemy.def}</div>
         </div>
       `;
-
       const playerContainer = document.getElementById('playerCards');
       playerContainer.innerHTML = gameState.playerCards.map((card, i) => {
-        const hpPercent = Math.max(0, Math.round((card.currentHp / card.def) * 100));
+        const hp = Math.max(0, Math.round((card.currentHp / card.def) * 100));
         return `
           <div class="card-battle ${card.rarity}" style="cursor:pointer; ${!card.alive ? 'opacity:0.4; filter: grayscale(1);' : ''}" onclick="selectPlayerCard(${i})">
             <img src="${card.img}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
             <div class="font-bold">${card.name}</div>
             <div class="text-sm">⚔️${card.atk} 🛡️${card.def}</div>
-            <div class="hp-bar"><div class="hp-fill" style="width:${hpPercent}%"></div></div>
+            <div class="hp-bar"><div class="hp-fill" style="width:${hp}%"></div></div>
             <div class="text-xs">HP: ${card.currentHp}/${card.def}</div>
           </div>
         `;
       }).join('');
     }
 
-    // === FUNCIONES DE JUEGO (buyCard, playerAttack, etc.) ===
+    // === COMPRA ===
     function buyCard(cardId) {
       const card = ALL_CARDS.find(c => c.id === cardId);
-      if (!card || !card.shopPrice) return;
-      if (gameState.diamonds >= card.shopPrice) {
+      if (card && gameState.diamonds >= card.shopPrice) {
         gameState.diamonds -= card.shopPrice;
         gameState.ownedCardIds.push(cardId);
         saveGame();
         renderShop();
         renderDeck();
-        alert(`¡Has comprado ${card.name}!`);
+        addToLog(`🎉 Has comprado <strong>${card.name}</strong>!`, 'system');
       } else {
-        alert("¡No tienes suficientes diamantes! 💎");
+        addToLog("💎 ¡No tienes suficientes diamantes!", 'system');
       }
     }
 
+    // === TURNO JUGADOR ===
     let selectedPlayerIndex = 0;
     function selectPlayerCard(index) {
-      if (!gameState.playerCards[index].alive) return;
+      if (!gameState.playerCards[index].alive || !gameState.playerTurn) return;
       selectedPlayerIndex = index;
       document.querySelectorAll('.card-battle').forEach(el => el.classList.remove('attacking'));
       document.querySelectorAll('.card-battle')[index + 1]?.classList.add('attacking');
     }
 
     function playerAttack() {
+      if (!gameState.playerTurn) return;
       const playerCard = gameState.playerCards[selectedPlayerIndex];
       const enemy = gameState.enemyCard;
-      if (!playerCard || !playerCard.alive) {
-        document.getElementById('battleLog').innerHTML = "¡Esta carta está fuera de combate!";
+      if (!playerCard.alive) {
+        addToLog("❌ ¡Esta carta está fuera de combate!", 'system');
         return;
       }
       const damage = Math.max(5, playerCard.atk - Math.floor(enemy.def * 0.3));
       enemy.currentHp = Math.max(0, enemy.currentHp - damage);
-      document.getElementById('battleLog').innerHTML = `¡${playerCard.name} ataca a ${enemy.name} por <strong>${damage} daño</strong>!`;
+      addToLog(`⚔️ <strong>${playerCard.name}</strong> ataca a ${enemy.name} por <strong>${damage} daño</strong>!`, 'player');
       const enemyEl = document.getElementById('enemyCard').querySelector('.card-battle');
       enemyEl.style.animation = 'attackPulse 0.8s 1';
       setTimeout(() => enemyEl.style.animation = '', 800);
@@ -542,31 +558,74 @@
         renderBattle();
         if (enemy.currentHp <= 0 && enemy.alive) {
           enemy.alive = false;
-          document.getElementById('battleLog').innerHTML = `💀 ¡${enemy.name} fue eliminado!`;
+          addToLog(`💀 ¡${enemy.name} fue eliminado! +30 trofeos`, 'system');
           showSkullEffect();
         }
+        gameState.playerTurn = false;
+        setTimeout(executeIATurn, 1500);
       }, 800);
     }
 
     function playerDefend() {
+      if (!gameState.playerTurn) return;
       const playerCard = gameState.playerCards[selectedPlayerIndex];
-      if (!playerCard || !playerCard.alive) {
-        document.getElementById('battleLog').innerHTML = "¡Esta carta está fuera de combate!";
+      if (!playerCard.alive) {
+        addToLog("❌ ¡Esta carta está fuera de combate!", 'system');
         return;
       }
-      document.getElementById('battleLog').innerHTML = `¡${playerCard.name} se defiende y reduce el próximo daño!`;
+      addToLog(`🛡️ <strong>${playerCard.name}</strong> se prepara para defender!`, 'player');
+      gameState.playerTurn = false;
+      setTimeout(executeIATurn, 1500);
     }
 
+    // === TURNO IA ===
+    function executeIATurn() {
+      const enemy = gameState.enemyCard;
+      const aliveCards = gameState.playerCards.filter(c => c.alive);
+      if (aliveCards.length === 0 || !enemy.alive) return;
+      const targetCard = aliveCards[Math.floor(Math.random() * aliveCards.length)];
+      const baseDamage = Math.max(5, enemy.atk - Math.floor(targetCard.def * 0.3));
+      targetCard.currentHp = Math.max(0, targetCard.currentHp - baseDamage);
+      addToLog(`🤖 La IA ataca a <strong>${targetCard.name}</strong> por ${baseDamage} daño!`, 'ia');
+      setTimeout(() => {
+        if (targetCard.currentHp <= 0) {
+          targetCard.alive = false;
+          addToLog(`💀 ¡${targetCard.name} fue eliminada!`, 'ia');
+          showSkullEffect();
+        }
+        renderBattle();
+        gameState.playerTurn = true;
+        addToLog("⏳ ¡Tu turno!", 'system');
+      }, 1200);
+    }
+
+    // === REACCIONES EN BATALLA ===
+    function toggleReactionPanel() {
+      const panel = document.getElementById('emojiButtons');
+      panel.classList.toggle('hidden');
+    }
+    function sendReaction(emoji) {
+      addToLog(`💬 Tú: ${emoji}`, 'player');
+      alert(`¡Has enviado ${emoji} a tu contrincante!`);
+    }
+
+    // === TORNEO ===
     function startTournament() {
-      alert("¡El torneo épico está en desarrollo! Próximamente podrás ganar la carta legendaria IA ÉLITE.");
+      alert("¡Torneo en desarrollo! Próximamente con recompensas.");
     }
 
+    // === NAVEGACIÓN ===
     function showView(view) {
       document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
       document.getElementById(view).classList.remove('hidden');
       if (view === 'deck') renderDeck();
       if (view === 'shop') renderShop();
-      if (view === 'battle') renderBattle();
+      if (view === 'battle') {
+        gameState.playerTurn = true;
+        document.getElementById('battleLog').innerHTML = '';
+        renderBattle();
+        addToLog("⏳ ¡Elige una carta y ataca!", 'system');
+      }
     }
 
     loadGame();
