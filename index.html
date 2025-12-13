@@ -451,33 +451,8 @@
     </div>
     <!-- Torneo -->
     <div id="tournament">
-      <h2 class="text-3xl font-bold text-center mb-2 text-yellow-400">🏆 TORNEO NAVIDEÑO</h2>
-      <div class="bg-gradient-to-r from-red-900 via-green-800 to-yellow-900 border-2 border-yellow-500 rounded-xl p-4 mb-6 mx-auto max-w-2xl animate-pulse">
-        <div class="flex items-center justify-center gap-3 mb-2">
-          <i class="fas fa-star text-yellow-300 text-xl"></i>
-          <span class="text-xl font-bold text-white">¡REGALO NAVIDEÑO!</span>
-          <i class="fas fa-star text-yellow-300 text-xl"></i>
-        </div>
-        <p class="text-center text-yellow-100 font-semibold">
-          🎁 Consigue la carta <span class="text-yellow-300 font-extrabold">FRANCINE SMITH</span> ganando 5 rondas.
-        </p>
-        <div class="text-center mt-3">
-          <img
-            src="https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062"
-            alt="Francine Smith - Navidad"
-            class="inline-block w-24 h-24 rounded-lg border-2 border-yellow-400 shadow-lg mx-auto"
-          />
-          <div class="text-yellow-200 text-sm font-bold mt-1">Francine Smith</div>
-        </div>
-      </div>
-      <p class="text-center text-gray-300 mb-4">
-        Necesitas <strong>1 copa</strong> para entrar. ¡Gana 5 rondas y recibe tu regalo!
-      </p>
-      <div class="text-center">
-        <button class="btn bg-gradient-to-r from-red-700 to-green-700" onclick="startTournament()">
-          🎁 ENTRAR AL TORNEO
-        </button>
-      </div>
+      <h2 class="text-3xl font-bold text-center mb-2 text-yellow-400">🏆 TORNEOS DISPONIBLES</h2>
+      <div id="tournamentsList" class="flex flex-col gap-6 mx-auto max-w-2xl"></div>
     </div>
     <!-- Ranking -->
     <div id="ranking">
@@ -546,6 +521,59 @@
       { id: 19, name: "Torrenta", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1506/sample_b060c3279b1a9b0a7da0e19bb15fa2d5.jpg?15273482", shopPrice: 700 },
       { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700 }
     ];
+    // ✅ TORNEOS MÚLTIPLES
+    const TOURNAMENTS = [
+      {
+        id: 1,
+        name: "Torneo Navideño",
+        cost: 1,
+        trophies: 500,
+        diamonds: 200,
+        cards: [7, 11, 12, 13],
+        description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.",
+        image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062"
+      },
+      {
+        id: 2,
+        name: "Torneo Principiante",
+        cost: 0,
+        trophies: 100,
+        diamonds: 50,
+        cards: [3, 4],
+        description: "Para nuevos jugadores. Gana cartas raras y épicas.",
+        image: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871"
+      },
+      {
+        id: 3,
+        name: "Torneo Épico",
+        cost: 3,
+        trophies: 300,
+        diamonds: 150,
+        cards: [14, 15, 16],
+        description: "Gana cartas épicas exclusivas.",
+        image: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020"
+      },
+      {
+        id: 4,
+        name: "Torneo Legendario",
+        cost: 5,
+        trophies: 1000,
+        diamonds: 300,
+        cards: [5, 6, 8],
+        description: "Recompensas legendarias y ultra raras.",
+        image: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622"
+      },
+      {
+        id: 5,
+        name: "Torneo Exótico",
+        cost: 7,
+        trophies: 1500,
+        diamonds: 500,
+        cards: [9, 10, 17],
+        description: "Gana cartas exóticas e ídolos.",
+        image: "https://via.placeholder.com/150/e91e63/ffffff?text=Exótica"
+      }
+    ];
     let gameState = {
       playerName: localStorage.getItem('playerName') || 'Jugador',
       trophies: parseInt(localStorage.getItem('trophies') || '0'),
@@ -554,7 +582,8 @@
       avatar: localStorage.getItem('playerAvatar') || 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037',
       ownedCardIds: JSON.parse(localStorage.getItem('ownedCardIds') || '[0,1,2]'),
       cardUpgrades: JSON.parse(localStorage.getItem('cardUpgrades') || '{}'),
-      currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]')
+      currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]'),
+      completedTournaments: JSON.parse(localStorage.getItem('completedTournaments') || '[]') // Para rastrear torneos completados
     };
     // Aplicar mejoras
     function applyCardUpgrades() {
@@ -693,7 +722,6 @@
         container.innerHTML = '<p class="text-center text-xl font-bold text-yellow-400 col-span-full">¡Tienda vacía! Has comprado todo 🎉</p>';
       }
     }
-
     // ✅ FUNCIÓN PARA COMPRAR CARTA
     function buyCard(cardId) {
       const card = ALL_CARDS.find(c => c.id === cardId);
@@ -721,7 +749,8 @@
       localStorage.setItem('ownedCardIds', JSON.stringify(gameState.ownedCardIds));
       localStorage.setItem('cardUpgrades', JSON.stringify(gameState.cardUpgrades));
       localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
-     
+      localStorage.setItem('completedTournaments', JSON.stringify(gameState.completedTournaments));
+    
       // ✅ Guardar en ranking
       let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
       const existingIndex = rankings.findIndex(r => r.name === gameState.playerName);
@@ -759,23 +788,67 @@
         container.appendChild(item);
       });
     }
-    function startTournament() {
-      if (gameState.cups < 1) {
-        alert("¡Necesitas 1 copa para el evento navideño! 🎄");
+    // ✅ RENDER DE TORNEOS
+    function renderTournaments() {
+      const container = document.getElementById('tournamentsList');
+      container.innerHTML = '';
+      TOURNAMENTS.forEach(tournament => {
+        if (gameState.completedTournaments.includes(tournament.id)) {
+          return; // No mostrar si ya completado
+        }
+        const tournamentEl = document.createElement('div');
+        tournamentEl.className = 'bg-gradient-to-r from-red-900 via-green-800 to-yellow-900 border-2 border-yellow-500 rounded-xl p-4 mb-6 animate-pulse';
+        tournamentEl.innerHTML = `
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <i class="fas fa-star text-yellow-300 text-xl"></i>
+            <span class="text-xl font-bold text-white">${tournament.name}</span>
+            <i class="fas fa-star text-yellow-300 text-xl"></i>
+          </div>
+          <p class="text-center text-yellow-100 font-semibold">
+            ${tournament.description}
+          </p>
+          <p class="text-center text-gray-300 mb-4">
+            Necesitas <strong>${tournament.cost} copas</strong> para entrar. Recompensas: ${tournament.trophies} trofeos, ${tournament.diamonds} gemas y cartas exclusivas.
+          </p>
+          <div class="text-center mt-3">
+            <img
+              src="${tournament.image}"
+              alt="${tournament.name}"
+              class="inline-block w-24 h-24 rounded-lg border-2 border-yellow-400 shadow-lg mx-auto"
+            />
+          </div>
+          <div class="text-center mt-4">
+            <button class="btn bg-gradient-to-r from-red-700 to-green-700" onclick="startSpecificTournament(${tournament.id})">
+              🎁 ENTRAR AL TORNEO
+            </button>
+          </div>
+        `;
+        container.appendChild(tournamentEl);
+      });
+    }
+    // ✅ INICIAR TORNEO ESPECÍFICO
+    function startSpecificTournament(tournamentId) {
+      const tournament = TOURNAMENTS.find(t => t.id === tournamentId);
+      if (!tournament) return;
+      if (gameState.cups < tournament.cost) {
+        alert(`¡Necesitas ${tournament.cost} copas para este torneo! 🎄`);
         return;
       }
       // Simular victoria
-      alert("¡FELICIDADES! 🎄 Has ganado el torneo.");
-      [7, 11, 12, 13].forEach(id => {
+      alert(`¡FELICIDADES! 🎄 Has ganado el ${tournament.name}.`);
+      tournament.cards.forEach(id => {
         if (!gameState.ownedCardIds.includes(id)) {
           gameState.ownedCardIds.push(id);
         }
       });
-      gameState.cups -= 1;
-      gameState.trophies += 500;
+      gameState.cups -= tournament.cost;
+      gameState.trophies += tournament.trophies;
+      gameState.diamonds += tournament.diamonds;
+      gameState.completedTournaments.push(tournament.id); // Marcar como completado
       saveGame();
       updateUI();
       renderDeck();
+      renderTournaments(); // Actualizar lista de torneos
     }
     function showView(view) {
       ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking'].forEach(id => {
@@ -785,6 +858,7 @@
       if (view === 'deck') renderDeck();
       if (view === 'shop') renderShop();
       if (view === 'ranking') updateRanking();
+      if (view === 'tournament') renderTournaments();
     }
     updateUI();
     showView('battle');
