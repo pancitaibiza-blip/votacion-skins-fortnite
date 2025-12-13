@@ -880,13 +880,32 @@
   const deckEl = document.getElementById('currentDeck');
   deckEl.innerHTML = '';
   currentDeck.forEach(id => {
-    if (id === 10) return;
-    const card = CARDS.find(c => c.id === id && c.unlocked);
+    const card = CARDS.find(c => c.id === id);
     if (card) {
       const cardEl = document.createElement('div');
       cardEl.style.width = '100px';
       cardEl.style.margin = '5px';
-      cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
+      if (card.id === 10) {
+        // Carta legendaria bloqueada en el mazo
+        cardEl.innerHTML = `
+          <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
+          <div style="color:#ff6b6b; font-size:0.8em; margin-top:4px;">🔒 Bloqueada</div>
+        `;
+        cardEl.onclick = () => {
+          alert('¡Sellamara Gemelas se desbloqueará mañana a las 15:00!');
+        };
+      } else if (card.unlocked) {
+        cardEl.innerHTML = `<img src="${card.img}" style="width:100%; border-radius:8px;" onclick="showCardPreview(${JSON.stringify(card).replace(/"/g, '&quot;')})">`;
+      } else {
+        // Carta normal bloqueada
+        cardEl.innerHTML = `
+          <img src="${card.img}" style="width:100%; border-radius:8px; filter:grayscale(100%);">
+          <div style="color:#ff6b6b; font-size:0.8em; margin-top:4px;">🔒 Bloqueada</div>
+        `;
+        cardEl.onclick = () => {
+          alert('¡Esta carta se desbloquea ganando batallas!');
+        };
+      }
       deckEl.appendChild(cardEl);
     }
   });
