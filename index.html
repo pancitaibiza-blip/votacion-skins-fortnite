@@ -293,12 +293,43 @@
       <button class="action-btn" onclick="exitBattle()">🚪 Salir</button>
     </div>
 
-    <div class="coming-soon">
-      <h3>🔔 ¡PRÓXIMA ACTUALIZACIÓN!</h3>
-      <p><strong>Mañana a las 13:00</strong></p>
-      <p>¡Modo Multijugador, Nuevas Cartas y Más!</p>
-      <div id="updateTimer" style="font-size:1.3em; color:#4ecdc4; margin:10px 0; font-weight:bold;"></div>
-    </div>
+    <!-- 🔜 Actualización -->
+<div class="coming-soon">
+  <h3>🔔 ¡PRÓXIMA ACTUALIZACIÓN! 🔔</h3>
+  <p><strong>Mañana a las 15:00</strong></p>
+  <p>¡Modo Multijugador + Perfil + Ranking!</p>
+  <div id="updateTimer" style="font-size:1.3em; color:#4ecdc4; margin:10px 0; font-weight:bold;">Cargando...</div>
+</div>
+
+<script>
+// Contador para la actualización de mañana a las 15:00
+function startUpdateCountdown() {
+  function updateTimer() {
+    const now = new Date();
+    const target = new Date(now);
+    target.setHours(15, 0, 0, 0); // Mañana a las 15:00
+    if (now >= target) {
+      target.setDate(target.getDate() + 1);
+    }
+    const diff = target - now;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    if (diff <= 0) {
+      document.getElementById('updateTimer').innerText = '¡La actualización ya está disponible! 🎁';
+    } else {
+      document.getElementById('updateTimer').innerText = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  }
+  updateTimer();
+  setInterval(updateTimer, 1000);
+}
+
+// Iniciar el contador
+startUpdateCountdown();
+</script>
   </div>
 
   <div class="card-preview" id="cardPreview">
