@@ -641,8 +641,8 @@
   </div>
 
   <script>
-    // ==== PANTALLA DE CARGA + PERFIL ====
-    window.addEventListener('load', async function() {
+    // ==== PANTALLA DE CARGA CORREGIDA ====
+    function initGame() {
       let playerName = localStorage.getItem('playerName');
       if (!playerName) {
         playerName = prompt("¿Cómo te llamas, jugador/a?") || "Jugador";
@@ -650,7 +650,6 @@
       }
       document.getElementById('playerName').innerText = playerName;
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('mainContent').style.display = 'block';
       
@@ -660,7 +659,19 @@
       updateRanking();
       startUpdateCountdown();
       startLegendaryCountdown();
-    });
+
+      const music = document.getElementById('gameMusic');
+      music.volume = 0.3;
+      music.play().catch(() => {
+        console.warn("Autoplay falló. Música en pausa.");
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGame);
+    } else {
+      initGame();
+    }
 
     // ==== CARTAS ====
     const CARDS = [
@@ -674,7 +685,7 @@
       { id:7, name:"Asesina", img:"https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", rarity:"legendary", atk:95, def:30, power:"Golpe Letal", attackType:"fire", unlocked: false },
       { id:8, name:"Guardiana", img:"https://s206.erome.com/4699/lpRzYjBO/P9p2wv5y.jpeg?v=1745795818", rarity:"epic", atk:50, def:80, power:"Escudo Energético", attackType:"ice", unlocked: false },
       { id:9, name:"IA ÉLITE", img:"https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818", rarity:"legendary", atk:100, def:35, power:"Tirano", attackType:"arcane", unlocked: true },
-      { id:10, name:"Carta del Desafío", img:"https://rule34.xxx/samples/457/sample_f9bc1e16c821e5923b37a699ea624f9c.jpg?15733609", rarity:"legendary", atk:120, def:60, power:"Desafío Final", attackType:"arcane", unlocked: false }
+      { id:10, name:"Sellamara Gemelas", img:"https://rule34.xxx/samples/457/sample_f9bc1e16c821e5923b37a699ea624f9c.jpg?15733609", rarity:"legendary", atk:120, def:60, power:"Desafío Final", attackType:"arcane", unlocked: false }
     ];
 
     const LEAGUES = [
@@ -734,7 +745,6 @@
       document.getElementById('diamondCount').innerText = diamonds;
     }
 
-    // ✅ RANKING LOCAL (simula "online" en el mismo dispositivo)
     function updateRanking() {
       const playerName = localStorage.getItem('playerName') || "Jugador";
       let rankings = JSON.parse(localStorage.getItem('rankings')) || [];
@@ -802,7 +812,6 @@
       document.getElementById('battleTable').style.display = 'none';
     }
 
-    // ✅ ZOOM EN CARTAS (con contador en legendaria)
     function showCardPreview(card) {
       document.getElementById('previewImg').src = card.img;
       document.getElementById('previewName').innerText = card.name;
@@ -827,7 +836,6 @@
       document.getElementById('previewStats').innerText = `ATK: ${card.atk} | DEF: ${card.def}`;
       document.getElementById('previewPower').innerText = card.power;
       
-      // Contador solo para carta legendaria
       const timerEl = document.getElementById('legendaryTimer');
       if (card.id === 10) {
         timerEl.style.display = 'block';
@@ -854,14 +862,15 @@
           const img = document.createElement('img');
           img.src = card.img;
           img.alt = card.name;
+          img.style.cursor = 'pointer';
+          img.onclick = () => showCardPreview(card);
           div.appendChild(img);
-          div.onclick = () => showCardPreview(card);
         } else if (card.id === 10) {
-          // Mostrar carta legendaria con candado
           const img = document.createElement('img');
           img.src = card.img;
           img.alt = card.name;
           img.style.filter = 'grayscale(100%)';
+          img.style.cursor = 'not-allowed';
           div.appendChild(img);
           div.onclick = () => showCardPreview(card);
         }
@@ -885,7 +894,7 @@
 
     function addToDeck(cardId) {
       if (cardId === 10) {
-        alert('¡Esta carta legendaria se desbloqueará mañana a las 15:00!');
+        alert('¡Sellamara Gemelas se desbloqueará mañana a las 15:00!');
         return;
       }
       if (currentDeck.length >= 3) {
@@ -1009,7 +1018,7 @@
           log.innerHTML = `¡${selectedPlayerCard.name} derrotó a la IA!`;
           setTimeout(() => {
             trophies += 30;
-            localStorage.setItem('trophies', trophies); // ✅ PERMANENTE
+            localStorage.setItem('trophies', trophies);
             updateUI();
             updateRanking();
             const msg = `¡Ganaste 30 trofeos!<br>Total: ${trophies} trofeos.`;
@@ -1069,4 +1078,63 @@
           ${isWin ? '🎉 ¡VICTORIA!' : '💀 DERROTA'}
         </h3>
         <p style="margin:15px 0;">${message}</p>
-        <button class="action-btn" onclick="startBattle()" style="
+        <button class="action-btn" onclick="startBattle()" style="margin-top:15px;">🔄 Otra Partida</button>
+      `;
+      document.getElementById(isWin ? 'winSound' : 'loseSound').play();
+    }
+
+    function exitBattle() {
+      document.getElementById('battleTable').style.display = 'none';
+      document.getElementById('battleView').style.display = 'block';
+      showNotification(`Trofeos: ${trophies} | Diamantes: ${diamonds}`);
+    }
+
+    function createParticles() {
+      const c = document.getElementById('particles');
+      const n = 15;
+      for (let i = 0; i < n; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const s = Math.random() * 4 + 1;
+        p.style.width = p.style.height = `${s}px`;
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${Math.random() * 100}%`;
+        const cols = ['rgba(255,107,107,0.7)','rgba(78,205,196,0.7)','rgba(254,202,87,0.7)'];
+        p.style.background = cols[Math.floor(Math.random() * cols.length)];
+        p.style.setProperty('--tx', `${(Math.random()-0.5)*200}px`);
+        p.style.setProperty('--ty', `${(Math.random()-0.5)*200}px`);
+        p.style.animationDuration = `${15 + Math.random() * 20}s`;
+        c.appendChild(p);
+      }
+    }
+
+    function startUpdateCountdown() {
+      function updateTimer() {
+        const now = new Date();
+        const target = new Date(now);
+        target.setHours(15, 0, 0, 0);
+        if (now >= target) {
+          target.setDate(target.getDate() + 1);
+        }
+        const diff = target - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        if (diff <= 0) {
+          document.getElementById('updateTimer').innerText = '¡La actualización ya está disponible! 🎁';
+        } else {
+          document.getElementById('updateTimer').innerText = 
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+      }
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    }
+
+    function startLegendaryCountdown() {
+      // No se necesita aquí, porque el contador se muestra en la vista detallada
+    }
+  </script>
+</body>
+</html>
