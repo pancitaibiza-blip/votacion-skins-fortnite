@@ -590,6 +590,9 @@
         <p class="text-lg text-white">La nueva rareza "Países" representa mujeres icónicas de cada país. ¡Colecciona cartas únicas inspiradas en culturas del mundo!</p>
       </div>
       <div class="card-grid" id="shopCards"></div>
+      <div class="text-center mt-6">
+        <p class="text-lg text-yellow-200">La tienda se actualiza automáticamente a las 1:00 AM: <span id="shopUpdateCountdown">--h --m --s</span></p>
+      </div>
     </div>
     <!-- Torneo -->
     <div id="tournament" class="section-container">
@@ -646,6 +649,7 @@
       return endTime;
     }
     const GEMS_OFFER_END = getGemsOfferEndTime();
+    const SHOP_UPDATE_END = getGemsOfferEndTime(); // Same as gems for shop update
     const SABRINA_START = new Date('2025-12-14T15:00:00');
     const CARMELA_AVAILABLE = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 1, 0, 0); // 1:00 AM del día siguiente
     const DECK_MAX_SIZE = 3;
@@ -772,8 +776,9 @@
       updateRanking(); // ✅ Actualizar ranking al cambiar algo
     }
     // ✅ CONTADOR DE OFERTA Y TORNEO SABRINA
-    function updateGemsCountdown() {
+    function updateCountdowns() {
       const now = new Date();
+      // Gems offer
       const gemsDiff = GEMS_OFFER_END - now;
       if (gemsDiff <= 0) {
         document.getElementById('offerBanner').style.display = 'none';
@@ -783,8 +788,27 @@
         const m = Math.floor((gemsDiff % 3600000) / 60000);
         const s = Math.floor((gemsDiff % 60000) / 1000);
         const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
-        document.getElementById('gemsCountdown').textContent = timeStr;
-        document.getElementById('shopGemsCountdown').textContent = timeStr;
+        const gemsSpans = document.querySelectorAll('#gemsCountdown, #shopGemsCountdown');
+        gemsSpans.forEach(span => span.textContent = timeStr);
+      }
+      // Shop update countdown
+      const shopDiff = SHOP_UPDATE_END - now;
+      const shopTimeStr = shopDiff <= 0 ? 'Actualizada' : `${Math.floor(shopDiff / 3600000).toString().padStart(2,'0')}h ${Math.floor((shopDiff % 3600000) / 60000).toString().padStart(2,'0')}m ${Math.floor((shopDiff % 60000) / 1000).toString().padStart(2,'0')}s`;
+      const shopUpdateSpan = document.getElementById('shopUpdateCountdown');
+      if (shopUpdateSpan) shopUpdateSpan.textContent = shopTimeStr;
+      // Carmela countdown
+      const carmelaDiff = CARMELA_AVAILABLE - now;
+      if (carmelaDiff <= 0) {
+        if (document.getElementById('shop').classList.contains('active')) {
+          renderShop();
+        }
+      } else {
+        const h = Math.floor(carmelaDiff / 3600000);
+        const m = Math.floor((carmelaDiff % 3600000) / 60000);
+        const s = Math.floor((carmelaDiff % 60000) / 1000);
+        const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+        const carmelaSpans = document.querySelectorAll('#carmelaCountdown');
+        carmelaSpans.forEach(span => span.textContent = timeStr);
       }
       // Contador para Torneo Sabrina
       const sabrinaSpan = document.getElementById('sabrinaCountdown');
@@ -805,8 +829,8 @@
         }
       }
     }
-    setInterval(updateGemsCountdown, 1000);
-    updateGemsCountdown();
+    setInterval(updateCountdowns, 1000);
+    updateCountdowns();
     // ✅ COMPRA DE GEMAS
     function buyGemsPackage() {
       if (new Date() >= GEMS_OFFER_END) {
@@ -926,10 +950,25 @@
     function renderShop() {
       const container = document.getElementById('shopCards');
       container.innerHTML = '';
+      const now = new Date();
       const buyableCards = ALL_CARDS.filter(c => c.shopPrice !== null && !gameState.ownedCardIds.includes(c.id));
       buyableCards.forEach(card => {
         const cardEl = document.createElement('div');
         cardEl.className = `card-container rarity-${card.rarity}`;
+        let extraHtml = '';
+        let clickable = true;
+        if (card.id === 22) {
+          if (now < CARMELA_AVAILABLE) {
+            extraHtml = `<div class="text-xs text-red-400 mt-1">Disponible en: <span id="carmelaCountdown">--h --m --s</span></div>`;
+            clickable = false;
+            cardEl.style.opacity = '0.7';
+            cardEl.onclick = () => alert('¡Esta carta no está disponible para compra hasta las 1:00 AM!');
+          } else {
+            cardEl.onclick = () => buyCard(card.id);
+          }
+        } else {
+          cardEl.onclick = () => buyCard(card.id);
+        }
         cardEl.innerHTML = `
           <div class="card-base">
             <div class="card-glow"></div>
@@ -939,16 +978,20 @@
               <div class="text-xs">⚔️${card.atk} 🛡️${card.def}</div>
               <div class="upgrade-badge">Nivel ${card.level}</div>
               <div class="text-xs text-yellow-400 mt-1">💎 ${card.shopPrice}</div>
+              ${extraHtml}
             </div>
           </div>
         `;
-        cardEl.onclick = () => buyCard(card.id);
+        if (clickable) {
+          // Already set onclick
+        }
         container.appendChild(cardEl);
       });
       // Si no hay cartas, mostrar mensaje
       if (buyableCards.length === 0) {
         container.innerHTML = '<p class="text-center text-2xl font-bold text-yellow-400 col-span-full">¡Tienda vacía! Has comprado todo 🎉</p>';
       }
+      updateCountdowns(); // Update countdowns after render
     }
     // ✅ FUNCIÓN PARA COMPRAR CARTA
     function buyCard(cardId) {
@@ -1064,7 +1107,7 @@
         `;
         container.appendChild(tournamentEl);
       });
-      updateGemsCountdown(); // Actualizar contador inmediatamente después de renderizar
+      updateCountdowns(); // Actualizar contadores inmediatamente después de renderizar
     }
     // ✅ INICIAR TORNEO ESPECÍFICO
     function startSpecificTournament(tournamentId) {
@@ -1112,6 +1155,7 @@
         renderIaCards();
         renderBattleCards();
       }
+      updateCountdowns();
     }
     // Battle logic
     let iaCards = [];
