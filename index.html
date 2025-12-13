@@ -31,7 +31,7 @@
     .content { position: relative; z-index: 10; opacity: 0; animation: fadeIn 1.5s forwards; }
     @keyframes fadeIn { to { opacity: 1; } }
 
-    /* Barra de trofeos */
+    /* Barra de trofeos y diamantes */
     .trophy-bar {
       background: rgba(10,10,26,0.7);
       padding: 12px;
@@ -43,7 +43,11 @@
       font-size: 1.2em;
       border: 2px solid gold;
     }
-    .trophy-icon { font-size: 1.5em; margin-right: 8px; }
+    .trophy-info, .diamonds-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .league-badge {
       padding: 4px 12px;
       border-radius: 20px;
@@ -409,12 +413,17 @@
   <div class="content">
     <h1>FORTNITE SKIN BATTLE: ¡DERROTA A LA IA!</h1>
     
+    <!-- ✅ BARRA DE TROFEOS Y DIAMANTES -->
     <div class="trophy-bar">
-      <div>
+      <div class="trophy-info">
         <span class="trophy-icon">🏆</span>
         <span id="trophyCount">0</span> trofeos
       </div>
       <div class="league-badge" id="leagueBadge">Bronce</div>
+      <div class="diamonds-info">
+        <span>💎</span>
+        <span id="diamondCount">100</span> diamantes
+      </div>
     </div>
 
     <!-- Pestañas -->
@@ -464,6 +473,7 @@
       </div>
       
       <div class="deck-section">
+        <h3>Tu Mazo Actual</h3>
         <div id="currentDeck" style="display:flex; justify-content:center; flex-wrap:wrap; gap:10px;"></div>
         <button class="action-btn" onclick="saveDeck()" style="margin-top:10px;">💾 Guardar Mazo</button>
       </div>
@@ -566,7 +576,17 @@
     let playerTurn = true;
     let selectedPlayerCard = null;
     let trophies = parseInt(localStorage.getItem('trophies')) || 0;
+    let diamonds = 100; // Créditos diarios
     let currentLeague = LEAGUES[0];
+
+    // Cargar diamantes
+    const today = new Date().toDateString();
+    const lastDiamondClaim = localStorage.getItem('lastDiamondClaim');
+    if (lastDiamondClaim !== today) {
+      localStorage.setItem('diamonds', 100);
+      localStorage.setItem('lastDiamondClaim', today);
+    }
+    diamonds = parseInt(localStorage.getItem('diamonds')) || 100;
 
     const savedCards = JSON.parse(localStorage.getItem('cards')) || {};
     CARDS.forEach(card => {
@@ -581,10 +601,12 @@
       localStorage.setItem('cards', JSON.stringify(state));
     }
 
-    function updateTrophies() {
+    function updateUI() {
+      // Trofeos
       localStorage.setItem('trophies', trophies);
       document.getElementById('trophyCount').innerText = trophies;
       
+      // Liga
       const newLeague = LEAGUES.find(l => trophies >= l.min && trophies <= l.max) || LEAGUES[0];
       if (newLeague.name !== currentLeague.name) {
         currentLeague = newLeague;
@@ -593,6 +615,10 @@
       document.getElementById('leagueBadge').className = `league-badge ${newLeague.badgeClass}`;
       document.getElementById('leagueBadge').innerText = newLeague.name;
       document.getElementById('arenaName').innerText = newLeague.name;
+
+      // Diamantes
+      localStorage.setItem('diamonds', diamonds);
+      document.getElementById('diamondCount').innerText = diamonds;
     }
 
     function showNotification(msg) {
@@ -613,15 +639,15 @@
       setTimeout(() => document.body.removeChild(notif), 3000);
     }
 
-    let credits = 100;
     function buyItem(id, cost) {
-      if (credits >= cost) {
-        credits -= cost;
+      if (diamonds >= cost) {
+        diamonds -= cost;
         localStorage.setItem(`owned_${id}`, 'true');
+        updateUI();
         document.getElementById('storeMessage').innerText = '¡Compra exitosa! 🎉';
         setTimeout(() => document.getElementById('storeMessage').innerText = '', 3000);
       } else {
-        document.getElementById('storeMessage').innerText = '❌ Créditos insuficientes.';
+        document.getElementById('storeMessage').innerText = '❌ Diamantes insuficientes.';
         setTimeout(() => document.getElementById('storeMessage').innerText = '', 3000);
       }
     }
@@ -636,7 +662,6 @@
       document.getElementById('battleTable').style.display = 'none';
     }
 
-    // ✨ VISTA DETALLADA DE CARTA
     function showCardPreview(card) {
       document.getElementById('previewImg').src = card.img;
       document.getElementById('previewName').innerText = card.name;
@@ -664,15 +689,14 @@
       document.getElementById('cardPreview').classList.add('show');
     }
 
-    function hideCardPreview() {
+    document.getElementById('cardPreview').onclick = () => {
       document.getElementById('cardPreview').classList.remove('show');
-    }
-
-    document.getElementById('cardPreview').onclick = hideCardPreview;
+    };
 
     function renderCollection() {
       const grid = document.getElementById('collectionGrid');
       grid.innerHTML = '';
+      // Excluir la carta de IA (última)
       CARDS.slice(0, -1).forEach(card => {
         const div = document.createElement('div');
         div.className = `collection-card ${card.unlocked ? 'unlocked' : 'locked'}`;
@@ -686,6 +710,7 @@
         grid.appendChild(div);
       });
 
+      // Renderizar mazo actual
       const deckEl = document.getElementById('currentDeck');
       deckEl.innerHTML = '';
       currentDeck.forEach(id => {
@@ -741,7 +766,8 @@
     }
 
     function startBattle() {
-      const savedDeck = JSON.parse(localStorage.getItem('currentDeck')) || [0,3,6];
+      // Cargar mazo guardado
+      const savedDeck = JSON.parse(localStorage.getItem('currentDeck')) || [0, 3, 6];
       currentDeck = savedDeck;
       
       playerCards = [];
@@ -757,6 +783,7 @@
         return;
       }
 
+      // Carta de IA (siempre la misma)
       const iaCard = {...CARDS[9], currentHp: CARDS[9].def, alive: true};
       enemyCard = iaCard;
 
@@ -771,12 +798,14 @@
     }
 
     function updateBattleUI() {
+      // Enemigo
       document.getElementById('enemyCardImg').src = enemyCard.img;
       document.getElementById('enemyRarity').innerText = enemyCard.rarity;
       document.getElementById('enemyRarity').className = `card-rarity ${enemyCard.rarity}`;
       document.getElementById('enemyHp').innerText = enemyCard.currentHp;
       document.getElementById('enemyHpBar').style.width = `${(enemyCard.currentHp / enemyCard.def) * 100}%`;
       
+      // Jugador
       if (selectedPlayerCard) {
         document.getElementById('playerCardImg').src = selectedPlayerCard.img;
         document.getElementById('playerRarity').innerText = selectedPlayerCard.rarity;
@@ -785,6 +814,7 @@
         document.getElementById('playerHpBar').style.width = `${(selectedPlayerCard.currentHp / selectedPlayerCard.def) * 100}%`;
       }
 
+      // Mano
       const handEl = document.getElementById('playerHand');
       handEl.innerHTML = '';
       playerCards.forEach(card => {
@@ -822,9 +852,9 @@
           setTimeout(() => {
             const oldTrophies = trophies;
             trophies += 30;
-            updateTrophies();
-            log.innerHTML += `<br><br>¡Ganaste 30 trofeos!<br>Total: ${trophies} trofeos.`;
-            setTimeout(() => endBattle(true), 2000);
+            updateUI();
+            const msg = `¡Ganaste 30 trofeos!<br>Total: ${trophies} trofeos.`;
+            showEndScreen(true, msg);
           }, 1500);
         } else {
           log.innerHTML += `<br>¡Turno de la IA!`;
@@ -858,9 +888,9 @@
           if (aliveCards.length === 0) {
             const oldTrophies = trophies;
             trophies = Math.max(0, trophies - 15);
-            updateTrophies();
-            log.innerHTML += `<br><br>Perdiste 15 trofeos.<br>Total: ${trophies} trofeos.`;
-            setTimeout(() => endBattle(false), 2000);
+            updateUI();
+            const msg = `Perdiste 15 trofeos.<br>Total: ${trophies} trofeos.`;
+            showEndScreen(false, msg);
             return;
           }
           selectedPlayerCard = aliveCards[0];
@@ -871,21 +901,29 @@
       }, 1000);
     }
 
-    function endBattle(isWin) {
+    function showEndScreen(isWin, message) {
       gameActive = false;
-      const sound = isWin ? 'winSound' : 'loseSound';
-      document.getElementById(sound).play();
+      const log = document.getElementById('battleLog');
+      log.innerHTML = `
+        <h3 style="color:${isWin ? 'gold' : '#ff6b6b'};">
+          ${isWin ? '🎉 ¡VICTORIA!' : '💀 DERROTA'}
+        </h3>
+        <p style="margin:15px 0;">${message}</p>
+        <button class="action-btn" onclick="startBattle()" style="margin-top:15px;">🔄 Otra Partida</button>
+      `;
+      document.getElementById(isWin ? 'winSound' : 'loseSound').play();
     }
 
     function exitBattle() {
       document.getElementById('battleTable').style.display = 'none';
       document.getElementById('battleView').style.display = 'block';
-      // Mostrar trofeos actuales
-      showNotification(`Tus trofeos actuales: ${trophies}`);
+      showNotification(`Trofeos: ${trophies} | Diamantes: ${diamonds}`);
     }
 
+    // Iniciar
     createParticles();
-    updateTrophies();
+    updateUI();
+    renderCollection(); // Asegurar que el mazo se renderice
 
     function createParticles() {
       const c = document.getElementById('particles');
