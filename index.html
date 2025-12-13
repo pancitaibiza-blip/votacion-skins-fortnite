@@ -378,6 +378,19 @@
       transform: scale(1.05);
       box-shadow: 0 6px 15px rgba(0, 255, 255, 0.8);
     }
+    /* Fireworks */
+    .firework {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, yellow, orange, red);
+      border-radius: 50%;
+      animation: burst 1s ease-out forwards;
+    }
+    @keyframes burst {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -990,6 +1003,8 @@
           tournament.cards.forEach(id => {
             if (!gameState.ownedCardIds.includes(id)) {
               gameState.ownedCardIds.push(id);
+              const card = ALL_CARDS.find(c => c.id === id);
+              showNewCard(card);
             }
           });
           gameState.trophies += tournament.trophies;
@@ -1071,6 +1086,23 @@
       selectedPlayerCard.def *= 2;
       iaAttack();
       selectedPlayerCard.def = originalDef;
+    }
+    // Función para mostrar nueva carta con fuegos artificiales
+    function showNewCard(card) {
+      showCardModal(card);
+      startFireworks();
+    }
+    // Función para iniciar fuegos artificiales
+    function startFireworks() {
+      for (let i = 0; i < 20; i++) {
+        const fw = document.createElement('div');
+        fw.className = 'firework';
+        fw.style.left = `${Math.random() * 100}%`;
+        fw.style.top = `${Math.random() * 100}%`;
+        fw.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 1000);
+      }
     }
     // Función para crear copos de nieve
     function createSnowflakes() {
