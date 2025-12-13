@@ -138,8 +138,8 @@
       font-weight: bold;
     }
 
-    /* CALAVERA */
-    .skull-effect {
+    /* CALAVERA Y CONFETI */
+    .overlay-effect {
       position: fixed;
       top: 0;
       left: 0;
@@ -152,23 +152,27 @@
       align-items: center;
       opacity: 0;
     }
-    .skull-icon {
-      font-size: 120px;
-      color: #ff0055;
-      text-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
-      animation: skullFloat 1.5s ease-out, skullPulse 2s infinite alternate;
+    .overlay-content {
+      text-align: center;
+      background: rgba(0,0,0,0.8);
+      padding: 30px;
+      border-radius: 20px;
+      border: 3px solid gold;
+      box-shadow: 0 0 40px gold;
     }
-    @keyframes skullFloat {
-      0% { transform: scale(0.2) translateY(100px); opacity: 0; }
-      60% { transform: scale(1.2) translateY(-20px); opacity: 1; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: gold;
+      border-radius: 50%;
+      animation: fall linear forwards;
     }
-    @keyframes skullPulse {
-      from { text-shadow: 0 0 20px rgba(255, 0, 85, 0.8); }
-      to { text-shadow: 0 0 40px rgba(255, 0, 85, 1), 0 0 60px rgba(255, 0, 150, 1); }
+    @keyframes fall {
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
-    /* PERFIL */
+    /* PERFIL Y LOG */
     #playerProfile {
       display: flex;
       align-items: center;
@@ -188,8 +192,6 @@
     #profileAvatar:hover {
       transform: scale(1.1);
     }
-
-    /* LOG DE BATALLA DETALLADO */
     #battleLog {
       min-height: 100px;
       background: rgba(0,0,0,0.5);
@@ -206,31 +208,11 @@
       margin: 4px 0;
       padding: 4px 8px;
       border-radius: 6px;
+      font-size: 14px;
     }
     .log-player { background: rgba(50, 150, 255, 0.2); }
     .log-ia { background: rgba(255, 80, 80, 0.2); }
     .log-system { background: rgba(150, 150, 255, 0.2); }
-
-    /* REACCIONES EN BATALLA */
-    #reactionPanel {
-      text-align: center;
-      margin-top: 12px;
-    }
-    .emoji-btn {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 0 4px;
-      transition: transform 0.2s;
-    }
-    .emoji-btn:hover {
-      transform: scale(1.3);
-      background: rgba(255,255,255,0.3);
-    }
   </style>
 </head>
 <body>
@@ -242,9 +224,20 @@
     </span>
   </div>
 
-  <!-- EFECTO CALAVERA -->
-  <div id="skullEffect" class="skull-effect">
-    <i class="fas fa-skull skull-icon"></i>
+  <!-- OVERLAY DE VICTORIA -->
+  <div id="victoryOverlay" class="overlay-effect">
+    <div class="overlay-content">
+      <h2 class="text-4xl font-bold text-yellow-400 mb-4">🎉 ¡HAS GANADO!</h2>
+      <p class="text-xl">+30 trofeos</p>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE CALAVERA -->
+  <div id="skullOverlay" class="overlay-effect">
+    <div class="overlay-content">
+      <h2 class="text-4xl">💀</h2>
+      <p class="text-xl">¡Carta eliminada!</p>
+    </div>
   </div>
 
   <div class="container mx-auto px-4 py-6 pt-20">
@@ -265,32 +258,17 @@
       <!-- Batalla -->
       <div id="battle" class="view">
         <div id="battleLog"></div>
-        
         <div class="text-center mb-6">
           <h3 class="text-xl font-bold text-red-400">IA</h3>
           <div id="enemyCard" class="inline-block"></div>
         </div>
-
         <div class="text-center">
           <h3 class="text-xl font-bold text-green-400">TU MAZO</h3>
           <div id="playerCards" class="flex flex-wrap justify-center gap-4"></div>
         </div>
-
         <div class="text-center mt-4">
           <button class="btn bg-red-600" onclick="playerAttack()">🔥 ATACAR</button>
           <button class="btn bg-blue-600" onclick="playerDefend()">🛡️ DEFENDER</button>
-        </div>
-
-        <!-- PANEL DE REACCIONES -->
-        <div id="reactionPanel" class="mt-6">
-          <button class="btn bg-gray-700" onclick="toggleReactionPanel()">💬 Reaccionar</button>
-          <div id="emojiButtons" class="hidden mt-2">
-            <button class="emoji-btn" onclick="sendReaction('🔥')">🔥</button>
-            <button class="emoji-btn" onclick="sendReaction('💀')">💀</button>
-            <button class="emoji-btn" onclick="sendReaction('😎')">😎</button>
-            <button class="emoji-btn" onclick="sendReaction('😈')">😈</button>
-            <button class="emoji-btn" onclick="sendReaction('🤯')">🤯</button>
-          </div>
         </div>
       </div>
 
@@ -302,7 +280,7 @@
 
       <!-- Tienda -->
       <div id="shop" class="view hidden">
-        <h2 class="text-2xl text-center mb-4">💎 TIENDA (Rotación en tiempo real)</h2>
+        <h2 class="text-2xl text-center mb-4">💎 TIENDA (Rotación en 5 días)</h2>
         <div id="shopCards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center"></div>
       </div>
 
@@ -363,51 +341,73 @@
       }
     }
 
-    // === REACCIONES DE CARTAS ===
-    let cardReactions = JSON.parse(localStorage.getItem('cardReactions') || '{}');
-    function addReaction(cardId, emoji) {
-      if (!cardReactions[cardId]) cardReactions[cardId] = {};
-      cardReactions[cardId][emoji] = (cardReactions[cardId][emoji] || 0) + 1;
-      localStorage.setItem('cardReactions', JSON.stringify(cardReactions));
-      renderDeck();
-    }
-    function getReactionCount(cardId, emoji) {
-      return cardReactions[cardId]?.[emoji] || 0;
-    }
+    // === CONTADOR GLOBAL DE 5 DÍAS (ACTUALIZA CADA SEGUNDO) ===
+    let lastShopUpdate = localStorage.getItem('lastShopUpdate') || new Date().toISOString();
+    localStorage.setItem('lastShopUpdate', lastShopUpdate); // asegurar
+    let timeLeft = 0;
 
-    // === CONTADOR DE COFRES (AHORA CON H:M:S) ===
-    function updateChestCountdown() {
-      const last = localStorage.getItem('lastShopUpdate') || new Date().toISOString();
-      const next = new Date(new Date(last).getTime() + 5 * 24 * 60 * 60 * 1000);
-      const diff = next - new Date();
-      if (diff <= 0) {
-        localStorage.setItem('lastShopUpdate', new Date().toISOString());
-        document.getElementById('countdownTimer').textContent = '¡YA DISPONIBLE!';
-        setTimeout(() => location.reload(), 3000);
-        return;
-      }
+    function calculateTimeLeft() {
+      const nextUpdate = new Date(new Date(lastShopUpdate).getTime() + 5 * 24 * 60 * 60 * 1000);
+      const diff = nextUpdate - new Date();
+      timeLeft = Math.max(0, diff);
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      document.getElementById('countdownTimer').textContent = 
-        `${d}d ${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+      return { d, h, m, s, total: diff };
     }
-    setInterval(updateChestCountdown, 1000);
-    updateChestCountdown();
 
-    // === CALAVERA ===
-    function showSkullEffect() {
-      const skull = document.getElementById('skullEffect');
-      skull.style.opacity = '1';
-      skull.style.display = 'flex';
+    function formatTime(time) {
+      return `${time.d}d ${time.h.toString().padStart(2,'0')}h ${time.m.toString().padStart(2,'0')}m ${time.s.toString().padStart(2,'0')}s`;
+    }
+
+    function updateAllTimers() {
+      const time = calculateTimeLeft();
+      document.getElementById('countdownTimer').textContent = time.total > 0 ? formatTime(time) : '¡YA DISPONIBLE!';
+      
+      // Actualizar tienda si está visible
+      if (document.getElementById('shop').classList.contains('hidden') === false) {
+        renderShop();
+      }
+    }
+
+    setInterval(updateAllTimers, 1000);
+    updateAllTimers();
+
+    // === EFECTOS VISUALES ===
+    function showVictory() {
+      const overlay = document.getElementById('victoryOverlay');
+      overlay.style.opacity = '1';
+      overlay.style.display = 'flex';
+      
+      // Confeti
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = ['gold','orange','red','purple','cyan'][Math.floor(Math.random()*5)];
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+      }
+      
       setTimeout(() => {
-        skull.style.opacity = '0';
-        setTimeout(() => skull.style.display = 'none', 1000);
-      }, 2000);
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 1000);
+      }, 3000);
     }
 
-    // === LOG DE BATALLA ===
+    function showSkull() {
+      const overlay = document.getElementById('skullOverlay');
+      overlay.style.opacity = '1';
+      overlay.style.display = 'flex';
+      setTimeout(() => {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 1000);
+      }, 1500);
+    }
+
+    // === LOG ===
     function addToLog(message, type = 'system') {
       const log = document.getElementById('battleLog');
       const entry = document.createElement('div');
@@ -429,8 +429,7 @@
     ];
 
     const IA_CARDS = [
-      { id: 100, name: "IA Básica", rarity: "common", atk: 65, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" },
-      { id: 101, name: "IA Élite", rarity: "legendary", atk: 95, def: 60, img: "https://s206.erome.com/4699/lpRzYjBO/gU2HfmRY.jpeg?v=1745795818" }
+      { id: 100, name: "IA Básica", rarity: "common", atk: 65, def: 70, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894" }
     ];
 
     let gameState = {
@@ -467,20 +466,17 @@
         <div class="card-small ${c.rarity}">
           <img src="${c.img}" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
           <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
-          <div class="text-[10px]">❤️${getReactionCount(c.id, '❤️')}</div>
         </div>
       `).join('');
     }
 
+    // ✅ TIENDA CON CONTADOR EN TIEMPO REAL POR CADA CARTA
     function renderShop() {
+      const time = calculateTimeLeft();
       const container = document.getElementById('shopCards');
-      const last = localStorage.getItem('lastShopUpdate');
-      const now = new Date();
-      const daysPassed = last ? Math.floor((now - new Date(last)) / 86400000) : 0;
-      const daysLeft = Math.max(0, 5 - daysPassed);
       container.innerHTML = ALL_CARDS.filter(c => c.shopPrice && !gameState.ownedCardIds.includes(c.id)).map(c => `
         <div class="card-small ${c.rarity} relative">
-          <div class="timer-badge">${daysLeft}d</div>
+          <div class="timer-badge">${formatTime(time)}</div>
           <img src="${c.img}" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
           <div class="font-bold text-xs mt-1 truncate">${c.name}</div>
           <div class="text-yellow-400 text-[11px]">💎${c.shopPrice}</div>
@@ -516,7 +512,6 @@
       }).join('');
     }
 
-    // === COMPRA ===
     function buyCard(cardId) {
       const card = ALL_CARDS.find(c => c.id === cardId);
       if (card && gameState.diamonds >= card.shopPrice) {
@@ -531,7 +526,6 @@
       }
     }
 
-    // === TURNO JUGADOR ===
     let selectedPlayerIndex = 0;
     function selectPlayerCard(index) {
       if (!gameState.playerCards[index].alive || !gameState.playerTurn) return;
@@ -559,7 +553,8 @@
         if (enemy.currentHp <= 0 && enemy.alive) {
           enemy.alive = false;
           addToLog(`💀 ¡${enemy.name} fue eliminado! +30 trofeos`, 'system');
-          showSkullEffect();
+          showVictory(); // ✅ AHORA SÍ APARECE
+          return;
         }
         gameState.playerTurn = false;
         setTimeout(executeIATurn, 1500);
@@ -578,43 +573,43 @@
       setTimeout(executeIATurn, 1500);
     }
 
-    // === TURNO IA ===
     function executeIATurn() {
       const enemy = gameState.enemyCard;
       const aliveCards = gameState.playerCards.filter(c => c.alive);
-      if (aliveCards.length === 0 || !enemy.alive) return;
+      if (aliveCards.length === 0) {
+        addToLog("💀 Has perdido la batalla.", 'system');
+        showSkull();
+        return;
+      }
+      if (!enemy.alive) return;
+
       const targetCard = aliveCards[Math.floor(Math.random() * aliveCards.length)];
       const baseDamage = Math.max(5, enemy.atk - Math.floor(targetCard.def * 0.3));
       targetCard.currentHp = Math.max(0, targetCard.currentHp - baseDamage);
       addToLog(`🤖 La IA ataca a <strong>${targetCard.name}</strong> por ${baseDamage} daño!`, 'ia');
+
       setTimeout(() => {
         if (targetCard.currentHp <= 0) {
           targetCard.alive = false;
           addToLog(`💀 ¡${targetCard.name} fue eliminada!`, 'ia');
-          showSkullEffect();
+          showSkull();
         }
         renderBattle();
+        const stillAlive = gameState.playerCards.some(c => c.alive);
+        if (!stillAlive) {
+          addToLog("💀 Has perdido la batalla.", 'system');
+          showSkull();
+          return;
+        }
         gameState.playerTurn = true;
         addToLog("⏳ ¡Tu turno!", 'system');
       }, 1200);
     }
 
-    // === REACCIONES EN BATALLA ===
-    function toggleReactionPanel() {
-      const panel = document.getElementById('emojiButtons');
-      panel.classList.toggle('hidden');
-    }
-    function sendReaction(emoji) {
-      addToLog(`💬 Tú: ${emoji}`, 'player');
-      alert(`¡Has enviado ${emoji} a tu contrincante!`);
-    }
-
-    // === TORNEO ===
     function startTournament() {
-      alert("¡Torneo en desarrollo! Próximamente con recompensas.");
+      alert("¡Torneo en desarrollo!");
     }
 
-    // === NAVEGACIÓN ===
     function showView(view) {
       document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
       document.getElementById(view).classList.remove('hidden');
