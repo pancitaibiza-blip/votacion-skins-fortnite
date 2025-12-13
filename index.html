@@ -146,6 +146,36 @@
       margin: 0 8px;
       font-weight: bold;
     }
+
+    /* === EFECTO DE CALAVERA === */
+    .skull-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+    }
+    .skull-icon {
+      font-size: 120px;
+      color: #ff0055;
+      text-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+      animation: skullFloat 1.5s ease-out, skullPulse 2s infinite alternate;
+    }
+    @keyframes skullFloat {
+      0% { transform: scale(0.2) translateY(100px); opacity: 0; }
+      60% { transform: scale(1.2) translateY(-20px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    @keyframes skullPulse {
+      from { text-shadow: 0 0 20px rgba(255, 0, 85, 0.8); }
+      to { text-shadow: 0 0 40px rgba(255, 0, 85, 1), 0 0 60px rgba(255, 0, 150, 1); }
+    }
   </style>
 </head>
 <body>
@@ -155,6 +185,11 @@
       🔔 ¡LLEGAN LOS COFRES! 🔔 ¿Qué carta nueva te tocará? 
       <span id="countdownTimer">Cargando...</span>
     </span>
+  </div>
+
+  <!-- EFECTO DE CALAVERA (INICIALMENTE OCULTO) -->
+  <div id="skullEffect" class="skull-effect">
+    <i class="fas fa-skull skull-icon"></i>
   </div>
 
   <div class="container mx-auto px-4 py-6 pt-20">
@@ -257,7 +292,6 @@
       let diff = nextUpdate - now;
 
       if (diff <= 0) {
-        // Rotar cofres
         localStorage.setItem('lastShopUpdate', new Date().toISOString());
         document.getElementById('countdownTimer').textContent = '¡AHORA!';
         setTimeout(() => location.reload(), 3000);
@@ -273,9 +307,19 @@
         `${days}d ${hours}h ${mins}m ${secs}s`;
     }
 
-    // Actualizar cada segundo
     setInterval(updateChestCountdown, 1000);
     updateChestCountdown();
+
+    // === EFECTO DE CALAVERA ===
+    function showSkullEffect() {
+      const skull = document.getElementById('skullEffect');
+      skull.style.opacity = '1';
+      skull.style.display = 'flex';
+      setTimeout(() => {
+        skull.style.opacity = '0';
+        setTimeout(() => skull.style.display = 'none', 1000);
+      }, 2000);
+    }
 
     // === RESTO DEL JUEGO ===
     const ALL_CARDS = [
@@ -295,11 +339,11 @@
 
     let gameState = {
       playerCards: [
-        { ...ALL_CARDS[0], currentHp: 50 },
-        { ...ALL_CARDS[1], currentHp: 70 },
-        { ...ALL_CARDS[2], currentHp: 65 }
+        { ...ALL_CARDS[0], currentHp: 50, alive: true },
+        { ...ALL_CARDS[1], currentHp: 70, alive: true },
+        { ...ALL_CARDS[2], currentHp: 65, alive: true }
       ],
-      enemyCard: { ...IA_CARDS[0], currentHp: 70 },
+      enemyCard: { ...IA_CARDS[0], currentHp: 70, alive: true },
       diamonds: 100,
       ownedCardIds: [0, 1, 2]
     };
@@ -364,7 +408,7 @@
       const enemy = gameState.enemyCard;
       const enemyHpPercent = Math.max(0, Math.min(100, Math.round((enemy.currentHp / enemy.def) * 100)));
       document.getElementById('enemyCard').innerHTML = `
-        <div class="card-battle ${enemy.rarity}">
+        <div class="card-battle ${enemy.rarity}" style="${!enemy.alive ? 'opacity:0.4; filter: grayscale(1);' : ''}">
           <img src="${enemy.img}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
           <div class="font-bold">${enemy.name}</div>
           <div class="text-sm">⚔️${enemy.atk} 🛡️${enemy.def}</div>
@@ -377,7 +421,7 @@
       playerContainer.innerHTML = gameState.playerCards.map((card, i) => {
         const hpPercent = Math.max(0, Math.min(100, Math.round((card.currentHp / card.def) * 100)));
         return `
-          <div class="card-battle ${card.rarity}" style="cursor:pointer;" onclick="selectPlayerCard(${i})">
+          <div class="card-battle ${card.rarity}" style="cursor:pointer; ${!card.alive ? 'opacity:0.4; filter: grayscale(1);' : ''}" onclick="selectPlayerCard(${i})">
             <img src="${card.img}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
             <div class="font-bold">${card.name}</div>
             <div class="text-sm">⚔️${card.atk} 🛡️${card.def}</div>
@@ -405,6 +449,7 @@
 
     let selectedPlayerIndex = 0;
     function selectPlayerCard(index) {
+      if (!gameState.playerCards[index].alive) return;
       selectedPlayerIndex = index;
       document.querySelectorAll('.card-battle').forEach(el => el.classList.remove('attacking'));
       document.querySelectorAll('.card-battle')[index + 1]?.classList.add('attacking');
@@ -414,7 +459,7 @@
       const playerCard = gameState.playerCards[selectedPlayerIndex];
       const enemy = gameState.enemyCard;
 
-      if (!playerCard || playerCard.currentHp <= 0) {
+      if (!playerCard || !playerCard.alive) {
         document.getElementById('battleLog').innerHTML = "¡Esta carta está fuera de combate!";
         return;
       }
@@ -430,15 +475,17 @@
 
       setTimeout(() => {
         renderBattle();
-        if (enemy.currentHp <= 0) {
-          document.getElementById('battleLog').innerHTML = `¡<strong>${enemy.name}</strong> fue derrotado! 🏆 +30 trofeos`;
+        if (enemy.currentHp <= 0 && enemy.alive) {
+          enemy.alive = false;
+          document.getElementById('battleLog').innerHTML = `💀 ¡${enemy.name} fue eliminado!`;
+          showSkullEffect();
         }
       }, 800);
     }
 
     function playerDefend() {
       const playerCard = gameState.playerCards[selectedPlayerIndex];
-      if (playerCard.currentHp <= 0) {
+      if (!playerCard || !playerCard.alive) {
         document.getElementById('battleLog').innerHTML = "¡Esta carta está fuera de combate!";
         return;
       }
