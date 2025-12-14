@@ -405,7 +405,7 @@
 
         <div id="deck" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">🎴 TU MAZO</h2>
-            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / <span id="totalCards">0</span></div>
+            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / <span id="totalCards">34</span></div>
             <div class="filter-bar">
                 <select id="rarityFilter" onchange="renderDeck()">
                     <option value="all">Todas las rarezas</option>
@@ -529,7 +529,6 @@
             { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700 },
             { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: null },
             { id: 22, name: "Carmela", rarity: "paises", baseAtk: 100, baseDef: 60, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 500 },
-            // NUEVAS CARTAS ÉPICAS
             { id: 23, name: "Amy Wong Thicc", rarity: "epic", baseAtk: 88, baseDef: 55, level: 1, img: "https://rule34.xxx//samples/2701/sample_eae1882d43a188cdcbb129ca7ad3e12e.jpg?14901475", shopPrice: 400 },
             { id: 24, name: "Neon Strike", rarity: "epic", baseAtk: 90, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/902/sample_2e1d3d88982219e96d1bb68453e57b27.jpg?14884672", shopPrice: 450 },
             { id: 25, name: "Beach Rebel", rarity: "epic", baseAtk: 85, baseDef: 60, level: 1, img: "https://rule34.xxx//samples/2019/sample_fd1e4fb4f37cab745ed074ee637ee911.jpg?14877326", shopPrice: 500 },
@@ -540,16 +539,22 @@
             { id: 30, name: "Pink Facesit", rarity: "epic", baseAtk: 80, baseDef: 65, level: 1, img: "https://rule34.xxx//samples/1545/sample_6ebdf1e38f29cb2e1d1cda76622fea1c.jpg?14763252", shopPrice: 750 },
             { id: 31, name: "D.Va & Uraraka", rarity: "epic", baseAtk: 93, baseDef: 52, level: 1, img: "https://rule34.xxx//samples/2122/sample_cadb0b375ac7de3414d0db39d552e7d4.jpg?14666699", shopPrice: 800 },
             { id: 32, name: "Laguna", rarity: "epic", baseAtk: 89, baseDef: 55, level: 1, img: "https://rule34.xxx//samples/842/sample_727d3f80cc43d197f3977fb5c9dfdc22.jpg?14662037", shopPrice: 850 },
-            { id: 33, name: "Facesit Dominatrix", rarity: "epic", baseAtk: 94, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2314/sample_6bdcff4bfa032aed2751a5370a24cf05.jpg?14637455", shopPrice: 900 }
+            { id: 33, name: "Facesit Dominatrix", rarity: "epic", baseAtk: 94, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2314/sample_6bdcff4bfa032aed2751a5370a24cf05.jpg?14637455", shopPrice: 900 },
+            { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: null },
+            { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, baseDef: 85, level: 1, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: null },
+            { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: null }
         ];
 
         const TOURNAMENTS = [
             { id: 1, name: "Torneo Navideño", cost: 1, trophies: 500, diamonds: 200, cards: [7, 11, 12, 13], description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.", image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", iaDeck: [0,1,2] },
-            { id: 2, name: "Torneo Principiante", cost: 0, trophies: 100, diamonds: 50, cards: [3, 4], description: "Para nuevos jugadores. Gana cartas raras y épicas.", image: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", iaDeck: [0,2,3] },
-            { id: 3, name: "Torneo Épico", cost: 3, trophies: 300, diamonds: 150, cards: [14, 16, 18], description: "Gana cartas épicas exclusivas.", image: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", iaDeck: [4,14,16] },
-            { id: 4, name: "Torneo Legendario", cost: 5, trophies: 1000, diamonds: 300, cards: [5, 6], description: "Recompensas legendarias y ultra raras.", image: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", iaDeck: [5,6,7] },
-            { id: 5, name: "Torneo Exótico", cost: 7, trophies: 1500, diamonds: 500, cards: [17], description: "Gana cartas exóticas e ídolos.", image: "https://rule34.xxx//samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590", iaDeck: [17,18,19] },
-            { id: 6, name: "Torneo Sabrina", cost: 5, trophies: 800, diamonds: 250, cards: [21], description: "¡Especial! Gana la carta épica Sabrina Carpente La Diva.", image: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", iaDeck: [20,21,0] }
+            { id: 2, name: "Torneo Principiante", cost: 0, trophies: 100, diamonds: 50, cards: [3, 4], description: "Para nuevos jugadores.", image: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", iaDeck: [0,2,3] },
+            { id: 3, name: "Torneo Épico", cost: 3, trophies: 300, diamonds: 150, cards: [14, 16, 18], description: "Cartas épicas exclusivas.", image: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", iaDeck: [4,14,16] },
+            { id: 4, name: "Torneo Legendario", cost: 5, trophies: 1000, diamonds: 300, cards: [5, 6], description: "Recompensas legendarias.", image: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", iaDeck: [5,6,7] },
+            { id: 5, name: "Torneo Exótico", cost: 7, trophies: 1500, diamonds: 500, cards: [17], description: "Gana cartas exóticas.", image: "https://rule34.xxx//samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590", iaDeck: [17,18,19] },
+            { id: 6, name: "Torneo Sabrina", cost: 5, trophies: 800, diamonds: 250, cards: [21], description: "¡Gana a Sabrina!", image: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", iaDeck: [20,21,0] },
+            { id: 7, name: "Torneo de Ídolos: LolaLolita", cost: 10, trophies: 2000, diamonds: 800, cards: [34], description: "¡Desafío extremo! Enfrenta a la IA más fuerte por LolaLolita.", image: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", iaDeck: [5,6,7,11,12], iaMultiplier: 8 },
+            { id: 8, name: "Torneo de Ídolos: DemonMika", cost: 12, trophies: 2500, diamonds: 1000, cards: [35], description: "¡Peligro máximo! Solo los mejores ganarán a DemonMika.", image: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", iaDeck: [6,7,11,12,13], iaMultiplier: 9 },
+            { id: 9, name: "Torneo de Ídolos: Alejandra", cost: 15, trophies: 3000, diamonds: 1200, cards: [36], description: "¡El desafío definitivo! Derrota a la IA invencible por Alejandra.", image: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", iaDeck: [7,11,12,13,5], iaMultiplier: 10 }
         ];
 
         const ACHIEVEMENTS = [
@@ -619,8 +624,6 @@
                 const timeStr = `${h}h ${m}m ${s}s`;
                 document.querySelectorAll('#gemsCountdown, #shopGemsCountdown').forEach(el => el.textContent = timeStr);
             }
-            const shopDiff = SHOP_UPDATE_END - now;
-            document.getElementById('shopUpdateCountdown').textContent = shopDiff <= 0 ? 'Actualizada' : `${Math.floor(shopDiff / 3600000).toString().padStart(2,'0')}h ${Math.floor((shopDiff % 3600000) / 60000).toString().padStart(2,'0')}m ${Math.floor((shopDiff % 60000) / 1000).toString().padStart(2,'0')}s`;
         }
         setInterval(updateCountdowns, 1000);
         updateCountdowns();
@@ -836,7 +839,7 @@
             updateUI();
             isTournament = true; isCupBattle = false; currentTournamentId = id;
             iaDeckIds = t.iaDeck;
-            iaLevelMultiplier = id;
+            iaLevelMultiplier = t.iaMultiplier || id;
             renderIaCards();
             renderBattleCards();
             resetBattle();
@@ -875,6 +878,7 @@
             iaCards = [];
             iaDeckIds.forEach((id, i) => {
                 let card = {...ALL_CARDS.find(c => c.id === id)};
+                if (!card) return;
                 card.atk = card.atk * iaLevelMultiplier;
                 card.def = card.def * iaLevelMultiplier;
                 const el = document.createElement('div');
