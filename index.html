@@ -111,6 +111,12 @@
         .rarity-rare .card-glow { background: #4caf50; }
         .rarity-epic .card-glow { background: #9c27b0; }
         .rarity-legendary .card-glow { background: #d4a017; }
+        .rarity-collaboration .card-glow { background: linear-gradient(45deg, #00bfff, #ff4500, #ffff00); opacity: 0.9; filter: blur(15px); animation: collabGlow 3s infinite alternate; }
+        .rarity-collaboration .card-base { border: 3px solid #00bfff; box-shadow: 0 0 25px #ff4500; }
+        @keyframes collabGlow {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
         .rarity-idolos .card-glow { background: linear-gradient(45deg, #ff9800, #ff4081, #ffc107); opacity: 0.8; filter: blur(15px); animation: glowPulse 2s infinite alternate; }
         @keyframes glowPulse {
             0% { transform: scale(1); opacity: 0.6; }
@@ -173,6 +179,20 @@
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
+        #collaborationBanner {
+            background: linear-gradient(to right, #ffeb3b, #ff9800);
+            color: #333;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
         #gemsCountdown {
             display: inline-block;
             background: rgba(0,0,0,0.8);
@@ -336,7 +356,7 @@
             font-weight: bold;
             font-size: 18px;
             position: fixed;
-            top: 50px;
+            top: 100px; /* Ajustado para dejar espacio al banner de colaboración */
             left: 0;
             width: 100%;
             z-index: 1000;
@@ -381,6 +401,37 @@
         .chest-container:hover {
             transform: scale(1.05);
         }
+        .locked-card {
+            filter: grayscale(100%) blur(3px);
+            opacity: 0.8;
+            position: relative;
+            cursor: default;
+        }
+        .locked-card .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+        .locked-card .lock-overlay i {
+            font-size: 40px;
+            color: yellow;
+            margin-bottom: 10px;
+        }
+        .locked-card .lock-overlay p {
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 5px black;
+        }
     </style>
 </head>
 <body>
@@ -388,7 +439,10 @@
         🎁 ¡OFERTA POR TIEMPO LIMITADO! 💎 ¡1000 GEMAS POR SOLO HOY!
         <span id="gemsCountdown">--h --m --s</span>
     </div>
-    <div id="announcementBanner">
+    <div id="collaborationBanner">
+        🎉 ¡PRÓXIMAMENTE! CARTA DE COLABORACIÓN: LOS SIMPSONS. Lanzamiento en: <span id="simpsonsCountdown">--d --h --m --s</span>
+    </div>
+        <div id="announcementBanner">
         LA PROXIMA ACTUALIZACION SERA EL DIA 15 DE NOVIEMBRE DE 2025 ALAS 11:00 DE LA MAÑANA AGREGAREMOS LOS COFRES.
     </div>
     <div class="container mx-auto px-4 py-6 pt-24">
@@ -428,6 +482,7 @@
                     <option value="epic">Épica</option>
                     <option value="legendary">Legendaria</option>
                     <option value="idolos">Ídolos</option>
+                        <option value="collaboration">Colaboración</option>
                     <option value="tournament">Torneo</option>
                     <option value="paises">Países</option>
                 </select>
@@ -525,6 +580,7 @@
     </div>
 
     <script>
+        // --- FECHAS Y CONSTANTES GLOBALES ---
         function getGemsOfferEndTime() {
             const now = new Date();
             const endTime = new Date(now);
@@ -536,6 +592,7 @@
         const SHOP_UPDATE_END = getGemsOfferEndTime();
         const SABRINA_START = new Date('2025-12-14T15:00:00');
         const CARMELA_AVAILABLE = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 1, 0, 0);
+        const SIMPSONS_COLLABORATION_START = new Date('2025-12-18T10:00:00'); // NUEVO: 18 de Dic. 10:00 AM
         const DECK_MAX_SIZE = 3;
         const MAX_LEVEL = 100;
         const UPGRADE_COST_BASE = 50;
@@ -544,15 +601,16 @@
             classic: {
                 cost: 50,
                 cards: 1,
-                weights: { common: 50, rare: 30, epic: 20, legendary: 0, idolos: 0, tournament: 0, paises: 0 }
+                weights: { common: 50, rare: 30, epic: 20, legendary: 0, idolos: 0, tournament: 0, paises: 0, collaboration: 0 }
             },
             epic: {
                 cost: 300,
                 cards: 2,
-                weights: { common: 0, rare: 0, epic: 50, legendary: 30, idolos: 10, tournament: 5, paises: 5 }
+                weights: { common: 0, rare: 0, epic: 50, legendary: 30, idolos: 10, tournament: 5, paises: 5, collaboration: 0 }
             }
         };
 
+        // --- DEFINICIÓN DE TODAS LAS CARTAS (Incluyendo la de Los Simpsons) ---
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null },
@@ -586,7 +644,9 @@
             { id: 33, name: "Facesit Dominatrix", rarity: "epic", baseAtk: 94, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2314/sample_6bdcff4bfa032aed2751a5370a24cf05.jpg?14637455", shopPrice: 900 },
             { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: null },
             { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, baseDef: 85, level: 1, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: null },
-            { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: null }
+            { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: null },
+            // NUEVA CARTA DE COLABORACIÓN (ID 37)
+            { id: 37, name: "Homero Simpson (Duffman)", rarity: "collaboration", baseAtk: 130, baseDef: 110, level: 1, img: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Duffman.png/250px-Duffman.png", shopPrice: 1500, unlockDate: SIMPSONS_COLLABORATION_START }
         ];
 
         const TOURNAMENTS = [
@@ -609,24 +669,30 @@
             { id: 5, name: "Maestro de Gemas", description: "Gasta 500 gemas", icon: "💎" }
         ];
 
+        // --- ESTADO INICIAL COMPENSATORIO ---
+        // Se inicializa con valores altos para compensar la pérdida de progreso.
         let gameState = {
             playerName: localStorage.getItem('playerName') || 'Jugador',
-            trophies: parseInt(localStorage.getItem('trophies') || '0'),
-            diamonds: parseInt(localStorage.getItem('diamonds') || '100'),
-            cups: parseInt(localStorage.getItem('cups') || '0'),
+            trophies: parseInt(localStorage.getItem('trophies') || '500'), // ¡500 Trofeos iniciales!
+            diamonds: parseInt(localStorage.getItem('diamonds') || '2500'), // ¡2500 Gemas iniciales!
+            cups: parseInt(localStorage.getItem('cups') || '10'), // ¡10 Copas iniciales!
             avatar: localStorage.getItem('playerAvatar') || 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738062',
-            ownedCardIds: JSON.parse(localStorage.getItem('ownedCardIds') || '[0,1,2]'),
-            cardUpgrades: JSON.parse(localStorage.getItem('cardUpgrades') || '{}'),
-            currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]'),
+            // Desbloqueamos 10 cartas para empezar fuerte
+            ownedCardIds: JSON.parse(localStorage.getItem('ownedCardIds') || '[0, 1, 2, 3, 4, 5, 6, 7, 14, 16]'),
+            // Subimos las cartas iniciales a Nivel 5 (solo si no hay guardado previo)
+            cardUpgrades: JSON.parse(localStorage.getItem('cardUpgrades') || '{"0":5, "1":5, "2":5, "3":5, "4":5, "5":5, "6":5, "7":5, "14":5, "16":5}'),
+            currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[5, 6, 7]'), // Usamos 3 cartas de alto nivel para el mazo inicial
             completedTournaments: JSON.parse(localStorage.getItem('completedTournaments') || '[]'),
             achievements: JSON.parse(localStorage.getItem('achievements') || '[]'),
             spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0')
         };
+        // --- FIN ESTADO INICIAL COMPENSATORIO ---
 
         function applyCardUpgrades() {
             ALL_CARDS.forEach(card => {
                 const level = gameState.cardUpgrades[card.id] || 1;
                 card.level = level;
+                // Guardamos el ATK y DEF final en el objeto principal para usarlos en batalla y mazo
                 card.atk = card.baseAtk + (level - 1) * 10;
                 card.def = card.baseDef + (level - 1) * 8;
             });
@@ -667,6 +733,8 @@
         function updateCountdowns() {
             const now = new Date();
             const gemsDiff = GEMS_OFFER_END - now;
+            
+            // 1. Contador de la Oferta de Gemas
             if (gemsDiff <= 0) {
                 document.getElementById('offerBanner').style.display = 'none';
                 document.getElementById('gemsOffer').style.display = 'none';
@@ -677,6 +745,24 @@
                 const timeStr = `${h}h ${m}m ${s}s`;
                 document.querySelectorAll('#gemsCountdown, #shopGemsCountdown').forEach(el => el.textContent = timeStr);
             }
+            
+            // 2. Contador de Colaboración de Los Simpsons (NUEVO)
+            const simpsonsDiff = SIMPSONS_COLLABORATION_START - now;
+            const collabBanner = document.getElementById('collaborationBanner');
+            
+            if (simpsonsDiff <= 0) {
+                if (collabBanner) collabBanner.style.display = 'none';
+                // Si el evento ya pasó, aseguramos que la carta se pueda comprar
+                const simpsonsCard = ALL_CARDS.find(c => c.id === 37);
+                if (simpsonsCard) simpsonsCard.unlockDate = new Date(0); // Desbloqueado
+            } else {
+                const d = Math.floor(simpsonsDiff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                const h = Math.floor((simpsonsDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const m = Math.floor((simpsonsDiff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                const s = Math.floor((simpsonsDiff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                const timeStr = `${d}d ${h}h ${m}m ${s}s`;
+                document.getElementById('simpsonsCountdown').textContent = timeStr;
+            }
         }
         setInterval(updateCountdowns, 1000);
         updateCountdowns();
@@ -735,7 +821,7 @@
         function showCardModal(card) {
             document.getElementById('cardModalImage').src = card.img;
             document.getElementById('cardModalName').textContent = card.name;
-            const rarityLabels = { common: "Común", rare: "Rara", epic: "Épica", legendary: "Legendaria", idolos: "Ídolos", tournament: "Torneo", paises: "Países" };
+            const rarityLabels = { common: "Común", rare: "Rara", epic: "Épica", legendary: "Legendaria", idolos: "Ídolos", tournament: "Torneo", paises: "Países", collaboration: "Colaboración" };
             document.getElementById('cardModalRarity').textContent = rarityLabels[card.rarity] || card.rarity;
             document.getElementById('cardModalLevel').textContent = `Nivel: ${card.level}`;
             document.getElementById('cardModalStats').textContent = `⚔️ ${card.atk} 🛡️ ${card.def}`;
@@ -780,15 +866,41 @@
             const container = document.getElementById('shopCards');
             container.innerHTML = '';
             const now = new Date();
+            
+            // 1. Mostrar cartas comprables y la carta de colaboración
             const buyable = ALL_CARDS.filter(c => c.shopPrice !== null && !gameState.ownedCardIds.includes(c.id));
             buyable.forEach(card => {
+                
+                let isLocked = card.unlockDate && now < card.unlockDate;
+
                 const el = document.createElement('div');
-                el.className = `card-container rarity-${card.rarity}`;
+                el.className = `card-container rarity-${card.rarity} ${isLocked ? 'locked-card' : ''}`;
+                
                 let extra = '';
                 if (card.id === 22 && now < CARMELA_AVAILABLE) {
                     extra = `<div class="text-xs text-red-400 mt-1">Disponible en: <span id="carmelaCountdown">--h --m --s</span></div>`;
-                    el.style.opacity = '0.7';
                 }
+                
+                let lockOverlay = '';
+                if (isLocked) {
+                    lockOverlay = `<div class="lock-overlay"><i class="fas fa-lock"></i><p>Disponible en:</p><p id="simpsonsShopCountdown">--d --h --m --s</p></div>`;
+                    
+                    // Necesitamos actualizar este contador en el bucle principal si es visible
+                    const updateSimpsonsShopCountdown = () => {
+                        const diff = card.unlockDate - new Date();
+                        if (diff > 0) {
+                            const d = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                            const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                            el.querySelector('#simpsonsShopCountdown').textContent = `${d}d ${h}h ${m}m ${s}s`;
+                        } else {
+                            renderShop(); // Recargar la tienda para desbloquear
+                        }
+                    };
+                    setInterval(updateSimpsonsShopCountdown, 1000);
+                }
+
                 el.innerHTML = `
                     <div class="card-base">
                         <div class="card-glow"></div>
@@ -799,10 +911,17 @@
                             <div class="upgrade-badge">Nivel ${card.level}</div>
                             <div class="text-xs text-yellow-400 mt-1">💎 ${card.shopPrice}</div>
                             ${extra}
+                                ${lockOverlay}
                         </div>
                     </div>
                 `;
-                el.onclick = () => buyCard(card.id);
+                
+                if (!isLocked) {
+                    el.onclick = () => buyCard(card.id);
+                } else {
+                    el.onclick = () => alert(`¡${card.name} no está disponible aún! Faltan ${document.getElementById('simpsonsCountdown').textContent}`);
+                }
+                
                 container.appendChild(el);
             });
             if (buyable.length === 0) container.innerHTML = '<p class="text-center text-2xl text-yellow-400 col-span-full">¡Tienda vacía! Has comprado todo 🎉</p>';
@@ -810,7 +929,11 @@
 
         function buyCard(cardId) {
             const card = ALL_CARDS.find(c => c.id === cardId);
-            if (card.id === 22 && new Date() < CARMELA_AVAILABLE) { alert("¡No disponible aún!"); return; }
+            const now = new Date();
+
+            if (card.id === 22 && now < CARMELA_AVAILABLE) { alert("¡No disponible aún!"); return; }
+            if (card.id === 37 && card.unlockDate && now < card.unlockDate) { alert("¡La carta de colaboración no está disponible aún!"); return; }
+
             if (gameState.diamonds < card.shopPrice) { alert("¡Gemas insuficientes!"); return; }
             if (confirm(`¿Comprar ${card.name} por ${card.shopPrice} gemas?`)) {
                 gameState.diamonds -= card.shopPrice;
@@ -1005,14 +1128,13 @@
         let isTournament = false, isCupBattle = false, currentTournamentId = null, iaDeckIds = [], iaLevelMultiplier = 1;
         let battleEnded = false;
 
-        // --- FUNCIONES DE RENDER Y REINICIO DE BATALLA CORREGIDAS ---
 
         function renderIaCards() {
             const container = document.getElementById('battleIaCards');
             container.innerHTML = '';
             iaCards = [];
             iaDeckIds.forEach((id, i) => {
-                let cardBase = ALL_CARDS.find(c => c.id === id); // Tomar la base del card
+                let cardBase = ALL_CARDS.find(c => c.id === id); 
                 if (!cardBase) return;
                 
                 // Calcular estadísticas multiplicadas
@@ -1023,7 +1145,7 @@
                 el.className = 'ia-card';
                 el.innerHTML = `<img src="${cardBase.img}"><div class="name">${cardBase.name}</div><div class="stats"><span>⚔️ ${atk}</span><span>🛡️ ${def}</span></div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${def}/${def}</div>`;
                 el.onclick = () => {
-                    if (iaCards[i].hp > 0) {
+                    if (!battleEnded && iaCards[i].hp > 0) {
                         selectedTargetCard = iaCards[i];
                         document.querySelectorAll('.ia-card').forEach(e => e.classList.remove('selected'));
                         el.classList.add('selected');
@@ -1049,7 +1171,6 @@
                 let cardBase = ALL_CARDS.find(c => c.id === id);
                 if (!cardBase) return;
                 
-                // Tomamos las stats finales (con el nivel de mejora)
                 const atk = cardBase.atk;
                 const def = cardBase.def;
 
@@ -1057,7 +1178,7 @@
                 el.className = 'player-card';
                 el.innerHTML = `<img src="${cardBase.img}"><div class="name">${cardBase.name}</div><div class="stats"><span>⚔️ ${atk}</span><span>🛡️ ${def}</span></div><div class="upgrade-badge">Nivel ${cardBase.level}</div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${def}/${def}</div>`;
                 el.onclick = () => {
-                    if (playerCards[i].hp > 0) {
+                    if (!battleEnded && playerCards[i].hp > 0) {
                         selectedPlayerCard = playerCards[i];
                         document.querySelectorAll('.player-card').forEach(e => e.classList.remove('selected'));
                         el.classList.add('selected');
@@ -1071,8 +1192,7 @@
                     hp: def, 
                     maxHp: def, 
                     element: el,
-                    // Guardamos la defensa base para poder revertir el efecto de "defend"
-                    baseDef: def
+                    baseDef: def // Guardamos la defensa original para la acción de defensa
                 });
             });
             if (playerCards.length === 0) container.innerHTML = '<p class="text-center text-xl">¡Añade cartas al mazo!</p>';
@@ -1081,7 +1201,7 @@
         function resetBattle() {
             playerCards.forEach(c => { 
                 c.hp = c.maxHp; 
-                c.def = c.baseDef; // Resetear la defensa después de defender
+                c.def = c.baseDef; 
                 c.element.classList.remove('selected'); 
             });
             iaCards.forEach(c => { 
@@ -1092,16 +1212,31 @@
             selectedPlayerCard = selectedTargetCard = null;
         }
 
-        // --- FUNCIONES DE ATAQUE CORREGIDAS (Ataque = Ataque - Defensa * 0.3) ---
+        function updateHpBars() {
+            [...iaCards, ...playerCards].forEach(c => {
+                const hpPercentage = (c.hp / c.maxHp) * 100;
+                c.element.querySelector('.hp-fill').style.width = `${hpPercentage}%`;
+                // Si la vida es 0 o menos, la carta está fuera de combate
+                if (hpPercentage <= 0) {
+                    c.element.style.opacity = '0.3';
+                    c.element.style.pointerEvents = 'none';
+                    c.element.querySelector('.hp-text').textContent = `HP: 0/${Math.round(c.maxHp)}`;
+                } else {
+                    c.element.style.opacity = '1';
+                    c.element.style.pointerEvents = 'auto';
+                    c.element.querySelector('.hp-text').textContent = `HP: ${Math.round(Math.max(0, c.hp))}/${Math.round(c.maxHp)}`;
+                }
+            });
+        }
 
         function playerAttack() {
-            if (!selectedPlayerCard || !selectedTargetCard) {
-                alert("¡Selecciona tu carta y el objetivo enemigo!");
-                return;
-            }
-            // CORRECCIÓN: Usamos Math.round para evitar decimales en el daño
+            if (battleEnded) return;
+            if (!selectedPlayerCard || selectedPlayerCard.hp <= 0) { alert("¡Selecciona una carta activa para atacar!"); return; }
+            if (!selectedTargetCard || selectedTargetCard.hp <= 0) { alert("¡Selecciona un objetivo enemigo activo!"); return; }
+            
+            // Calculo de daño corregido
             const rawDamage = selectedPlayerCard.atk - selectedTargetCard.def * 0.3;
-            const damage = Math.round(Math.max(rawDamage, 1)); // Daño mínimo de 1 si ataca
+            const damage = Math.round(Math.max(rawDamage, 1)); 
 
             selectedTargetCard.hp -= damage;
             
@@ -1112,6 +1247,7 @@
         }
 
         function iaAttack() {
+            if (battleEnded) return;
             const aliveIa = iaCards.filter(c => c.hp > 0);
             const alivePlayer = playerCards.filter(c => c.hp > 0);
             if (aliveIa.length === 0 || alivePlayer.length === 0) return;
@@ -1119,9 +1255,9 @@
             const attacker = aliveIa[Math.floor(Math.random() * aliveIa.length)];
             const target = alivePlayer[Math.floor(Math.random() * alivePlayer.length)];
 
-            // CORRECCIÓN: Usamos Math.round para evitar decimales en el daño
+            // Calculo de daño corregido
             const rawDamage = attacker.atk - target.def * 0.3;
-            const damage = Math.round(Math.max(rawDamage, 1)); // Daño mínimo de 1 si ataca
+            const damage = Math.round(Math.max(rawDamage, 1)); 
             
             target.hp -= damage;
             
@@ -1131,14 +1267,14 @@
         }
 
         function playerDefend() {
-            if (!selectedPlayerCard) {
-                alert("¡Selecciona tu carta para defender!");
+            if (battleEnded) return;
+            if (!selectedPlayerCard || selectedPlayerCard.hp <= 0) {
+                alert("¡Selecciona una carta activa para defender!");
                 return;
             }
-            // La defensa se duplica temporalmente
-            const origDef = selectedPlayerCard.def;
-            selectedPlayerCard.def = selectedPlayerCard.baseDef * 2; // Usamos baseDef por si se llamó defend 2 veces
-            
+            
+            // Duplicamos la defensa usando baseDef (corregido)
+            selectedPlayerCard.def = selectedPlayerCard.baseDef * 2; 
             animateDefend(selectedPlayerCard.element);
             
             setTimeout(() => {
@@ -1150,7 +1286,6 @@
         }
 
         function checkBattleEnd() {
-            // ... (el resto de checkBattleEnd() es el mismo)
             if (iaCards.every(c => c.hp <= 0)) {
                 battleEnded = true;
                 showBattleMessage("¡FELICIDADES! HAS GANADO 🎄");
@@ -1192,8 +1327,8 @@
 
         function rematch() {
             closeBattleMessage();
-            renderIaCards(); // Vuelve a cargar cartas IA por si eran de torneo
-            renderBattleCards(); // Vuelve a cargar cartas del jugador
+            renderIaCards(); 
+            renderBattleCards(); 
             resetBattle();
         }
 
