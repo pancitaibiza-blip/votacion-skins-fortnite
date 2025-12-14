@@ -436,7 +436,7 @@
         </div>
         <div id="deck" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">🎴 TU MAZO</h2>
-            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / 35</div>
+            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / 36</div>
             <div class="filter-bar">
                 <select id="rarityFilter" onchange="renderDeck()">
                     <option value="all">Todas las rarezas</option>
@@ -570,7 +570,8 @@
             { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: null },
             { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, baseDef: 85, level: 1, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: null },
             { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: null },
-            { id: 37, name: "Muñeca Simpsons", rarity: "legendary", baseAtk: 115, baseDef: 75, level: 1, img: "https://wimg.rule34.xxx/images/1370/e31706328b6ffa7e207dbb2df991f116.gif", shopPrice: 1500 }
+            { id: 37, name: "Muñeca Simpsons", rarity: "legendary", baseAtk: 115, baseDef: 75, level: 1, img: "https://wimg.rule34.xxx/images/1370/e31706328b6ffa7e207dbb2df991f116.gif", shopPrice: 1500 },
+            { id: 38, name: "Princesa Peach", rarity: "legendary", baseAtk: 130, baseDef: 85, level: 1, img: "https://wimg.rule34.xxx/images/4630/43c3385fc160e3d1c5e2927b693cbd62.gif", shopPrice: 2000 }
         ];
         const TOURNAMENTS = [
             { id: 1, name: "Torneo Navideño", cost: 1, trophies: 500, diamonds: 200, cards: [7, 11, 12, 13], description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.", image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", iaDeck: [0,1,2] },
@@ -787,8 +788,8 @@
                     extra = `<div class="text-xs text-red-400 mt-1">Disponible en: <span id="carmelaCountdown">--h --m --s</span></div>`;
                     el.style.opacity = '0.7';
                 }
-                if (card.id === 37) {
-                    extra = `<div class="text-xs text-yellow-300 mt-1 font-bold">¡NUEVA COLABORACIÓN SIMPSONS!</div><div class="text-xs text-white mt-1">Traeremos más chicas de Los Simpsons</div>`;
+                if (card.id === 38) {
+                    extra = `<div class="text-xs text-yellow-300 mt-1 font-bold">¡NUEVA COLABORACIÓN SUPER MARIO BROS!</div><div class="text-xs text-white mt-1">Traeremos más princesas</div>`;
                 }
                 el.innerHTML = `
                     <div class="card-base">
