@@ -879,12 +879,18 @@
             iaDeckIds.forEach((id, i) => {
                 let card = {...ALL_CARDS.find(c => c.id === id)};
                 if (!card) return;
-                card.atk = card.atk * iaLevelMultiplier;
-                card.def = card.def * iaLevelMultiplier;
+                card.atk *= iaLevelMultiplier;
+                card.def *= iaLevelMultiplier;
                 const el = document.createElement('div');
                 el.className = 'ia-card';
-                el.innerHTML = `<img src="${card.img}"><div class="name">${card.name}</div><div class="stats"><span>⚔️ ${card.atk}</span><span>🛡️ ${card.def}</span></div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${card.def}/${card.def}</div>`;
-                el.onclick = () => { if (card.hp > 0) { selectedTargetCard = iaCards[i]; document.querySelectorAll('.ia-card').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); } };
+                el.innerHTML = `<img src="${card.img}"><div class="name">${card.name}</div><div class="stats"><span>⚔️ ${Math.round(card.atk)}</span><span>🛡️ ${Math.round(card.def)}</span></div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${Math.round(card.def)}/${Math.round(card.def)}</div>`;
+                el.onclick = () => {
+                    if (iaCards[i].hp > 0) {
+                        selectedTargetCard = iaCards[i];
+                        document.querySelectorAll('.ia-card').forEach(e => e.classList.remove('selected'));
+                        el.classList.add('selected');
+                    }
+                };
                 container.appendChild(el);
                 iaCards.push({name: card.name, atk: card.atk, def: card.def, hp: card.def, maxHp: card.def, element: el});
             });
@@ -900,7 +906,13 @@
                 const el = document.createElement('div');
                 el.className = 'player-card';
                 el.innerHTML = `<img src="${card.img}"><div class="name">${card.name}</div><div class="stats"><span>⚔️ ${card.atk}</span><span>🛡️ ${card.def}</span></div><div class="upgrade-badge">Nivel ${card.level}</div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${card.def}/${card.def}</div>`;
-                el.onclick = () => { if (card.hp > 0) { selectedPlayerCard = playerCards[i]; document.querySelectorAll('.player-card').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); } };
+                el.onclick = () => {
+                    if (playerCards[i].hp > 0) {
+                        selectedPlayerCard = playerCards[i];
+                        document.querySelectorAll('.player-card').forEach(e => e.classList.remove('selected'));
+                        el.classList.add('selected');
+                    }
+                };
                 container.appendChild(el);
                 playerCards.push({name: card.name, atk: card.atk, def: card.def, hp: card.def, maxHp: card.def, element: el});
             });
@@ -917,13 +929,16 @@
         function updateHpBars() {
             [...iaCards, ...playerCards].forEach(c => {
                 c.element.querySelector('.hp-fill').style.width = `${(c.hp / c.maxHp) * 100}%`;
-                c.element.querySelector('.hp-text').textContent = `HP: ${c.hp}/${c.maxHp}`;
+                c.element.querySelector('.hp-text').textContent = `HP: ${Math.round(c.hp)}/${Math.round(c.maxHp)}`;
             });
         }
 
         function playerAttack() {
-            if (!selectedPlayerCard || !selectedTargetCard) { alert("¡Selecciona tu carta y el objetivo!"); return; }
-            const damage = Math.max(selectedPlayerCard.atk - selectedTargetCard.def, 0);
+            if (!selectedPlayerCard || !selectedTargetCard) {
+                alert("¡Selecciona tu carta y el objetivo enemigo!");
+                return;
+            }
+            const damage = Math.max(selectedPlayerCard.atk - selectedTargetCard.def * 0.3, 0); // Defensa reduce daño
             selectedTargetCard.hp -= damage;
             animateAttack(selectedPlayerCard.element, selectedTargetCard.element);
             updateHpBars();
@@ -937,7 +952,7 @@
             if (aliveIa.length === 0 || alivePlayer.length === 0) return;
             const attacker = aliveIa[Math.floor(Math.random() * aliveIa.length)];
             const target = alivePlayer[Math.floor(Math.random() * alivePlayer.length)];
-            const damage = Math.max(attacker.atk - target.def, 0);
+            const damage = Math.max(attacker.atk - target.def * 0.3, 0);
             target.hp -= damage;
             animateAttack(attacker.element, target.element);
             updateHpBars();
@@ -945,11 +960,19 @@
         }
 
         function playerDefend() {
-            if (!selectedPlayerCard) { alert("¡Selecciona tu carta!"); return; }
+            if (!selectedPlayerCard) {
+                alert("¡Selecciona tu carta para defender!");
+                return;
+            }
             const origDef = selectedPlayerCard.def;
             selectedPlayerCard.def *= 2;
             animateDefend(selectedPlayerCard.element);
-            setTimeout(() => { iaAttack(); selectedPlayerCard.def = origDef; updateHpBars(); checkBattleEnd(); }, 1000);
+            setTimeout(() => {
+                iaAttack();
+                selectedPlayerCard.def = origDef;
+                updateHpBars();
+                checkBattleEnd();
+            }, 1000);
         }
 
         function checkBattleEnd() {
