@@ -7,15 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* [TUS ESTILOS CSS COMPLETOS SE MANTIENEN AQUÍ] */
-        /* Incluyendo la corrección de padding y todos los estilos de cartas/modal */
-        /* ================================================= */
-        /* === BASE DEL JUEGO Y ESTABILIDAD === */
-        /* ================================================= */
         body {
             background: linear-gradient(135deg, #b22222, #228b22, #ffd700, #ffffff);
             background-size: 400% 400%;
-            animation: gradientBG 30s ease infinite;
+            animation: gradientBG 30s ease infinite; /* Aumentado de 20s a 30s para menos CPU */
             color: white;
             min-height: 100vh;
             margin: 0;
@@ -23,35 +18,49 @@
             overflow-x: hidden;
             position: relative;
         }
+        body::before {
+            content: "🎄";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            opacity: 0.7;
+            z-index: 1; /* Ahora sobre la nieve */
+        }
+        body::after {
+            content: "❄️";
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 28px;
+            opacity: 0.6;
+            z-index: 1; /* Sobre la nieve */
+        }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
-        /* CORRECCIÓN: Asegura que el contenido principal no sea tapado por las barras fijas */
-        .container {
-            padding-top: 130px; 
-            padding-bottom: 100px;
+        /* Efecto de nieve cayendo */
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 0; /* Detrás del contenido */
         }
-        
-        /* Barras fijas superiores */
-        #offerBanner {
-            position: fixed;
-            top: 0;
-            z-index: 1000;
+        @keyframes fall {
+            0% {
+                top: -10vh;
+                transform: translateX(0) rotate(0deg);
+            }
+            100% {
+                top: 110vh;
+                transform: translateX(0) rotate(360deg); /* Simplificado para menos complejidad */
+            }
         }
-        #announcementBanner {
-            position: fixed;
-            top: 50px; 
-            z-index: 1000;
-        }
-
-        /* Ocultar elementos que no son la vista activa */
-        #deck, #shop, #tournament, #cupMode, #ranking, #achievements { display: none; }
-        #deck.active, #shop.active, #tournament.active, #cupMode.active, #ranking.active, #achievements.active { display: block; }
-        
-        /* Estilos de Botones Generales */
+        .hidden { display: none !important; }
         .btn {
             background: linear-gradient(to right, #d42020, #ff4545);
             color: white;
@@ -68,14 +77,16 @@
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(255, 200, 200, 0.8);
         }
-        /* Estilos de Cartas */
         .card-container {
             position: relative;
             display: inline-block;
             margin: 4px;
             cursor: pointer;
             transition: transform 0.3s ease;
-            will-change: transform; 
+            will-change: transform; /* Optimización para hovers */
+        }
+        .card-container:hover {
+            transform: translateY(-5px);
         }
         .card-base {
             border-radius: 16px;
@@ -83,6 +94,11 @@
             position: relative;
             width: 160px;
             background: rgba(10, 15, 25, 0.95);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.5s ease;
+        }
+        .card-container:hover .card-base {
+            transform: scale(1.05);
         }
         .card-glow {
             position: absolute;
@@ -96,15 +112,91 @@
             filter: blur(12px);
             transition: opacity 0.3s ease;
         }
+        .card-container:hover .card-glow {
+            opacity: 1;
+        }
         .rarity-common .card-glow { background: #9e9e9e; }
         .rarity-rare .card-glow { background: #4caf50; }
         .rarity-epic .card-glow { background: #9c27b0; }
         .rarity-legendary .card-glow { background: #d4a017; }
         .rarity-ultra .card-glow { background: #00bcd4; }
         .rarity-exotic .card-glow { background: #e91e63; }
-        .rarity-idolos .card-glow { background: linear-gradient(45deg, #ff9800, #ff4081, #ffc107); }
+        .rarity-idolos .card-glow { background: linear-gradient(45deg, #ff9800, #ff4081, #ffc107); opacity: 0.8; filter: blur(15px); animation: glowPulse 2s infinite alternate; /* Aumentado a 2s */
+        }
+        @keyframes glowPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+        .rarity-idolos .card-base { box-shadow: 0 0 20px #ff9800, 0 0 30px #ff4081; }
         .rarity-tournament .card-glow { background: #f44336; }
-        .rarity-paises .card-glow { background: linear-gradient(45deg, #ff0000, #ffffff, #0000ff); }
+        .rarity-paises .card-glow { background: linear-gradient(45deg, #ff0000, #ffffff, #0000ff); opacity: 0.8; filter: blur(15px); animation: glowPulse 2s infinite alternate; /* Aumentado a 2s */
+        }
+        .rarity-paises .card-base { box-shadow: 0 0 20px #ff0000, 0 0 30px #0000ff; }
+        .card-content {
+            padding: 8px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .card-content img {
+            transition: transform 0.5s ease;
+            visibility: visible;
+            opacity: 1;
+        }
+        .card-container:hover .card-content img {
+            transform: scale(1.05);
+        }
+        .upgrade-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(to bottom, #ffd700, #d4af37);
+            color: #333;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .stats-bar {
+            background: rgba(10, 20, 10, 0.9);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 24px 0;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            border: 1px solid rgba(212, 32, 32, 0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .stat { font-weight: bold; font-size: 20px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .trophy { color: #FFD700; }
+        .gem { color: #4FC3F7; }
+        .crown { color: #FFAA00; }
+        #offerBanner {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        #gemsCountdown {
+            display: inline-block;
+            background: rgba(0,0,0,0.8);
+            color: gold;
+            padding: 4px 10px;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+        #deck, #shop, #tournament, #cupMode, #ranking, #achievements { display: none; }
+        #deck.active, #shop.active, #tournament.active, #cupMode.active, #ranking.active, #achievements.active { display: block; }
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -112,8 +204,100 @@
             justify-content: center;
             margin-top: 20px;
         }
-        
-        /* Estilos de Batalla */
+        .filter-bar { text-align: center; margin-bottom: 20px; }
+        .filter-bar select {
+            background: rgba(51,51,51,0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(85,85,85,0.5);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        /* MODAL DE CARTA */
+        #cardModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(5px);
+        }
+        #cardModalContent {
+            background: rgba(20, 20, 40, 0.98);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            border: 4px solid rgba(255,215,0,0.5);
+            box-shadow: 0 0 50px rgba(255,215,0,0.3);
+            perspective: 1000px;
+        }
+        #cardModalImage {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: transform 0.5s ease;
+            transform: rotateY(0deg);
+        }
+        #cardModal:hover #cardModalImage {
+            transform: rotateY(10deg) translateZ(50px);
+        }
+        /* RANKING */
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .ranking-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid gold;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .ranking-info { flex: 1; }
+        .ranking-name { font-weight: bold; font-size: 18px; }
+        .ranking-trophies { color: gold; }
+
+        /* NUEVO DISEÑO DE BATALLA - CORRECCIÓN DE SOLAPAMIENTO */
+        #battle {
+            display: none;
+            padding: 24px;
+            padding-bottom: 150px; /* CORRECCIÓN: Padding inferior para evitar solapamiento con la barra fija */
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        #battle.active {
+            display: block;
+        }
+        .battle-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .battle-ia-cards, .battle-player-cards {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+        /* Estilos base para cartas de batalla */
         .ia-card, .player-card {
             position: relative;
             background: rgba(0, 0, 0, 0.6);
@@ -127,106 +311,143 @@
         }
         .ia-card { border: 3px solid #d42020; }
         .player-card { border: 3px solid #00bcd4; }
+
+        /* MEJORA 1: EFECTO VISUAL DE CARTA SELECCIONADA */
         .ia-card.selected, .player-card.selected {
             border-color: yellow;
             box-shadow: 0 0 30px yellow, 0 -10px 20px rgba(255, 255, 0, 0.5);
             transform: translateY(-10px) scale(1.05);
         }
-        /* ... (tus estilos de animación de batalla y daño flotante se mantienen) ... */
         
-        /* ================================================= */
-        /* === DISEÑO DE VICTORIA (MODAL) === */
-        /* ================================================= */
+        /* MEJORA 1: ANIMACIÓN DE ATAQUE (DESPLAZAMIENTO) */
+        .attacking-player {
+            animation: attackPlayer 0.5s ease-in-out;
+        }
+        .attacking-ia {
+            animation: attackIA 0.5s ease-in-out;
+        }
 
-        #battleMessage {
+        @keyframes attackPlayer {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(0, -50px) scale(1.1); } /* Se acerca al centro */
+            100% { transform: translate(0, 0); }
+        }
+        @keyframes attackIA {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(0, 50px) scale(1.1); } /* Se acerca al centro */
+            100% { transform: translate(0, 0); }
+        }
+        
+        /* MEJORA 2: FEEDBACK DE DAÑO FLOTANTE */
+        .damage-float {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+            text-shadow: 0 0 5px black;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .critical-damage {
+            color: yellow;
+            font-size: 30px;
+            text-shadow: 0 0 10px red;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; top: 50%; }
+            100% { opacity: 0; top: 0%; transform: translate(-50%, -100%); }
+        }
+
+        /* Otras animaciones de batalla */
+        .attacked {
+            animation: shake 0.5s ease-in-out;
+            box-shadow: 0 0 30px red;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+        .defended {
+            animation: glow 1s ease-in-out;
+            box-shadow: 0 0 30px rgba(0, 188, 212, 1);
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(0, 188, 212, 1); }
+            100% { box-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+        }
+        .attack-button {
+            background: linear-gradient(to right, #d42020, #ff4545);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 32, 32, 0.6);
+            margin: 0 12px;
+        }
+        .attack-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(255, 200, 200, 0.9);
+        }
+        .defend-button {
+            background: linear-gradient(to right, #00bcd4, #00e5ff);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 188, 212, 0.6);
+            margin: 0 12px;
+        }
+        .defend-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 255, 255, 0.9);
+        }
+        /* Announcements */
+        #announcementBanner {
+            background: linear-gradient(to right, #ffd700, #ff8c00);
+            color: #333;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
             position: fixed;
-            top: 0;
+            top: 50px; /* Below offerBanner */
             left: 0;
             width: 100%;
-            height: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 5000; 
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
-            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
-
-        #battleMessageContent {
-            background: url('https://i.imgur.com/k9bT67J.png') no-repeat center center; 
-            background-size: cover;
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 90%;
-            width: 450px; 
-            min-height: 450px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            position: relative;
-        }
-        
-        .victory-profile-bar {
-            background: rgba(50, 50, 50, 0.9);
-            border: 4px solid #FFD700; 
-            border-radius: 15px;
-            width: 95%;
-            padding: 10px 20px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 0 15px #FFD700; 
-        }
-
-        .victory-profile-bar img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-right: 15px;
-            border: 2px solid #D4AF37;
-        }
-
-        .victory-trophy-text {
-            text-align: left;
-            flex-grow: 1;
-            font-size: 18px;
-            font-weight: bold;
+        /* Navegación */
+        .nav-btn {
+            background: rgba(100, 100, 100, 0.7);
             color: white;
-            text-shadow: 0 2px 2px rgba(0,0,0,0.5);
-        }
-
-        .victory-trophy-text span {
-            display: block;
-            font-size: 14px;
-            font-weight: normal;
-            color: #FFD700;
-        }
-
-        #messageText {
-            background: linear-gradient(to right, #DAA520, #FFD700, #DAA520);
-            color: #B22222; 
-            padding: 10px 30px;
+            border: 2px solid #555;
+            font-weight: bold;
+            transition: all 0.3s ease;
             border-radius: 12px;
-            border: 3px solid #8B0000;
-            font-size: 30px;
-            font-weight: 900;
-            text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-            margin: 20px 0;
-            animation: pulse 1.5s infinite alternate;
+            padding: 10px 20px;
+            margin: 4px;
         }
-
-        #battleMessage .modal-buttons {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-top: 30px;
-            padding-bottom: 20px;
+        .nav-btn:hover {
+            background: rgba(200, 200, 200, 0.9);
+            color: black;
+            border-color: #fff;
+            transform: scale(1.05);
         }
-        /* [Otros estilos de botones, pulso y confeti se mantienen] */
     </style>
 </head>
 <body>
@@ -235,17 +456,16 @@
         Tu navegador no soporta el elemento de audio.
     </audio>
 
-    <div id="offerBanner" class="w-full bg-red-600 text-white p-2 text-center text-sm font-bold">
+    <div id="offerBanner">
         🎁 ¡OFERTA POR TIEMPO LIMITADO! 💎 ¡1000 GEMAS POR SOLO HOY!
         <span id="gemsCountdown">--h --m --s</span>
     </div>
-    <div id="announcementBanner" class="w-full bg-yellow-400 text-black p-2 text-center text-sm font-bold">
+    <div id="announcementBanner">
         LA PROXIMA ACTUALIZACION SERA EL DIA 15 DE NOVIEMBRE DE 2025 ALAS 11:00 DE LA MAÑANA AGREGAREMOS LOS COFRES.
     </div>
-    
-    <div class="container mx-auto px-4 py-6"> 
+    <div class="container mx-auto px-4 py-6 pt-24">
         <div class="text-center mb-6">
-            <img id="profileAvatar" src="https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e3777664c2ce885.jpg?15738037" alt="Avatar" class="w-20 h-20 rounded-full mx-auto border-4 border-red-500 shadow-lg">
+            <img id="profileAvatar" src="https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037" alt="Avatar" class="w-20 h-20 rounded-full mx-auto border-4 border-red-500 shadow-lg">
             <h2 class="text-2xl font-bold mt-3" id="playerName">Jugador</h2>
         </div>
         <div class="stats-bar">
@@ -254,7 +474,6 @@
             <div class="stat"><i class="fas fa-crown crown"></i> <span id="cups">0</span></div>
         </div>
         <h1 class="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-green-500">🎄 FORTNITE: BATALLA NAVIDEÑA</h1>
-        
         <div id="battle" class="active section-container">
             <div class="battle-header">
                 <h2 class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">⚔️ BATALLA</h2>
@@ -267,7 +486,6 @@
                 <button class="defend-button" onclick="playerDefend()">🛡️ DEFENDER</button>
             </div>
         </div>
-
         <div id="deck" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">🎴 TU MAZO</h2>
             <div class="filter-bar">
@@ -289,7 +507,6 @@
                 <button class="btn bg-purple-700" onclick="saveDeck()">💾 Guardar Mazo</button>
             </div>
         </div>
-
         <div id="shop" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">💎 TIENDA NAVIDEÑA</h2>
             <div id="gemsOffer" class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-2xl text-center mb-8 mx-auto max-w-3xl animate-pulse shadow-xl">
@@ -307,17 +524,14 @@
                 <p class="text-lg text-yellow-200">La tienda se actualiza automáticamente a las 1:00 AM: <span id="shopUpdateCountdown">--h --m --s</span></p>
             </div>
         </div>
-        
         <div id="tournament" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-yellow-400">🏆 TORNEOS DISPONIBLES</h2>
             <div id="tournamentsList" class="flex flex-col gap-8 mx-auto max-w-3xl"></div>
         </div>
-
         <div id="ranking" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6">🏆 RANKING GLOBAL</h2>
             <div id="rankingList" class="max-h-96 overflow-y-auto"></div>
         </div>
-
         <div id="cupMode" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-yellow-500">🏅 CONSEGUIR COPAS</h2>
             <p class="text-center text-lg mb-6">¡Gana batallas fáciles para obtener copas y desbloquear torneos!</p>
@@ -325,33 +539,26 @@
                 <button class="btn bg-yellow-600 text-lg px-8 py-4" onclick="startCupBattle()">Iniciar Batalla por Copas</button>
             </div>
         </div>
-        
         <div id="achievements" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-600">🏅 LOGROS</h2>
             <div id="achievementsList" class="max-h-96 overflow-y-auto"></div>
         </div>
-        
     </div>
-    
-    <div id="battleMessage">
-        <div id="battleMessageContent">
-            <div class="victory-profile-bar">
-                <img id="modalProfileAvatar" src="https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e3777664c2ce885.jpg?15738037" alt="Avatar">
-                <div class="victory-trophy-text">
-                    <span id="modalPlayerName">Jugador</span>
-                    <span id="modalTrophies">0 trofeos</span>
-                </div>
-            </div>
-
-            <h2 id="messageText"></h2>
-            
-            <div class="modal-buttons">
-                <button class="btn bg-green-600" onclick="rematch()">REVANCHA</button>
-                <button class="btn bg-blue-600" onclick="closeBattleMessage()">SALIR</button>
-            </div>
+    <div id="cardModal" onclick="closeCardModal()">
+        <div id="cardModalContent" onclick="event.stopPropagation()">
+            <img id="cardModalImage" src="" alt="Carta" />
+            <h2 id="cardModalName" class="text-3xl font-bold"></h2>
+            <div id="cardModalRarity" class="font-bold text-xl"></div>
+            <div id="cardModalLevel" class="font-bold text-lg mt-2"></div>
+            <div id="cardModalStats" class="text-xl mt-4"></div>
+            <button class="btn bg-gray-700 mt-6" onclick="closeCardModal()">Cerrar</button>
         </div>
     </div>
-    
+    <div id="battleMessage">
+        <h2 id="messageText"></h2>
+        <button class="btn bg-green-600" onclick="rematch()">REVANCHA</button>
+        <button class="btn bg-blue-600" onclick="closeBattleMessage()">SALIR</button>
+    </div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center gap-3 z-10 flex-wrap px-4 py-4 bg-black/50 backdrop-blur-md rounded-t-2xl shadow-lg">
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('battle')">Batalla</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('deck')">Mazo</button>
@@ -361,19 +568,24 @@
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('tournament')">Torneo</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('achievements')">Logros</button>
     </div>
-    
     <script>
-        // =========================================================
-        // === DATOS Y ESTADO DEL JUEGO ===
-        // =========================================================
-        const GEMS_OFFER_END = new Date(new Date().setHours(1, 0, 0, 0) + (new Date().getHours() >= 1 ? 24 * 60 * 60 * 1000 : 0));
-        const SHOP_UPDATE_END = GEMS_OFFER_END;
+        // ✅ CONFIGURACIÓN DE OFERTA
+        function getGemsOfferEndTime() {
+            const now = new Date();
+            const endTime = new Date(now);
+            endTime.setHours(1, 0, 0, 0);
+            if (endTime <= now) endTime.setDate(endTime.getDate() + 1);
+            return endTime;
+        }
+        const GEMS_OFFER_END = getGemsOfferEndTime();
+        const SHOP_UPDATE_END = getGemsOfferEndTime(); // Same as gems for shop update
         const SABRINA_START = new Date('2025-12-14T15:00:00');
-        const CARMELA_AVAILABLE = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 1, 0, 0); 
+        const CARMELA_AVAILABLE = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 1, 0, 0); // 1:00 AM del día siguiente
         const DECK_MAX_SIZE = 3;
         const MAX_LEVEL = 100;
         const UPGRADE_COST_BASE = 50;
-
+        
+        // ✅ CARTAS (Añadida propiedad 'ability')
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null, ability: null },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null, ability: 'escudo_azul' },
@@ -395,16 +607,77 @@
             { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: null, ability: 'golpe_critico' },
             { id: 22, name: "Carmela", rarity: "paises", baseAtk: 100, baseDef: 60, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 500, ability: 'golpe_critico' }
         ];
-
+        // ✅ TORNEOS MÚLTIPLES
         const TOURNAMENTS = [
-            { id: 1, name: "Torneo Navideño", cost: 1, trophies: 500, diamonds: 200, cards: [7, 11, 12, 13], description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.", image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", iaDeck: [0,1,2] },
-            { id: 2, name: "Torneo Principiante", cost: 0, trophies: 100, diamonds: 50, cards: [3, 4], description: "Para nuevos jugadores. Gana cartas raras y épicas.", image: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", iaDeck: [0,2,3] },
-            { id: 3, name: "Torneo Épico", cost: 3, trophies: 300, diamonds: 150, cards: [14, 16, 18], description: "Gana cartas épicas exclusivas.", image: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", iaDeck: [4,14,16] },
-            { id: 4, name: "Torneo Legendario", cost: 5, trophies: 1000, diamonds: 300, cards: [5, 6], description: "Recompensas legendarias y ultra raras.", image: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", iaDeck: [5,6,7] },
-            { id: 5, name: "Torneo Exótico", cost: 7, trophies: 1500, diamonds: 500, cards: [17], description: "Gana cartas exóticas e ídolos.", image: "https://rule34.xxx//samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590", iaDeck: [17,18,19] },
-            { id: 6, name: "Torneo Sabrina", cost: 5, trophies: 800, diamonds: 250, cards: [21], description: "¡Especial! Gana la carta épica Sabrina Carpente La Diva.", image: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", iaDeck: [20,21,0] }
+            // ... (Tus torneos originales) ...
+            {
+                id: 1,
+                name: "Torneo Navideño",
+                cost: 1,
+                trophies: 500,
+                diamonds: 200,
+                cards: [7, 11, 12, 13],
+                description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.",
+                image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062",
+                iaDeck: [0,1,2] // Example IA deck for this tournament
+            },
+            {
+                id: 2,
+                name: "Torneo Principiante",
+                cost: 0,
+                trophies: 100,
+                diamonds: 50,
+                cards: [3, 4],
+                description: "Para nuevos jugadores. Gana cartas raras y épicas.",
+                image: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871",
+                iaDeck: [0,2,3]
+            },
+            {
+                id: 3,
+                name: "Torneo Épico",
+                cost: 3,
+                trophies: 300,
+                diamonds: 150,
+                cards: [14, 16, 18],
+                description: "Gana cartas épicas exclusivas.",
+                image: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020",
+                iaDeck: [4,14,16]
+            },
+            {
+                id: 4,
+                name: "Torneo Legendario",
+                cost: 5,
+                trophies: 1000,
+                diamonds: 300,
+                cards: [5, 6],
+                description: "Recompensas legendarias y ultra raras.",
+                image: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622",
+                iaDeck: [5,6,7]
+            },
+            {
+                id: 5,
+                name: "Torneo Exótico",
+                cost: 7,
+                trophies: 1500,
+                diamonds: 500,
+                cards: [17],
+                description: "Gana cartas exóticas e ídolos.",
+                image: "https://rule34.xxx//samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590",
+                iaDeck: [17,18,19]
+            },
+            {
+                id: 6,
+                name: "Torneo Sabrina",
+                cost: 5,
+                trophies: 800,
+                diamonds: 250,
+                cards: [21],
+                description: "¡Especial! Gana la carta épica Sabrina Carpente La Diva.",
+                image: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg",
+                iaDeck: [20,21,0]
+            }
         ];
-
+        // ✅ LOGROS
         const ACHIEVEMENTS = [
             { id: 1, name: "Primera Victoria", description: "Gana tu primera batalla", icon: "🏆" },
             { id: 2, name: "Coleccionista Principiante", description: "Colecciona 5 cartas", icon: "🃏" },
@@ -412,21 +685,448 @@
             { id: 4, name: "Campeón de Torneo", description: "Gana un torneo", icon: "👑" },
             { id: 5, name: "Maestro de Gemas", description: "Gasta 500 gemas", icon: "💎" }
         ];
-        
         let gameState = {
             playerName: localStorage.getItem('playerName') || 'Jugador',
             trophies: parseInt(localStorage.getItem('trophies') || '0'),
             diamonds: parseInt(localStorage.getItem('diamonds') || '100'),
             cups: parseInt(localStorage.getItem('cups') || '0'),
-            avatar: localStorage.getItem('playerAvatar') || 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e3777664c2ce885.jpg?15738037',
+            avatar: localStorage.getItem('playerAvatar') || 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037',
             ownedCardIds: JSON.parse(localStorage.getItem('ownedCardIds') || '[0,1,2]'),
             cardUpgrades: JSON.parse(localStorage.getItem('cardUpgrades') || '{}'),
             currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]'),
-            completedTournaments: JSON.parse(localStorage.getItem('completedTournaments') || '[]'),
-            achievements: JSON.parse(localStorage.getItem('achievements') || '[]'),
-            spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0')
+            completedTournaments: JSON.parse(localStorage.getItem('completedTournaments') || '[]'), // Para rastrear torneos completados
+            achievements: JSON.parse(localStorage.getItem('achievements') || '[]'), // Logros desbloqueados
+            spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0') // Para rastrear gemas gastadas
         };
-        
+        // Aplicar mejoras
+        function applyCardUpgrades() {
+            ALL_CARDS.forEach(card => {
+                const level = gameState.cardUpgrades[card.id] || 1;
+                card.level = level;
+                card.atk = card.baseAtk + (level - 1) * 10;
+                card.def = card.baseDef + (level - 1) * 8;
+            });
+        }
+        applyCardUpgrades();
+        function updateUI() {
+            document.getElementById('playerName').textContent = gameState.playerName;
+            document.getElementById('profileAvatar').src = gameState.avatar;
+            document.getElementById('trophies').textContent = gameState.trophies;
+            document.getElementById('diamonds').textContent = gameState.diamonds;
+            document.getElementById('cups').textContent = gameState.cups;
+            updateRanking(); // ✅ Actualizar ranking al cambiar algo
+        }
+        // ✅ CONTADOR DE OFERTA Y TORNEO SABRINA
+        function updateCountdowns() {
+            const now = new Date();
+            // Gems offer
+            const gemsDiff = GEMS_OFFER_END - now;
+            if (gemsDiff <= 0) {
+                document.getElementById('offerBanner').style.display = 'none';
+                document.getElementById('gemsOffer').style.display = 'none';
+            } else {
+                const h = Math.floor(gemsDiff / 3600000);
+                const m = Math.floor((gemsDiff % 3600000) / 60000);
+                const s = Math.floor((gemsDiff % 60000) / 1000);
+                const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+                const gemsSpans = document.querySelectorAll('#gemsCountdown, #shopGemsCountdown');
+                gemsSpans.forEach(span => span.textContent = timeStr);
+            }
+            // Shop update countdown
+            const shopDiff = SHOP_UPDATE_END - now;
+            const shopTimeStr = shopDiff <= 0 ? 'Actualizada' : `${Math.floor(shopDiff / 3600000).toString().padStart(2,'0')}h ${Math.floor((shopDiff % 3600000) / 60000).toString().padStart(2,'0')}m ${Math.floor((shopDiff % 60000) / 1000).toString().padStart(2,'0')}s`;
+            const shopUpdateSpan = document.getElementById('shopUpdateCountdown');
+            if (shopUpdateSpan) shopUpdateSpan.textContent = shopTimeStr;
+            // Carmela countdown
+            const carmelaDiff = CARMELA_AVAILABLE - now;
+            if (carmelaDiff <= 0) {
+                if (document.getElementById('shop').classList.contains('active')) {
+                    renderShop();
+                }
+            } else {
+                const h = Math.floor(carmelaDiff / 3600000);
+                const m = Math.floor((carmelaDiff % 3600000) / 60000);
+                const s = Math.floor((carmelaDiff % 60000) / 1000);
+                const timeStr = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+                const carmelaSpans = document.querySelectorAll('#carmelaCountdown');
+                carmelaSpans.forEach(span => span.textContent = timeStr);
+            }
+            // Contador para Torneo Sabrina
+            const sabrinaSpan = document.getElementById('sabrinaCountdown');
+            if (sabrinaSpan) {
+                const sabrinaDiff = SABRINA_START - now;
+                if (sabrinaDiff <= 0) {
+                    const button = sabrinaSpan.parentElement;
+                    button.disabled = false;
+                    button.classList.remove('bg-gray-600');
+                    button.classList.add('bg-gradient-to-r', 'from-red-700', 'to-green-700');
+                    button.innerHTML = '🎁 ENTRAR AL TORNEO';
+                    button.onclick = () => startSpecificTournament(6);
+                } else {
+                    const h = Math.floor(sabrinaDiff / 3600000);
+                    const m = Math.floor((sabrinaDiff % 3600000) / 60000);
+                    const s = Math.floor((sabrinaDiff % 60000) / 1000);
+                    sabrinaSpan.textContent = `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+                }
+            }
+        }
+        setInterval(updateCountdowns, 1000);
+        updateCountdowns();
+        // ✅ COMPRA DE GEMAS
+        function buyGemsPackage() {
+            if (new Date() >= GEMS_OFFER_END) {
+                alert("¡La oferta ha terminado!");
+                return;
+            }
+            if (confirm("¿Comprar 1000 gemas por $4.99?")) {
+                gameState.diamonds += 1000;
+                saveGame();
+                updateUI();
+                alert("¡Compra exitosa! Has recibido 1000 gemas 💎");
+            }
+        }
+        // ✅ SUBIR NIVEL DE CARTA
+        function upgradeCard(cardId) {
+            const card = ALL_CARDS.find(c => c.id === cardId);
+            if (!card) return;
+            const currentLevel = gameState.cardUpgrades[cardId] || 1;
+            if (currentLevel >= MAX_LEVEL) {
+                alert("¡Esta carta ya está al nivel máximo!");
+                return;
+            }
+            const cost = currentLevel * UPGRADE_COST_BASE;
+            if (gameState.diamonds < cost) {
+                alert("¡No tienes suficientes gemas! 💎");
+                return;
+            }
+            if (confirm(`¿Subir ${card.name} al nivel ${currentLevel + 1} por ${cost} gemas?`)) {
+                gameState.diamonds -= cost;
+                gameState.spentDiamonds += cost;
+                gameState.cardUpgrades[cardId] = currentLevel + 1;
+                saveGame();
+                applyCardUpgrades();
+                updateUI();
+                renderDeck();
+                renderShop();
+                renderBattleCards();
+                checkAchievements();
+                alert(`¡${card.name} subida al nivel ${currentLevel + 1}! 🎉`);
+            }
+        }
+        // ✅ AGREGAR/QUITAR DEL MAZO CON LÍMITE
+        function addToDeck(cardId) {
+            if (gameState.currentDeck.includes(cardId)) return;
+            if (gameState.currentDeck.length >= DECK_MAX_SIZE) {
+                alert(`¡El mazo está lleno! Máximo ${DECK_MAX_SIZE} cartas.`);
+                return;
+            }
+            gameState.currentDeck.push(cardId);
+            saveGame();
+            renderDeck();
+        }
+        function removeFromDeck(cardId) {
+            gameState.currentDeck = gameState.currentDeck.filter(id => id !== cardId);
+            saveGame();
+            renderDeck();
+        }
+        function saveDeck() {
+            alert("¡Mazo guardado!");
+            saveGame();
+        }
+        // ✅ MODAL DE CARTA
+        function showCardModal(card) {
+            document.getElementById('cardModalImage').src = card.img;
+            document.getElementById('cardModalName').textContent = card.name;
+            const rarityLabels = {
+                common: "Común", rare: "Rara", epic: "Épica", legendary: "Legendaria",
+                ultra: "Ultra Raro", exotic: "Exótica", idolos: "Ídolos", tournament: "Torneo",
+                paises: "Países"
+            };
+            const rarityText = rarityLabels[card.rarity] || card.rarity;
+            const rarityClass = `rarity-tag-${card.rarity}`;
+            document.getElementById('cardModalRarity').textContent = rarityText;
+            document.getElementById('cardModalRarity').className = `font-bold ${rarityClass}`;
+            document.getElementById('cardModalLevel').textContent = `Nivel: ${card.level}`;
+            document.getElementById('cardModalStats').textContent = `⚔️ ${card.atk} 🛡️ ${card.def}`;
+            document.getElementById('cardModal').style.display = 'flex';
+        }
+        function closeCardModal() {
+            document.getElementById('cardModal').style.display = 'none';
+        }
+        // ✅ RENDER CON FILTRO Y BOTONES DE EDICIÓN
+        function renderDeck() {
+            const container = document.getElementById('deckCards');
+            container.innerHTML = '';
+            const rarityFilter = document.getElementById('rarityFilter').value;
+            let cardsToShow = ALL_CARDS.filter(c => gameState.ownedCardIds.includes(c.id));
+            if (rarityFilter !== 'all') {
+                cardsToShow = cardsToShow.filter(c => c.rarity === rarityFilter);
+            }
+            cardsToShow.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-container ${card.rarity}`;
+                const inDeck = gameState.currentDeck.includes(card.id);
+                const buttonText = inDeck ? 'Quitar del Mazo' : 'Añadir al Mazo';
+                const buttonAction = inDeck ? `removeFromDeck(${card.id})` : `addToDeck(${card.id})`;
+                const buttonDisabled = !inDeck && gameState.currentDeck.length >= DECK_MAX_SIZE ? 'disabled' : '';
+                const upgradeDisabled = card.level >= MAX_LEVEL ? 'disabled' : '';
+                cardEl.innerHTML = `
+                    <div class="card-base">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/555/fff?text=${card.name}'" style="width:100%; height:190px; object-fit:cover; border-radius:8px;">
+                            <div class="font-bold text-sm mt-2 truncate">${card.name}</div>
+                            <div class="text-xs">⚔️ ${card.atk} 🛡️ ${card.def}</div>
+                            <div class="upgrade-badge">Nivel ${card.level}</div>
+                            <button class="btn bg-${inDeck ? 'red' : 'green'}-600 text-sm mt-3" onclick="${buttonAction}" ${buttonDisabled}> ${buttonText}</button>
+                            <button class="btn bg-blue-600 text-sm mt-1" onclick="upgradeCard(${card.id})" ${upgradeDisabled}>Subir Nivel</button>
+                        </div>
+                    </div>
+                `;
+                cardEl.querySelector('.card-base').onclick = (e) => {
+                    if (!e.target.closest('button')) showCardModal(card);
+                };
+                container.appendChild(cardEl);
+            });
+        }
+        // ✅ RENDER DE TIENDA CORREGIDO
+        function renderShop() {
+            const container = document.getElementById('shopCards');
+            container.innerHTML = '';
+            const now = new Date();
+            const buyableCards = ALL_CARDS.filter(c => c.shopPrice !== null && !gameState.ownedCardIds.includes(c.id));
+            buyableCards.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-container rarity-${card.rarity}`;
+                let extraHtml = '';
+                let clickable = true;
+                if (card.id === 22) {
+                    if (now < CARMELA_AVAILABLE) {
+                        extraHtml = `<div class="text-xs text-red-400 mt-1">Disponible en: <span id="carmelaCountdown">--h --m --s</span></div>`;
+                        clickable = false;
+                        cardEl.style.opacity = '0.7';
+                        cardEl.onclick = () => alert('¡Esta carta no está disponible para compra hasta las 1:00 AM!');
+                    } else {
+                        cardEl.onclick = () => buyCard(card.id);
+                    }
+                } else {
+                    cardEl.onclick = () => buyCard(card.id);
+                }
+                cardEl.innerHTML = `
+                    <div class="card-base">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <img src="${card.img}" onerror="this.src='https://via.placeholder.com/150/555/fff?text=${card.name}'" style="width:100%; height:190px; object-fit:cover; border-radius:8px;">
+                            <div class="font-bold text-sm mt-2 truncate">${card.name}</div>
+                            <div class="text-xs">⚔️ ${card.atk} 🛡️ ${card.def}</div>
+                            <div class="upgrade-badge">Nivel ${card.level}</div>
+                            <div class="text-xs text-yellow-400 mt-1">💎 ${card.shopPrice}</div>
+                            ${extraHtml}
+                        </div>
+                    </div>
+                `;
+                if (clickable) {
+                    // Already set onclick
+                }
+                container.appendChild(cardEl);
+            });
+            // Si no hay cartas, mostrar mensaje
+            if (buyableCards.length === 0) {
+                container.innerHTML = '<p class="text-center text-2xl font-bold text-yellow-400 col-span-full">¡Tienda vacía! Has comprado todo 🎉</p>';
+            }
+            updateCountdowns(); // Update countdowns after render
+        }
+        // ✅ FUNCIÓN PARA COMPRAR CARTA
+        function buyCard(cardId) {
+            const card = ALL_CARDS.find(c => c.id === cardId);
+            if (!card) return;
+            if (card.id === 22 && new Date() < CARMELA_AVAILABLE) {
+                alert("¡Esta carta no está disponible para compra hasta las 1:00 AM!");
+                return;
+            }
+            if (gameState.diamonds < card.shopPrice) {
+                alert("¡No tienes suficientes gemas! 💎");
+                return;
+            }
+            if (confirm(`¿Comprar ${card.name} por ${card.shopPrice} gemas? 💎`)) {
+                gameState.diamonds -= card.shopPrice;
+                gameState.spentDiamonds += card.shopPrice;
+                if (!gameState.ownedCardIds.includes(cardId)) {
+                    gameState.ownedCardIds.push(cardId);
+                }
+                // No añadir automáticamente al mazo, dejar que el usuario edite
+                saveGame();
+                updateUI();
+                renderShop(); // Actualiza la tienda
+                renderDeck(); // Actualiza el mazo
+                checkAchievements();
+                alert(`¡${card.name} comprada exitosamente! 🎉 Ve al mazo para añadirla.`);
+            }
+        }
+        function saveGame() {
+            localStorage.setItem('trophies', gameState.trophies);
+            localStorage.setItem('diamonds', gameState.diamonds);
+            localStorage.setItem('cups', gameState.cups);
+            localStorage.setItem('ownedCardIds', JSON.stringify(gameState.ownedCardIds));
+            localStorage.setItem('cardUpgrades', JSON.stringify(gameState.cardUpgrades));
+            localStorage.setItem('currentDeck', JSON.stringify(gameState.currentDeck));
+            localStorage.setItem('completedTournaments', JSON.stringify(gameState.completedTournaments));
+            localStorage.setItem('achievements', JSON.stringify(gameState.achievements));
+            localStorage.setItem('spentDiamonds', gameState.spentDiamonds);
+            // ✅ Guardar en ranking
+            let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const existingIndex = rankings.findIndex(r => r.name === gameState.playerName);
+            const playerData = {
+                name: gameState.playerName,
+                trophies: gameState.trophies,
+                avatar: gameState.avatar
+            };
+            if (existingIndex >= 0) {
+                rankings[existingIndex] = playerData;
+            } else {
+                rankings.push(playerData);
+            }
+            // Ordenar por trofeos
+            rankings.sort((a, b) => b.trophies - a.trophies);
+            rankings = rankings.slice(0, 10); // Top 10
+            localStorage.setItem('rankings', JSON.stringify(rankings));
+        }
+        // ✅ RANKING EN TIEMPO REAL
+        function updateRanking() {
+            const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const container = document.getElementById('rankingList');
+            container.innerHTML = '';
+            rankings.forEach((player, i) => {
+                const item = document.createElement('div');
+                item.className = 'ranking-item';
+                item.innerHTML = `
+                    <div class="ranking-avatar" style="background-image: url('${player.avatar}'); background-size: cover;"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${player.name}</div>
+                        <div class="ranking-trophies">🪙 ${player.trophies} trofeos</div>
+                    </div>
+                    <div class="ranking-pos text-3xl font-bold">${i + 1}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        // ✅ RENDER DE TORNEOS
+        function renderTournaments() {
+            const container = document.getElementById('tournamentsList');
+            container.innerHTML = '';
+            const now = new Date();
+            TOURNAMENTS.forEach(tournament => {
+                if (gameState.completedTournaments.includes(tournament.id)) {
+                    return; // No mostrar si ya completado
+                }
+                let buttonHtml = `<button class="btn bg-gradient-to-r from-red-700 to-green-700 text-lg px-8 py-4" onclick="startSpecificTournament(${tournament.id})">🎁 ENTRAR AL TORNEO</button>`;
+                if (tournament.id === 6) {
+                    const tournamentStart = SABRINA_START;
+                    if (now < tournamentStart) {
+                        buttonHtml = `<button class="btn bg-gray-600 text-lg px-8 py-4" disabled>Disponible en: <span id="sabrinaCountdown">--h --m --s</span></button>`;
+                    }
+                }
+                const tournamentEl = document.createElement('div');
+                tournamentEl.className = 'bg-gradient-to-r from-red-900/80 via-green-800/80 to-yellow-900/80 border-2 border-yellow-500 rounded-2xl p-6 mb-8 animate-pulse shadow-2xl';
+                tournamentEl.innerHTML = `
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <i class="fas fa-star text-yellow-300 text-2xl"></i>
+                        <span class="text-2xl font-bold text-white">${tournament.name}</span>
+                        <i class="fas fa-star text-yellow-300 text-2xl"></i>
+                    </div>
+                    <p class="text-center text-yellow-100 font-semibold text-lg">
+                        ${tournament.description}
+                    </p>
+                    <p class="text-center text-gray-200 mb-6 text-md">
+                        Necesitas <strong>${tournament.cost} copas</strong> para entrar. Recompensas: ${tournament.trophies} trofeos, ${tournament.diamonds} gemas y cartas exclusivas.
+                    </p>
+                    <div class="text-center mb-6">
+                        <img
+                            src="${tournament.image}"
+                            alt="${tournament.name}"
+                            class="inline-block w-32 h-32 rounded-xl border-4 border-yellow-400 shadow-xl mx-auto"
+                        />
+                    </div>
+                    <div class="text-center">
+                        ${buttonHtml}
+                    </div>
+                `;
+                container.appendChild(tournamentEl);
+            });
+            updateCountdowns(); // Actualizar contadores inmediatamente después de renderizar
+        }
+        // ✅ INICIAR TORNEO ESPECÍFICO
+        function startSpecificTournament(tournamentId) {
+            const tournament = TOURNAMENTS.find(t => t.id === tournamentId);
+            if (!tournament) return;
+            if (gameState.cups < tournament.cost) {
+                alert(`¡Necesitas ${tournament.cost} copas para este torneo! 🎄`);
+                return;
+            }
+            gameState.cups -= tournament.cost;
+            saveGame();
+            updateUI();
+            isTournament = true;
+            isCupBattle = false;
+            currentTournamentId = tournamentId;
+            iaDeckIds = tournament.iaDeck || [0,1,2];
+            iaLevelMultiplier = tournament.id; // Increase IA strength based on tournament id
+            
+            renderIaCards();
+            renderBattleCards();
+            resetBattle();
+            showView('battle');
+        }
+
+        // ✅ INICIAR BATALLA POR COPAS
+        function startCupBattle() {
+            // 1. Establecer el estado del modo de batalla
+            isCupBattle = true;
+            isTournament = false;
+            currentTournamentId = null;
+            iaDeckIds = [0,1,2]; // Mazo simple para batallas de copa
+            iaLevelMultiplier = 1; // IA con nivel base
+
+            // 2. Renderizar las cartas con las nuevas configuraciones
+            renderIaCards();
+            renderBattleCards();
+            
+            // 3. Resetear las HP y seleccionar las cartas por defecto
+            resetBattle(); 
+
+            // 4. Mostrar la vista de batalla
+            showView('battle');
+        }
+
+        // ✅ Función de vista con corrección para el botón de navegación
+        function showView(view) {
+            ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking', 'achievements'].forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            document.getElementById(view).classList.add('active');
+            
+            // Quitar clase 'selected' de todos los botones y añadir al actual
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const navButton = document.querySelector(`.nav-btn[onclick*="showView('${view}')"]`);
+            if (navButton) {
+                navButton.classList.add('active');
+            }
+
+            if (view === 'deck') renderDeck();
+            if (view === 'shop') renderShop();
+            if (view === 'ranking') updateRanking();
+            if (view === 'tournament') renderTournaments();
+            if (view === 'battle') {
+                // Si se entra en batalla, re-renderizar para asegurar que las referencias estén frescas
+                renderIaCards();
+                renderBattleCards();
+            }
+            if (view === 'achievements') renderAchievements();
+            updateCountdowns();
+        }
+
+        // Battle logic
         let iaCards = [];
         let playerCards = [];
         let selectedPlayerCard = null;
@@ -436,182 +1136,466 @@
         let currentTournamentId = null;
         let iaDeckIds = [];
         let iaLevelMultiplier = 1;
-        let battleEnded = false;
+        let currentBattleType = null; // To store if it's tournament or cup for rematch
 
-        // =========================================================
-        // === FUNCIONES DE RENDERIZADO BÁSICO (Para asegurar el arranque) ===
-        // =========================================================
-
-        function getCardStats(cardId, isIA = false) { 
+        // Añadimos el ID de la carta a la representación de batalla para poder obtener la habilidad
+        function getCardStats(cardId, isIA = false) {
             const cardData = ALL_CARDS.find(c => c.id === cardId);
             if (!cardData) return null;
-            let atk = cardData.atk || cardData.baseAtk;
-            let def = cardData.def || cardData.baseDef;
+
+            let atk = cardData.atk;
+            let def = cardData.def;
+            let level = cardData.level;
 
             if (isIA) {
-                atk = atk * iaLevelMultiplier;
-                def = def * iaLevelMultiplier;
+                // Para la IA, su ATK y DEF se multiplican por el multiplicador del torneo
+                atk = cardData.baseAtk * iaLevelMultiplier;
+                def = cardData.baseDef * iaLevelMultiplier;
+                level = cardData.level * iaLevelMultiplier; // Nivel visualmente más alto
             }
+
             return {
-                id: cardId, name: cardData.name, atk: atk, def: def, 
-                hp: def, maxHp: def, ability: cardData.ability,
-                level: cardData.level || 1, img: cardData.img
+                id: cardId, // Añadido
+                name: cardData.name,
+                atk: atk,
+                def: def,
+                hp: def,
+                maxHp: def,
+                ability: cardData.ability, // Añadido
+                level: level
             };
         }
         
+        // Función de actualización de barras de HP para reflejar el estado actual
         function updateHpBars() {
-            // Lógica para actualizar las barras HP (omito el cuerpo por espacio, pero debe estar ahí)
+            // Actualizar cartas del jugador
+            playerCards.forEach(card => {
+                const percentage = (card.hp / card.maxHp) * 100;
+                const hpFill = card.element.querySelector('.hp-fill');
+                const hpText = card.element.querySelector('.hp-text');
+                hpFill.style.width = `${Math.max(0, percentage)}%`;
+                hpText.textContent = `HP: ${Math.max(0, Math.floor(card.hp))}/${card.maxHp}`;
+                if (card.hp <= 0) {
+                    card.element.style.opacity = '0.5';
+                    card.element.classList.remove('selected');
+                } else {
+                    card.element.style.opacity = '1';
+                }
+            });
+
+            // Actualizar cartas de la IA
+            iaCards.forEach(card => {
+                const percentage = (card.hp / card.maxHp) * 100;
+                const hpFill = card.element.querySelector('.hp-fill');
+                const hpText = card.element.querySelector('.hp-text');
+                hpFill.style.width = `${Math.max(0, percentage)}%`;
+                hpText.textContent = `HP: ${Math.max(0, Math.floor(card.hp))}/${card.maxHp}`;
+                if (card.hp <= 0) {
+                    card.element.style.opacity = '0.5';
+                    card.element.classList.remove('selected');
+                } else {
+                    card.element.style.opacity = '1';
+                }
+            });
         }
+
 
         function renderIaCards() {
             const container = document.getElementById('battleIaCards');
-            if (!container) return; 
             container.innerHTML = '';
             iaCards = [];
-            iaDeckIds = iaDeckIds.length > 0 ? iaDeckIds : [0, 1, 2]; // Fallback deck
             iaDeckIds.forEach((id, index) => {
                 let card = getCardStats(id, true);
                 if (!card) return;
+
                 const cardEl = document.createElement('div');
                 cardEl.className = 'ia-card';
-                cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><div>${card.name}</div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${card.def}/${card.def}</div>`;
-                cardEl.onclick = () => { selectedTargetCard = iaCards[index]; };
+                cardEl.innerHTML = `
+                    <img src="${ALL_CARDS.find(c => c.id === id).img}" alt="${card.name}">
+                    <div class="name">${card.name}</div>
+                    <div class="stats">
+                        <span>⚔️ ${card.atk}</span>
+                        <span>🛡️ ${card.def}</span>
+                    </div>
+                    <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
+                    <div class="hp-text">HP: ${card.def}/${card.def}</div>
+                `;
+                cardEl.onclick = () => {
+                    if (card.hp <= 0) return;
+                    selectedTargetCard = iaCards[index];
+                    document.querySelectorAll('.ia-card').forEach(e => e.classList.remove('selected'));
+                    cardEl.classList.add('selected');
+                };
                 container.appendChild(cardEl);
                 iaCards.push({...card, element: cardEl});
             });
         }
-        
         function renderBattleCards() {
             const container = document.getElementById('battlePlayerCards');
-            if (!container) return;
             container.innerHTML = '';
             playerCards = [];
-            const deck = gameState.currentDeck.length > 0 ? gameState.currentDeck.slice(0, 3) : [0, 1, 2];
-            deck.forEach((id, index) => {
+            gameState.currentDeck.forEach((id, index) => {
                 const card = getCardStats(id, false);
                 if (!card) return;
+                
                 const cardEl = document.createElement('div');
                 cardEl.className = 'player-card';
-                cardEl.innerHTML = `<img src="${card.img}" alt="${card.name}"><div>${card.name}</div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${card.def}/${card.def}</div>`;
-                cardEl.onclick = () => { selectedPlayerCard = playerCards[index]; };
+                cardEl.innerHTML = `
+                    <img src="${ALL_CARDS.find(c => c.id === id).img}" alt="${card.name}">
+                    <div class="name">${card.name}</div>
+                    <div class="stats">
+                        <span>⚔️ ${card.atk}</span>
+                        <span>🛡️ ${card.def}</span>
+                    </div>
+                    <div class="upgrade-badge">Nivel ${card.level}</div>
+                    <div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div>
+                    <div class="hp-text">HP: ${card.def}/${card.def}</div>
+                `;
+                cardEl.onclick = () => {
+                    if (card.hp <= 0) return; 
+                    selectedPlayerCard = playerCards[index];
+                    document.querySelectorAll('.player-card').forEach(e => e.classList.remove('selected'));
+                    cardEl.classList.add('selected');
+                };
                 container.appendChild(cardEl);
                 playerCards.push({...card, element: cardEl});
             });
-        }
-
-        function resetBattle() {
-            selectedPlayerCard = null;
-            selectedTargetCard = null;
-            updateHpBars();
-        }
-
-        // =========================================================
-        // === OTRAS FUNCIONES (El cuerpo completo debe estar en tu archivo) ===
-        // =========================================================
-        
-        function applyCardUpgrades() { /* ... Tu función applyCardUpgrades ... */ }
-        function saveGame() { /* ... Tu función saveGame ... */ }
-        function updateRanking() { /* ... Tu función updateRanking ... */ }
-        function checkAchievements() { /* ... Tu función checkAchievements ... */ }
-        function unlockAchievement(id) { /* ... Tu función unlockAchievement ... */ }
-        function renderDeck() { /* ... Tu función renderDeck ... */ }
-        function renderShop() { /* ... Tu función renderShop ... */ }
-        function renderTournaments() { /* ... Tu función renderTournaments ... */ }
-        function renderAchievements() { /* ... Tu función renderAchievements ... */ }
-        function buyGemsPackage() { /* ... Tu función buyGemsPackage ... */ }
-        function upgradeCard(id) { /* ... Tu función upgradeCard ... */ }
-        function startSpecificTournament(id) { /* ... Tu startSpecificTournament ... */ showView('battle'); }
-        function playerAttack() { /* ... Tu playerAttack con animaciones ... */ }
-        function iaAttack() { /* ... Tu iaAttack con animaciones ... */ }
-        function playerDefend() { /* ... Tu playerDefend ... */ }
-        function checkBattleEnd() { /* ... Tu checkBattleEnd ... */ }
-        function rematch() { /* ... Tu rematch ... */ }
-        function updateCountdowns() { /* ... Tu lógica de contadores ... */ }
-        setInterval(updateCountdowns, 1000);
-
-        function updateUI() {
-            document.getElementById('playerName').textContent = gameState.playerName;
-            document.getElementById('profileAvatar').src = gameState.avatar;
-            document.getElementById('trophies').textContent = gameState.trophies;
-            document.getElementById('diamonds').textContent = gameState.diamonds;
-            document.getElementById('cups').textContent = gameState.cups;
-            updateRanking(); 
-        }
-
-        function startCupBattle() { 
-            isCupBattle = true;
-            isTournament = false;
-            currentTournamentId = null;
-            iaDeckIds = [0,1,2];
-            iaLevelMultiplier = 1;
-            renderIaCards();
-            renderBattleCards();
-            resetBattle();
-            showView('battle');
-        }
-
-        function showView(view) {
-            ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking', 'achievements'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.remove('active');
-            });
-            const targetEl = document.getElementById(view);
-            if(targetEl) targetEl.classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            const navButton = document.querySelector(`.nav-btn[onclick*="showView('${view}')"]`);
-            if (navButton) navButton.classList.add('active');
-
-            if (view === 'deck') renderDeck();
-            if (view === 'shop') renderShop();
-            if (view === 'ranking') updateRanking();
-            if (view === 'tournament') renderTournaments();
-            if (view === 'battle') {
-                renderIaCards();
-                renderBattleCards();
+            if (playerCards.length === 0) {
+                container.innerHTML = '<p class="text-center text-xl">¡Añade cartas a tu mazo para batallar!</p>';
             }
-            if (view === 'achievements') renderAchievements();
-            updateCountdowns();
+        }
+        
+        function showDamage(element, damage, isCritical = false) {
+            const damageEl = document.createElement('div');
+            damageEl.className = 'damage-float' + (isCritical ? ' critical-damage' : '');
+            damageEl.textContent = `-${Math.floor(damage)}`;
+            
+            // Posicionar el daño sobre el centro de la carta
+            const cardRect = element.getBoundingClientRect();
+            const battleRect = document.getElementById('battle').getBoundingClientRect();
+            
+            damageEl.style.left = `${cardRect.left - battleRect.left + cardRect.width / 2}px`;
+            damageEl.style.top = `${cardRect.top - battleRect.top + cardRect.height / 3}px`;
+
+            document.getElementById('battle').appendChild(damageEl);
+            setTimeout(() => damageEl.remove(), 1000);
         }
 
+        // --- LÓGICA DE BATALLA MODIFICADA CON HABILIDADES ---
+        
+        function calculateDamage(attacker, defender) {
+            let baseDamage = attacker.atk;
+            let finalDefense = defender.def;
+            let isCritical = false;
+
+            // Habilidad 1: Golpe Crítico (Legendaria, Ídolos, Países)
+            if (attacker.ability === 'golpe_critico' && Math.random() < 0.15) { // 15% de probabilidad
+                finalDefense = 0;
+                isCritical = true;
+                console.log(`${attacker.name} usó Golpe Crítico!`);
+            }
+            
+            // Habilidad 2: Escudo Azul (Rara, Tournament)
+            if (defender.ability === 'escudo_azul' && !isCritical) { 
+                finalDefense *= 1.25; // 25% más de defensa
+                console.log(`${defender.name} usó Escudo Azul!`);
+            }
+            
+            let finalDamage = Math.max(baseDamage - finalDefense, 1); // Daño mínimo de 1
+
+            return { damage: finalDamage, isCritical };
+        }
+
+        function playerAttack() {
+            if (!selectedPlayerCard || selectedPlayerCard.hp <= 0) {
+                alert("Selecciona una carta tuya viva!");
+                return;
+            }
+            if (!selectedTargetCard || selectedTargetCard.hp <= 0) {
+                alert("Selecciona una carta enemiga viva para atacar!");
+                return;
+            }
+
+            const { damage, isCritical } = calculateDamage(selectedPlayerCard, selectedTargetCard);
+
+            // 1. Animación de ataque (Desplazamiento)
+            selectedPlayerCard.element.classList.add('attacking-player');
+            
+            setTimeout(() => {
+                // 2. Aplicar Daño
+                selectedTargetCard.hp -= damage;
+                if (selectedTargetCard.hp <= 0) {
+                    selectedTargetCard.hp = 0;
+                }
+                
+                // 3. Feedback de Daño
+                showDamage(selectedTargetCard.element, damage, isCritical);
+
+                // 4. Feedback Visual en el objetivo (Shake)
+                selectedTargetCard.element.classList.add('attacked');
+                setTimeout(() => selectedTargetCard.element.classList.remove('attacked'), 500);
+
+                updateHpBars();
+                selectedPlayerCard.element.classList.remove('attacking-player'); // Reinicia la posición
+
+                checkBattleEnd();
+                if (!battleEnded) {
+                    setTimeout(iaAttack, 1000); // IA ataca después del jugador y la animación
+                }
+            }, 500); // Medio segundo para la animación de desplazamiento
+        }
+
+        function iaAttack() {
+            const attackerIaCard = getRandomAliveIaCard();
+            const targetPlayerCard = getRandomAlivePlayerCard();
+
+            if (!attackerIaCard || !targetPlayerCard) return;
+
+            const { damage, isCritical } = calculateDamage(attackerIaCard, targetPlayerCard);
+            
+            // 1. Animación de ataque (Desplazamiento)
+            attackerIaCard.element.classList.add('attacking-ia');
+
+            setTimeout(() => {
+                // 2. Aplicar Daño
+                targetPlayerCard.hp -= damage;
+                if (targetPlayerCard.hp <= 0) {
+                    targetPlayerCard.hp = 0;
+                }
+                
+                // 3. Feedback de Daño
+                showDamage(targetPlayerCard.element, damage, isCritical);
+
+                // 4. Feedback Visual en el objetivo (Shake)
+                targetPlayerCard.element.classList.add('attacked');
+                setTimeout(() => targetPlayerCard.element.classList.remove('attacked'), 500);
+
+                updateHpBars();
+                attackerIaCard.element.classList.remove('attacking-ia'); // Reinicia la posición
+
+                checkBattleEnd();
+            }, 500);
+        }
+
+        function playerDefend() {
+            if (!selectedPlayerCard || selectedPlayerCard.hp <= 0) {
+                alert("Selecciona una carta tuya viva para defender!");
+                return;
+            }
+            
+            // 1. Animación de Defensa
+            animateDefend(selectedPlayerCard.element);
+            
+            // Aumentar temporalmente la defensa para la IA, luego volver a la normalidad
+            const originalDef = selectedPlayerCard.def;
+            selectedPlayerCard.def *= 2; // Doble de defensa al defender
+            
+            console.log(`${selectedPlayerCard.name} está defendiendo (DEF x2 temporalmente)!`);
+
+            // La IA ataca mientras el jugador está defendiendo
+            setTimeout(() => {
+                iaAttack(); // La IA ataca
+
+                // Después del ataque de la IA, revertir la defensa
+                selectedPlayerCard.def = originalDef;
+                updateHpBars();
+                checkBattleEnd();
+
+            }, 1000);
+        }
+        
+        let battleEnded = false;
+        function checkBattleEnd() {
+            if (iaCards.every(c => c.hp <= 0)) {
+                battleEnded = true;
+                // CAMBIO: Mensaje de victoria
+                showBattleMessage("🎉 VICTORIA 🎉"); 
+                if (isTournament) {
+                    const tournament = TOURNAMENTS.find(t => t.id === currentTournamentId);
+                    tournament.cards.forEach(id => {
+                        if (!gameState.ownedCardIds.includes(id)) {
+                            gameState.ownedCardIds.push(id);
+                            const card = ALL_CARDS.find(c => c.id === id);
+                            showNewCard(card);
+                        }
+                    });
+                    gameState.trophies += tournament.trophies;
+                    gameState.diamonds += tournament.diamonds;
+                    gameState.completedTournaments.push(tournament.id);
+                    unlockAchievement(4); // Campeón de Torneo
+                } else if (isCupBattle) {
+                    gameState.cups += 1;
+                }
+                unlockAchievement(1); // Primera Victoria
+                saveGame();
+                updateUI();
+                renderDeck();
+                renderTournaments();
+            } else if (playerCards.every(c => c.hp <= 0)) {
+                battleEnded = true;
+                showBattleMessage("❌ HAS PERDIDO LA BATALLA ❌");
+            }
+        }
+        function getRandomAliveIaCard() {
+            const alive = iaCards.filter(c => c.hp > 0);
+            if (alive.length === 0) return null;
+            return alive[Math.floor(Math.random() * alive.length)];
+        }
+        function getRandomAlivePlayerCard() {
+            const alive = playerCards.filter(c => c.hp > 0);
+            if (alive.length === 0) return null;
+            return alive[Math.floor(Math.random() * alive.length)];
+        }
         function showBattleMessage(message) {
-            const messageEl = document.getElementById('messageText');
-            const rematchBtn = document.querySelector('#battleMessage .btn.bg-green-600');
+            document.getElementById('messageText').textContent = message;
+            document.getElementById('battleMessage').style.display = 'block';
+        }
+
+        // CAMBIO: Lógica para SALIR (limpia el estado de batalla)
+        function closeBattleMessage() {
+            document.getElementById('battleMessage').style.display = 'none';
+            battleEnded = false;
             
-            document.getElementById('modalProfileAvatar').src = gameState.avatar;
-            document.getElementById('modalPlayerName').textContent = gameState.playerName;
-            document.getElementById('modalTrophies').textContent = `${gameState.trophies} trofeos`;
+            // Limpia el estado de batalla para que la próxima vez sea una batalla nueva
+            isTournament = false;
+            isCupBattle = false;
+            currentTournamentId = null;
+
+            // Vuelve a la vista principal de batalla.
+            showView('battle'); 
+        }
+
+        function rematch() {
+            document.getElementById('battleMessage').style.display = 'none';
+            battleEnded = false;
             
-            if (message.includes("VICTORIA")) {
-                messageEl.style.background = 'linear-gradient(to right, #DAA520, #FFD700, #DAA520)';
-                messageEl.style.color = '#B22222';
-                messageEl.innerHTML = '🎉 ' + "VICTORIA" + ' 🎉';
-                rematchBtn.style.display = 'inline-block';
+            // Volver a iniciar el modo en el que se estaba
+            if (isTournament && currentTournamentId) {
+                startSpecificTournament(currentTournamentId);
+            } else if (isCupBattle) {
+                startCupBattle();
             } else {
-                messageEl.style.background = 'linear-gradient(to right, #555, #888, #555)';
-                messageEl.style.color = '#fff';
-                messageEl.innerHTML = '❌ ' + "DERROTA" + ' ❌';
-                rematchBtn.style.display = 'inline-block';
+                // Si no hay modo activo, simplemente resetea la batalla actual (solo si se está en la vista de batalla)
+                resetBattle();
             }
-            
-            document.getElementById('battleMessage').style.display = 'flex';
         }
         
-        function closeBattleMessage() { /* ... Tu closeBattleMessage ... */ showView('battle'); }
+        // Función de reseteo para asegurar que las referencias se limpien.
+        function resetBattle() {
+            playerCards.forEach(card => {
+                card.hp = card.maxHp;
+                card.element.classList.remove('selected');
+                card.element.style.opacity = '1';
+            });
+            iaCards.forEach(card => {
+                card.hp = card.maxHp;
+                card.element.classList.remove('selected');
+                card.element.style.opacity = '1';
+            });
+            updateHpBars();
+            selectedPlayerCard = null; // Reiniciar la selección del jugador
+            selectedTargetCard = null; // Reiniciar la selección del objetivo
+        }
 
-        function setupMusic() { 
+        // Función para mostrar nueva carta con fuegos artificiales
+        function showNewCard(card) {
+            showCardModal(card);
+            startFireworks();
+        }
+        // Función para iniciar fuegos artificiales
+        function startFireworks() {
+            for (let i = 0; i < 10; i++) { /* Reducido de 20 a 10 */
+                const fw = document.createElement('div');
+                fw.className = 'firework';
+                fw.style.left = `${Math.random() * 100}%`;
+                fw.style.top = `${Math.random() * 100}%`;
+                fw.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(fw);
+                setTimeout(() => fw.remove(), 1000);
+            }
+        }
+        // Función para crear copos de nieve
+        function createSnowflakes() {
+            for (let i = 0; i < 30; i++) { /* Reducido de 100 a 30 para menos lag */
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                snowflake.style.animationDelay = `${Math.random() * 10}s`;
+                snowflake.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                snowflake.style.opacity = Math.random() * 0.5 + 0.5;
+                const size = Math.random() * 5 + 5;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                document.body.appendChild(snowflake);
+            }
+        }
+        // Nuevas funciones para animaciones
+        function animateDefend(targetEl) {
+            targetEl.classList.add('defended');
+            setTimeout(() => targetEl.classList.remove('defended'), 1000);
+        }
+        // ✅ SISTEMA DE LOGROS
+        function unlockAchievement(achievementId) {
+            if (!gameState.achievements.includes(achievementId)) {
+                gameState.achievements.push(achievementId);
+                saveGame();
+                alert(`¡Logro desbloqueado: ${ACHIEVEMENTS.find(a => a.id === achievementId).name}!`);
+            }
+        }
+        function checkAchievements() {
+            // Coleccionista Principiante
+            if (gameState.ownedCardIds.length >= 5) {
+                unlockAchievement(2);
+            }
+            // Mejorador (nivel 5)
+            Object.entries(gameState.cardUpgrades).forEach(([id, level]) => {
+                if (level >= 5) {
+                    unlockAchievement(3);
+                }
+            });
+            // Maestro de Gemas
+            if (gameState.spentDiamonds >= 500) {
+                unlockAchievement(5);
+            }
+        }
+        function renderAchievements() {
+            const container = document.getElementById('achievementsList');
+            container.innerHTML = '';
+            ACHIEVEMENTS.forEach(ach => {
+                const isUnlocked = gameState.achievements.includes(ach.id);
+                const item = document.createElement('div');
+                item.className = `achievement-item ${isUnlocked ? 'achievement-unlocked' : 'achievement-locked'}`;
+                item.innerHTML = `
+                    <div class="achievement-icon">${ach.icon}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${ach.name}</div>
+                        <div class="achievement-description">${ach.description}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // ✅ LÓGICA DE MÚSICA DE FONDO Y REPRODUCCIÓN AUTOMÁTICA
+        function setupMusic() {
             const music = document.getElementById('backgroundMusic');
             if (music) {
+                // Establece el volumen a 30%
                 music.volume = 0.3; 
-                music.play().catch(error => {});
+                
+                // Intenta iniciar la reproducción. Esto puede fallar si el navegador lo bloquea.
+                music.play().catch(error => {
+                    console.log("Autoplay bloqueado. La música se iniciará con la primera interacción del usuario.");
+                });
             }
         }
 
-        // === INICIO DEL JUEGO ===
-        applyCardUpgrades();
+        // Se llama setupMusic al inicio
         updateUI();
         showView('battle');
-        setupMusic(); 
+        createSnowflakes(); // Llama a la función para generar la nieve
+        checkAchievements(); // Verificar logros al cargar
+        setupMusic(); // Inicia la lógica de música
     </script>
 </body>
 </html>
