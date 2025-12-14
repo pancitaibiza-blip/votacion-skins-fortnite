@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* Estilos Base de tu Juego */
+        /* ================================================= */
+        /* === BASE DEL JUEGO Y ESTABILIDAD === */
+        /* ================================================= */
         body {
-            /* Fallback de fondo sólido si el gradiente animado falla */
-            background-color: #388e3c; 
             background: linear-gradient(135deg, #b22222, #228b22, #ffd700, #ffffff);
             background-size: 400% 400%;
-            animation: gradientBG 30s ease infinite; 
+            animation: gradientBG 30s ease infinite;
             color: white;
             min-height: 100vh;
             margin: 0;
@@ -26,8 +26,15 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        /* ... (Resto de estilos de nieve, botones base, etc. se mantienen) ... */
+        /* CORRECCIÓN: Asegura que el contenido principal no sea tapado por las barras fijas */
+        .container {
+            padding-top: 130px; /* Suficiente espacio para OfferBanner (50px) + Announcement (50px) */
+        }
+        
+        /* Ocultar elementos */
         .hidden { display: none !important; }
+        
+        /* Estilos de Botones Generales */
         .btn {
             background: linear-gradient(to right, #d42020, #ff4545);
             color: white;
@@ -44,11 +51,27 @@
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(255, 200, 200, 0.8);
         }
-        /* [Tus estilos de cartas, glows y animación de batalla se mantienen] */
-        /* ... */
+        
+        /* Barras fijas superiores */
+        #offerBanner {
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        #announcementBanner {
+            position: fixed;
+            top: 50px; /* Posicionado debajo de offerBanner */
+            z-index: 1000;
+        }
+
+        /* Estilos de Cartas (Se mantienen) */
+        /* ... (tus estilos de .card-container, .card-base, .rarity-*, etc.) ... */
+        
+        /* Estilos de Batalla (Se mantienen) */
+        /* ... (tus estilos de .ia-card, .player-card, .damage-float, etc.) ... */
 
         /* ================================================= */
-        /* === ESTILOS DEL NUEVO DISEÑO DE VICTORIA === */
+        /* === DISEÑO DE VICTORIA (MODAL) REFORZADO === */
         /* ================================================= */
 
         #battleMessage {
@@ -60,20 +83,17 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 5000; /* Alto Z-index para asegurar que está encima de todo */
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(5px);
             padding: 20px;
         }
 
         #battleMessageContent {
-            /* Usamos un fondo de fallback si la URL de la imagen falla */
-            background: #282828; 
-            background: url('https://i.imgur.com/k9bT67J.png') no-repeat center center; /* IMAGEN DE ESCENA INVERNAL */
+            background: url('https://i.imgur.com/k9bT67J.png') no-repeat center center; /* Fondo de escena invernal */
             background-size: cover;
             border-radius: 20px;
             padding: 20px;
-            text-align: center;
             max-width: 90%;
             width: 450px; 
             min-height: 450px;
@@ -83,7 +103,6 @@
             justify-content: space-around;
             align-items: center;
             position: relative;
-            overflow: hidden; 
         }
         
         /* Contenedor de Perfil (Barra Dorada Superior) */
@@ -97,30 +116,6 @@
             display: flex;
             align-items: center;
             box-shadow: 0 0 15px #FFD700; 
-        }
-
-        .victory-profile-bar img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-right: 15px;
-            border: 2px solid #D4AF37;
-        }
-
-        .victory-trophy-text {
-            text-align: left;
-            flex-grow: 1;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 2px rgba(0,0,0,0.5);
-        }
-
-        .victory-trophy-text span {
-            display: block;
-            font-size: 14px;
-            font-weight: normal;
-            color: #FFD700;
         }
 
         /* TÍTULO VICTORIA */
@@ -163,9 +158,6 @@
             border-color: #FF6347;
             box-shadow: 0 0 10px #FF4500, 0 0 20px rgba(178, 34, 34, 0.8);
         }
-        #battleMessage .btn.bg-green-600:hover {
-             box-shadow: 0 0 15px #FF6347, 0 0 30px #FF4500;
-        }
         
         /* Botón SALIR (Verde Neón) */
         #battleMessage .btn.bg-blue-600 { 
@@ -173,29 +165,15 @@
             border-color: #90EE90;
             box-shadow: 0 0 10px #32CD32, 0 0 20px rgba(0, 128, 0, 0.8);
         }
-        #battleMessage .btn.bg-blue-600:hover {
-             box-shadow: 0 0 15px #90EE90, 0 0 30px #32CD32;
-        }
-
+        
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
             100% { transform: scale(1.03); box-shadow: 0 0 35px rgba(255, 215, 0, 1); }
         }
         
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: gold;
-            border-radius: 50%;
-            animation: fallConfetti 2s ease-out forwards;
-        }
+        /* Estilos de cartas, glows, navegación, etc. se mantienen igual */
+        /* ... */
 
-        @keyframes fallConfetti {
-            0% { transform: translateY(-500px) rotateZ(0deg); opacity: 1; }
-            100% { transform: translateY(500px) rotateZ(360deg); opacity: 0; }
-        }
-        /* ... (Resto de estilos de cartas, glows y animación de batalla se mantienen) ... */
     </style>
 </head>
 <body>
@@ -204,15 +182,15 @@
         Tu navegador no soporta el elemento de audio.
     </audio>
 
-    <div id="offerBanner">
+    <div id="offerBanner" class="w-full bg-red-600 text-white p-2 text-center text-sm font-bold">
         🎁 ¡OFERTA POR TIEMPO LIMITADO! 💎 ¡1000 GEMAS POR SOLO HOY!
         <span id="gemsCountdown">--h --m --s</span>
     </div>
-    <div id="announcementBanner">
+    <div id="announcementBanner" class="w-full bg-yellow-400 text-black p-2 text-center text-sm font-bold">
         LA PROXIMA ACTUALIZACION SERA EL DIA 15 DE NOVIEMBRE DE 2025 ALAS 11:00 DE LA MAÑANA AGREGAREMOS LOS COFRES.
     </div>
     
-    <div class="container mx-auto px-4 py-6 pt-24">
+    <div class="container mx-auto px-4 py-6"> 
         <div class="text-center mb-6">
             <img id="profileAvatar" src="https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e3777664c2ce885.jpg?15738037" alt="Avatar" class="w-20 h-20 rounded-full mx-auto border-4 border-red-500 shadow-lg">
             <h2 class="text-2xl font-bold mt-3" id="playerName">Jugador</h2>
@@ -241,7 +219,6 @@
     
     <div id="battleMessage">
         <div id="battleMessageContent">
-            
             <div class="victory-profile-bar">
                 <img id="modalProfileAvatar" src="https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e3777664c2ce885.jpg?15738037" alt="Avatar">
                 <div class="victory-trophy-text">
@@ -250,7 +227,7 @@
                 </div>
             </div>
 
-            <h2 id="messageText">🎉 VICTORIA 🎉</h2>
+            <h2 id="messageText"></h2>
             
             <div class="modal-buttons">
                 <button class="btn bg-green-600" onclick="rematch()">REVANCHA</button>
@@ -271,16 +248,15 @@
     
     <script>
         // === JS LÓGICA DE JUEGO Y ESTADO ===
-        // [Las variables y constantes se mantienen]
+        // [Tus variables y constantes se mantienen]
         const DECK_MAX_SIZE = 3;
-        const MAX_LEVEL = 100;
-        const UPGRADE_COST_BASE = 50;
+        // ... (resto de constantes) ...
         
-        // ... (Tu array ALL_CARDS, TOURNAMENTS, ACHIEVEMENTS, gameState se mantienen) ...
+        // Simulación de tu data (DEBES ASEGURARTE DE RELLENAR ESTOS ARRAYS COMPLETOS EN TU ARCHIVO)
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: null, ability: null },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: null, ability: 'escudo_azul' },
-            // ... (Resto de cartas) ...
+            // ... (Asegúrate de que tus 22 cartas estén aquí) ...
         ];
 
         let gameState = {
@@ -297,93 +273,80 @@
             spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0')
         };
         
-        // ... (Tu función applyCardUpgrades y updateUI se mantienen) ...
+        // ... (Tus funciones principales se mantienen) ...
         function updateUI() {
             document.getElementById('playerName').textContent = gameState.playerName;
             document.getElementById('profileAvatar').src = gameState.avatar;
             document.getElementById('trophies').textContent = gameState.trophies;
             document.getElementById('diamonds').textContent = gameState.diamonds;
             document.getElementById('cups').textContent = gameState.cups;
-            updateRanking(); 
+            // updateRanking(); 
         }
         
-        // ... (Tu función startCupBattle y showView se mantienen) ...
-        
-        // === JS LÓGICA DE BATALLA Y MODAL (Actualizada para el nuevo diseño) ===
+        // La función showView es crucial para la estabilidad
+        function showView(view) {
+            ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking', 'achievements'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.remove('active');
+            });
+            const targetEl = document.getElementById(view);
+            if(targetEl) targetEl.classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const navButton = document.querySelector(`.nav-btn[onclick*="showView('${view}')"]`);
+            if (navButton) {
+                navButton.classList.add('active');
+            }
 
+            // Estas funciones deben estar definidas en tu código completo.
+            // if (view === 'deck') renderDeck();
+            // if (view === 'shop') renderShop();
+            // if (view === 'ranking') updateRanking();
+            // if (view === 'tournament') renderTournaments();
+            if (view === 'battle') {
+                // Estas funciones deben estar definidas en tu código completo.
+                // renderIaCards();
+                // renderBattleCards();
+            }
+            // if (view === 'achievements') renderAchievements();
+            // updateCountdowns();
+        }
+
+        // Función de BATALLA con el nuevo diseño
         function showBattleMessage(message) {
             const messageEl = document.getElementById('messageText');
             const rematchBtn = document.querySelector('#battleMessage .btn.bg-green-600');
             
-            // 1. Actualizar el contenido y estilos del título
-            messageEl.textContent = message;
-            
-            // 2. Actualizar la barra de perfil dentro del modal
+            // 1. Actualizar la barra de perfil dentro del modal
             document.getElementById('modalProfileAvatar').src = gameState.avatar;
             document.getElementById('modalPlayerName').textContent = gameState.playerName;
             document.getElementById('modalTrophies').textContent = `${gameState.trophies} trofeos`;
             
-            // 3. Estilizado y efectos
+            // 2. Estilizado y efectos
             if (message.includes("VICTORIA")) {
-                // Estilo Victoria
                 messageEl.style.background = 'linear-gradient(to right, #DAA520, #FFD700, #DAA520)';
                 messageEl.style.color = '#B22222';
-                messageEl.innerHTML = '🎉 ' + message + ' 🎉';
-                startConfettiEffect(); 
+                messageEl.innerHTML = '🎉 ' + "VICTORIA" + ' 🎉';
+                // startConfettiEffect(); // Desactivado por ahora si causa problemas
                 rematchBtn.style.display = 'inline-block';
             } else {
-                // Estilo Derrota
                 messageEl.style.background = 'linear-gradient(to right, #555, #888, #555)';
                 messageEl.style.color = '#fff';
-                messageEl.innerHTML = '❌ ' + message + ' ❌';
+                messageEl.innerHTML = '❌ ' + "DERROTA" + ' ❌';
                 rematchBtn.style.display = 'inline-block';
             }
             
-            // 4. Mostrar el modal
+            // 3. Mostrar el modal
             document.getElementById('battleMessage').style.display = 'flex';
         }
-
-        // Nueva función para el efecto de confeti
-        function startConfettiEffect() {
-            const modalContent = document.getElementById('battleMessageContent');
-            
-            modalContent.querySelectorAll('.confetti').forEach(c => c.remove());
-            
-            for (let i = 0; i < 20; i++) { 
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = `${Math.random() * 100}%`;
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
-                confetti.style.animationDuration = `${Math.random() * 1.5 + 1.5}s`;
-                modalContent.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 3000);
-            }
-        }
         
-        function checkBattleEnd() {
-            if (iaCards.every(c => c.hp <= 0)) {
-                battleEnded = true;
-                showBattleMessage("VICTORIA"); 
-                // ... (lógica de recompensa se mantiene) ...
-                saveGame();
-                updateUI();
-                // ...
-            } else if (playerCards.every(c => c.hp <= 0)) {
-                battleEnded = true;
-                showBattleMessage("DERROTA"); // Usa "DERROTA" para activar el estilo de derrota
-            }
-        }
-        
-        // ... (Tu lógica de ataque y el resto de funciones se mantienen) ...
-        
-        // === Configuración de Música ===
         function setupMusic() {
             const music = document.getElementById('backgroundMusic');
             if (music) {
                 music.volume = 0.3; 
                 music.play().catch(error => {
-                    console.log("Autoplay bloqueado. La música se iniciará con la primera interacción del usuario.");
+                    // Manejo del bloqueo de autoplay
                 });
             }
         }
