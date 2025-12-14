@@ -550,6 +550,21 @@
       color: gray;
       opacity: 0.7;
     }
+    /* Announcement Banner */
+    #announcementBanner {
+      background: linear-gradient(to right, #ffd700, #ff8c00);
+      color: #333;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      position: fixed;
+      top: 50px; /* Below offerBanner */
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
   </style>
 </head>
 <body>
@@ -557,6 +572,10 @@
   <div id="offerBanner">
     🎁 ¡OFERTA POR TIEMPO LIMITADO! 💎 ¡1000 GEMAS POR SOLO HOY!
     <span id="gemsCountdown">--h --m --s</span>
+  </div>
+  <!-- Announcement Banner -->
+  <div id="announcementBanner">
+    LA PROXIMA ACTUALIZACION SERA EL DIA 15 DE NOVIEMBRE DE 2025 ALAS 11:00 DE LA MAÑANA AGREGAREMOS LOS COFRES.
   </div>
   <div class="container mx-auto px-4 py-6 pt-24">
     <!-- Perfil y estadísticas -->
