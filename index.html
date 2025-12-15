@@ -677,7 +677,34 @@
             { id: 2, name: "Coleccionista Principiante", description: "Colecciona 5 cartas", icon: "🃏" },
             { id: 3, name: "Mejorador", description: "Sube una carta al nivel 5", icon: "⬆️" },
             { id: 4, name: "Campeón de Torneo", description: "Gana un torneo", icon: "👑" },
-            { id: 5, name: "Maestro de Gemas", description: "Gasta 500 gemas", icon: "💎" }
+            { id: 5, name: "Maestro de Gemas", description: "Gasta 500 gemas", icon: "💎" },
+            { id: 6, name: "Dominador Navideño", description: "Gana 10 batallas seguidas sin perder", icon: "🔥" },
+            { id: 7, name: "Thicc Collector", description: "Colecciona todas las cartas Épicas y Legendarias", icon: "🍑" },
+            { id: 8, name: "Adicto a las Gemas", description: "Gasta 5000 gemas en total", icon: "💎" },
+            { id: 9, name: "Maestro Upgrader", description: "Sube una carta al nivel 20", icon: "⬆️" },
+            { id: 10, name: "Rey de los Ídolos", description: "Gana todos los torneos de Ídolos", icon: "👑" },
+            { id: 11, name: "Animado Cachondo", description: "Compra el Pack GIFS ANIMADOS y gana una batalla con una carta animada", icon: "🍆" },
+            { id: 12, name: "Cofre Maníaco", description: "Abre 20 cofres en total", icon: "📦" },
+            { id: 13, name: "Nivel Dios", description: "Llega al nivel 50 con cualquier carta", icon: "⭐" },
+            { id: 14, name: "Exclusivo Cazador", description: "Compra la carta exclusiva 'Busting The Fuck Out'", icon: "⏰" },
+            { id: 15, name: "Mazo Thicc Máximo", description: "Llena tu mazo solo con cartas Animadas o Ídolos", icon: "🎴" },
+            { id: 16, name: "Spendthrift Caliente", description: "Gasta 10,000 gemas en packs especiales", icon: "🛒" },
+            { id: 17, name: "Coleccionista Supremo", description: "Colecciona TODAS las 51 cartas", icon: "🎉" },
+            { id: 18, name: "Bouncy Bouncy Thicc", description: "Gana 5 batallas seguidas solo con cartas 'thicc' (Épicas+)", icon: "🍑" },
+            { id: 19, name: "Creampie Collector", description: "Sube 3 cartas Animadas al nivel 10 (llénalas de upgrades 💦)", icon: "🍆💦" },
+            { id: 20, name: "Tentacle Tease", description: "Abre 10 cofres Legendarios", icon: "🐙" },
+            { id: 21, name: "Femboy Surprise", description: "Gana un torneo con mazo full de cartas 'idolos'", icon: "👙" },
+            { id: 22, name: "Womb Breaker", description: "Mata 50 cartas enemigas con daño overkill", icon: "🔨" },
+            { id: 23, name: "Hentai Hoarder", description: "Colecciona todas las cartas Rule34/Animated", icon: "📱🔞" },
+            { id: 24, name: "POV Pervert", description: "Gana 20 batallas en modo Copa sin perder HP", icon: "👁️" },
+            { id: 25, name: "Jiggle Master", description: "Compra todos los packs especiales", icon: "🫨" },
+            { id: 26, name: "Cum Flood", description: "Gasta 20,000 gemas en upgrades", icon: "🌊" },
+            { id: 27, name: "NTR Nightmare", description: "Roba 3 cartas de torneo a la IA", icon: "😈" },
+            { id: 28, name: "Omni-Hole Onahole", description: "Usa TODAS tus cartas en batallas al menos una vez", icon: "🕳️" },
+            { id: 29, name: "Glazed Goddess", description: "Gana contra IA con multiplier x10+", icon: "🍩" },
+            { id: 30, name: "Breeding Season", description: "Maxea nivel 50 en una carta Legendaria/Ídolos", icon: "🤰" },
+            { id: 31, name: "Lewd Live2D Legend", description: "Desbloquea todas las animadas y gana racha x10 con ellas", icon: "🎭💦" },
+            { id: 32, name: "Ultimate Waifu Dominator", description: "Colecciona TODO + gana todos los torneos (¡Harema Suprema!)", icon: "👑🍑" }
         ];
         let gameState = {
             playerName: localStorage.getItem('playerName') || 'Jugador',
@@ -690,7 +717,14 @@
             currentDeck: JSON.parse(localStorage.getItem('currentDeck') || '[0,1,2]'),
             completedTournaments: JSON.parse(localStorage.getItem('completedTournaments') || '[]'),
             achievements: JSON.parse(localStorage.getItem('achievements') || '[]'),
-            spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0')
+            spentDiamonds: parseInt(localStorage.getItem('spentDiamonds') || '0'),
+            winStreak: parseInt(localStorage.getItem('winStreak') || '0'),
+            totalChestsOpened: parseInt(localStorage.getItem('totalChestsOpened') || '0'),
+            totalEnemyKills: parseInt(localStorage.getItem('totalEnemyKills') || '0'),
+            packsBoughtCount: parseInt(localStorage.getItem('packsBoughtCount') || '0'),
+            allCardsUsed: new Set(JSON.parse(localStorage.getItem('allCardsUsed') || '[]')),
+            specialSpend: parseInt(localStorage.getItem('specialSpend') || '0'),
+            winStreakThicc: parseInt(localStorage.getItem('winStreakThicc') || '0')
         };
         function applyCardUpgrades() {
             ALL_CARDS.forEach(card => {
@@ -777,6 +811,7 @@
             }
             if (!confirm(`¿Abrir Cofre ${type.charAt(0).toUpperCase() + type.slice(1)} por ${price} gemas?`)) return;
             gameState.diamonds -= price;
+            gameState.totalChestsOpened++;
             const numCards = Math.floor(Math.random() * (maxCards - minCards + 1)) + minCards;
             const wonCards = [];
             for (let i = 0; i < numCards; i++) {
@@ -794,6 +829,7 @@
             wonCards.forEach(c => message += `- ${c.name} (${c.rarity})\n`);
             alert(message);
             wonCards.forEach(card => showNewCard(card));
+            checkAchievements();
         }
         function buyAnimatedPack() {
             if (gameState.diamonds < 3000) {
@@ -803,6 +839,8 @@
             if (confirm("¿Comprar Pack GIFS ANIMADOS por 3000 gemas? Obtendrás 3 cartas Pokémon folladas animadas exclusivas 🔥🍆")) {
                 gameState.diamonds -= 3000;
                 gameState.spentDiamonds += 3000;
+                gameState.packsBoughtCount++;
+                gameState.specialSpend += 3000;
                 [39,40,41].forEach(id => {
                     if (!gameState.ownedCardIds.includes(id)) gameState.ownedCardIds.push(id);
                 });
@@ -812,6 +850,7 @@
                 renderDeck();
                 alert("¡Pack comprado! 3 Pokémon animados follados en tu colección 🍆💦");
                 [39,40,41].forEach(id => showNewCard(ALL_CARDS.find(c => c.id === id)));
+                checkAchievements();
             }
         }
         function buyClassicPack() {
@@ -822,6 +861,8 @@
             if (confirm("¿Comprar Classic Thicc Pack por 3500 gemas? Obtendrás 3 chicas clásicas thicc animadas 🔥🍑")) {
                 gameState.diamonds -= 3500;
                 gameState.spentDiamonds += 3500;
+                gameState.packsBoughtCount++;
+                gameState.specialSpend += 3500;
                 [43,44,45].forEach(id => {
                     if (!gameState.ownedCardIds.includes(id)) gameState.ownedCardIds.push(id);
                 });
@@ -831,6 +872,7 @@
                 renderDeck();
                 alert("¡Classic Thicc Pack comprado! 3 chicas clásicas thicc en tu colección 💦");
                 [43,44,45].forEach(id => showNewCard(ALL_CARDS.find(c => c.id === id)));
+                checkAchievements();
             }
         }
         function upgradeCard(cardId) {
@@ -977,6 +1019,13 @@
             localStorage.setItem('completedTournaments', JSON.stringify(gameState.completedTournaments));
             localStorage.setItem('achievements', JSON.stringify(gameState.achievements));
             localStorage.setItem('spentDiamonds', gameState.spentDiamonds);
+            localStorage.setItem('winStreak', gameState.winStreak);
+            localStorage.setItem('totalChestsOpened', gameState.totalChestsOpened);
+            localStorage.setItem('totalEnemyKills', gameState.totalEnemyKills);
+            localStorage.setItem('packsBoughtCount', gameState.packsBoughtCount);
+            localStorage.setItem('allCardsUsed', JSON.stringify([...gameState.allCardsUsed]));
+            localStorage.setItem('specialSpend', gameState.specialSpend);
+            localStorage.setItem('winStreakThicc', gameState.winStreakThicc);
             let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
             const index = rankings.findIndex(r => r.name === gameState.playerName);
             const data = { name: gameState.playerName, trophies: gameState.trophies, avatar: gameState.avatar };
@@ -1096,6 +1145,7 @@
             gameState.currentDeck.forEach((id, i) => {
                 const card = ALL_CARDS.find(c => c.id === id);
                 if (!card) return;
+                gameState.allCardsUsed.add(id);
                 const el = document.createElement('div');
                 el.className = 'player-card';
                 el.innerHTML = `<img src="${card.img}"><div class="name">${card.name}</div><div class="stats"><span>⚔️ ${card.atk}</span><span>🛡️ ${card.def}</span></div><div class="upgrade-badge">Nivel ${card.level}</div><div class="hp-bar"><div class="hp-fill" style="width:100%"></div></div><div class="hp-text">HP: ${card.def}/${card.def}</div>`;
@@ -1142,15 +1192,12 @@
         }
         function iaAttack() {
             if (battleEnded) return;
-
             const aliveIa = iaCards.filter(c => c.hp > 0);
             const alivePlayer = playerCards.filter(c => c.hp > 0);
-            
             if (aliveIa.length === 0 || alivePlayer.length === 0) {
                 checkBattleEnd();
                 return;
             }
-            
             const attacker = aliveIa[Math.floor(Math.random() * aliveIa.length)];
             const target = alivePlayer[Math.floor(Math.random() * alivePlayer.length)];
             const effectiveDamage = Math.max(0, attacker.atk - Math.round(target.def * 0.3));
@@ -1179,9 +1226,15 @@
         }
         function checkBattleEnd() {
             if (battleEnded) return;
-
             if (iaCards.every(c => c.hp <= 0)) {
                 battleEnded = true;
+                gameState.totalEnemyKills += iaCards.length;
+                gameState.winStreak++;
+                const isThiccDeck = gameState.currentDeck.every(id => {
+                    const r = ALL_CARDS.find(c => c.id === id)?.rarity;
+                    return ['epic','legendary','animated','idolos'].includes(r);
+                });
+                if (isThiccDeck) gameState.winStreakThicc++;
                 showBattleMessage("¡FELICIDADES! HAS GANADO 🎄");
                 if (isTournament) {
                     const t = TOURNAMENTS.find(x => x.id === currentTournamentId);
@@ -1204,9 +1257,14 @@
                 saveGame();
                 renderDeck();
                 renderTournaments();
+                checkAchievements();
             } else if (playerCards.every(c => c.hp <= 0)) {
                 battleEnded = true;
+                gameState.winStreak = 0;
+                gameState.winStreakThicc = 0;
                 showBattleMessage("HAS PERDIDO...");
+                saveGame();
+                checkAchievements();
             }
         }
         function showBattleMessage(msg) {
@@ -1269,6 +1327,20 @@
             if (gameState.ownedCardIds.length >= 5) unlockAchievement(2);
             if (Object.values(gameState.cardUpgrades).some(l => l >= 5)) unlockAchievement(3);
             if (gameState.spentDiamonds >= 500) unlockAchievement(5);
+            if (gameState.winStreak >= 10) unlockAchievement(6);
+            if (gameState.spentDiamonds >= 5000) unlockAchievement(8);
+            if (Math.max(...Object.values(gameState.cardUpgrades), 0) >= 20) unlockAchievement(9);
+            if (gameState.totalChestsOpened >= 20) unlockAchievement(12);
+            if (Math.max(...Object.values(gameState.cardUpgrades), 0) >= 50) unlockAchievement(13);
+            if (gameState.ownedCardIds.includes(50)) unlockAchievement(14);
+            if (gameState.specialSpend >= 10000) unlockAchievement(16);
+            if (gameState.ownedCardIds.length === ALL_CARDS.length) unlockAchievement(17);
+            if (gameState.winStreakThicc >= 5) unlockAchievement(18);
+            if (gameState.totalEnemyKills >= 50) unlockAchievement(22);
+            if (gameState.packsBoughtCount >= 2) unlockAchievement(25);
+            if (gameState.spentDiamonds >= 20000) unlockAchievement(26);
+            if (gameState.allCardsUsed.size >= ALL_CARDS.length) unlockAchievement(28);
+            if (gameState.ownedCardIds.length === ALL_CARDS.length && gameState.completedTournaments.length === TOURNAMENTS.length) unlockAchievement(32);
         }
         function renderAchievements() {
             const container = document.getElementById('achievementsList');
@@ -1276,8 +1348,21 @@
             ACHIEVEMENTS.forEach(a => {
                 const unlocked = gameState.achievements.includes(a.id);
                 const item = document.createElement('div');
-                item.className = `achievement-item ${unlocked ? 'achievement-unlocked' : 'achievement-locked'}`;
-                item.innerHTML = `<div class="achievement-icon">${a.icon}</div><div class="achievement-info"><div class="achievement-name">${a.name}</div><div class="achievement-description">${a.description}</div></div>`;
+                item.className = `ranking-item p-4 rounded-xl ${unlocked ? 'bg-gradient-to-r from-pink-600 to-purple-700 animate-pulse shadow-2xl' : 'bg-gray-800 opacity-70'}`;
+                let progress = '';
+                if (a.id === 6) progress = `Racha: ${gameState.winStreak}/10 🔥`;
+                if (a.id === 12) progress = `Cofres: ${gameState.totalChestsOpened}/20 📦`;
+                if (a.id === 18) progress = `Racha Thicc: ${gameState.winStreakThicc}/5 🍑`;
+                if (a.id === 22) progress = `Muertes: ${gameState.totalEnemyKills}/50 🔨`;
+                item.innerHTML = `
+                    <div class="text-4xl">${a.icon}</div>
+                    <div class="flex-1">
+                        <div class="text-xl font-bold">${a.name}</div>
+                        <div class="text-sm opacity-90">${a.description}</div>
+                        ${progress ? `<div class="text-xs text-pink-300 mt-1">${progress}</div>` : ''}
+                        ${unlocked ? '<div class="text-sm text-yellow-300 mt-1">¡DESBLOQUEADO! 🎉💦</div>' : ''}
+                    </div>
+                `;
                 container.appendChild(item);
             });
         }
@@ -1285,6 +1370,7 @@
         showView('battle');
         createSnowflakes();
         checkAchievements();
+        renderAchievements();
     </script>
 </body>
 </html>
