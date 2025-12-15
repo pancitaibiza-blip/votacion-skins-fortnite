@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -445,7 +445,7 @@
         </div>
         <div id="deck" class="section-container">
             <h2 class="text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">🎴 TU MAZO</h2>
-            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / 45</div>
+            <div id="collectionCounter">Cartas coleccionadas: <span id="collectedCount">0</span> / 50</div>
             <div class="filter-bar">
                 <select id="rarityFilter" onchange="renderDeck()">
                     <option value="all">Todas las rarezas</option>
@@ -599,7 +599,12 @@
             { id: 42, name: "Otaku Girl", rarity: "animated", baseAtk: 500, baseDef: 120, level: 1, img: "https://wimg.rule34.xxx/images/3636/2238fbcefc001a701fe5e1f8c5236fe5.gif", shopPrice: 1800 },
             { id: 43, name: "Belle Beast Ride", rarity: "animated", baseAtk: 150, baseDef: 90, level: 1, img: "https://cdn2.hentaigifz.com/116588/belle-from-beauty-and-the-beast-scaled.webp", shopPrice: null },
             { id: 44, name: "Emo Bad Belle", rarity: "animated", baseAtk: 140, baseDef: 95, level: 1, img: "https://cdn2.hentaigifz.com/116536/emo-scaled.webp", shopPrice: null },
-            { id: 45, name: "Betty Boop Tease", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://cdn2.hentaigifz.com/116498/betty-boop-scaled.webp", shopPrice: null }
+            { id: 45, name: "Betty Boop Tease", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://cdn2.hentaigifz.com/116498/betty-boop-scaled.webp", shopPrice: null },
+            // NUEVAS CARTAS SUPER PODEROSAS
+            { id: 46, name: "Dexter's Mom Beach", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500 },
+            { id: 47, name: "Keqing Thicc Ride", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116288/hentai-scaled.webp", shopPrice: 2500 },
+            { id: 48, name: "Leona Gym Thrust", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116388/tmr-scaled.webp", shopPrice: 2500 },
+            { id: 49, name: "Strange Hero Facesit", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116364/strangeh-scaled.webp", shopPrice: 2500 }
         ];
         const TOURNAMENTS = [
             { id: 1, name: "Torneo Navideño", cost: 1, trophies: 500, diamonds: 200, cards: [7, 11, 12, 13], description: "¡Regalo navideño! Gana Francine Smith y cartas de torneo.", image: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", iaDeck: [0,1,2] },
@@ -1200,4 +1205,4 @@
         checkAchievements();
     </script>
 </body>
-</html>
+</html>      
