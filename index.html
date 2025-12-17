@@ -1992,17 +1992,40 @@
             if (view === 'shop') renderShop();
             if (view === 'tournament') renderTournaments();
             if (view === 'ranking') updateRanking();
-            if (view === 'battle') { renderIaCards(); renderBattleCards(); }
+            if (view === 'battle') { 
+                // Inicializar las cartas de la IA si no hay un torneo o batalla de copas activo
+                if (!isTournament && !isCupBattle) {
+                    initDefaultIaCards();
+                }
+                renderIaCards(); 
+                renderBattleCards(); 
+            }
             if (view === 'achievements') renderAchievements();
             if (view === 'skinsDuel') initSkinsDuel();
         }
         let iaCards = [], playerCards = [], selectedPlayerCard = null, selectedTargetCard = null;
         let isTournament = false, isCupBattle = false, currentTournamentId = null, iaDeckIds = [], iaLevelMultiplier = 1;
         let battleEnded = false;
+        
+        // Función para inicializar las cartas de la IA por defecto
+        function initDefaultIaCards() {
+            if (iaDeckIds.length === 0) {
+                // Si no hay cartas de IA definidas, usar algunas por defecto
+                iaDeckIds = [3, 4, 5]; // Usar cartas con diferentes niveles de dificultad
+                iaLevelMultiplier = 1;
+            }
+        }
+        
         function renderIaCards() {
             const container = document.getElementById('battleIaCards');
             container.innerHTML = '';
             iaCards = [];
+            
+            // Asegurarse de que haya cartas de IA para mostrar
+            if (iaDeckIds.length === 0) {
+                initDefaultIaCards();
+            }
+            
             iaDeckIds.forEach((id, i) => {
                 let card = {...ALL_CARDS.find(c => c.id === id)};
                 if (!card) return;
