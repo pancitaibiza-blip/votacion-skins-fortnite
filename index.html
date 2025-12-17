@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+undefined<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -6,8 +6,9 @@
     <title>🎄 Fortnite Cartas - Evento Navideño</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Configuración global sin efectos 3D */
+        /* Configuración global */
         body {
             background: linear-gradient(135deg, #b22222, #228b22, #ffd700, #ffffff);
             background-size: 400% 400%;
@@ -15,12 +16,12 @@
             color: white;
             min-height: 100vh;
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
             position: relative;
         }
         
-        /* Efectos de iluminación simplificados */
+        /* Efectos de iluminación */
         body::before {
             content: "";
             position: fixed;
@@ -65,7 +66,7 @@
             100% { top: 110vh; transform: translateX(50px); }
         }
         
-        /* Botones simplificados */
+        /* Botones */
         .btn {
             background: linear-gradient(to right, #d42020, #ff4545);
             color: white;
@@ -78,6 +79,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             position: relative;
+            font-family: 'Montserrat', sans-serif;
         }
         
         .btn::before {
@@ -99,10 +101,9 @@
         
         .btn:active {
             transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        /* Contenedor de cartas simplificado */
+        /* Contenedor de cartas */
         .card-container {
             position: relative;
             display: inline-block;
@@ -115,7 +116,7 @@
             transform: translateY(-5px);
         }
         
-        /* Base de cartas simplificada */
+        /* Base de cartas */
         .card-base {
             border-radius: 16px;
             overflow: hidden;
@@ -131,7 +132,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
         
-        /* Efecto de brillo simplificado */
+        /* Efecto de brillo */
         .card-glow {
             position: absolute;
             top: -15px;
@@ -150,7 +151,7 @@
             transform: scale(1.1);
         }
         
-        /* Efectos de rareza simplificados */
+        /* Efectos de rareza */
         .rarity-common .card-glow { 
             background: #9e9e9e;
             box-shadow: 0 0 20px rgba(158, 158, 158, 0.8);
@@ -217,7 +218,7 @@
             box-shadow: 0 0 20px #ff0000, 0 0 30px #0000ff, 0 10px 20px rgba(0,0,0,0.4);
         }
         
-        /* Contenido de cartas simplificado */
+        /* Contenido de cartas */
         .card-content {
             padding: 8px;
             text-align: center;
@@ -236,7 +237,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
         
-        /* Insignia de mejora simplificada */
+        /* Insignia de mejora */
         .upgrade-badge {
             position: absolute;
             top: 8px;
@@ -250,7 +251,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
-        /* Barra de estadísticas simplificada */
+        /* Barra de estadísticas */
         .stats-bar {
             background: linear-gradient(135deg, rgba(10, 20, 10, 0.9) 0%, rgba(30, 40, 30, 0.9) 100%);
             border-radius: 20px;
@@ -272,7 +273,7 @@
         .gem { color: #4FC3F7; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); }
         .crown { color: #FFAA00; text-shadow: 0 0 10px rgba(255, 170, 0, 0.5); }
         
-        /* Banners simplificados */
+        /* Banners */
         #offerBanner {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             color: white;
@@ -345,9 +346,9 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
-        /* Secciones simplificadas */
-        #deck, #shop, #tournament, #cupMode, #ranking, #achievements, #skinsDuel, #coliseum, #chaosMode { display: none; }
-        #deck.active, #shop.active, #tournament.active, #cupMode.active, #ranking.active, #achievements.active, #skinsDuel.active, #coliseum.active, #chaosMode.active { 
+        /* Secciones */
+        #deck, #shop, #tournament, #cupMode, #ranking, #achievements, #skinsDuel, #coliseum, #arena { display: none; }
+        #deck.active, #shop.active, #tournament.active, #cupMode.active, #ranking.active, #achievements.active, #skinsDuel.active, #coliseum.active, #arena.active { 
             display: block; 
             animation: fadeIn 0.5s ease forwards;
         }
@@ -379,7 +380,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
-        /* Modal simplificado */
+        /* Modal */
         #cardModal {
             position: fixed;
             top: 0;
@@ -423,7 +424,7 @@
             transform: scale(1.02);
         }
         
-        /* Ranking simplificado */
+        /* Ranking */
         .ranking-item {
             display: flex;
             align-items: center;
@@ -451,7 +452,7 @@
             background-position: center;
         }
         
-        /* Batalla simplificada */
+        /* Batalla */
         #battle {
             display: none;
             padding: 24px;
@@ -480,7 +481,6 @@
             width: 180px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
-            /* Asegurar que las cartas de la IA sean visibles */
             opacity: 1 !important;
             visibility: visible !important;
         }
@@ -512,7 +512,6 @@
             border-radius: 12px;
             margin-bottom: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            /* Asegurar que las imágenes de las cartas de la IA sean visibles */
             opacity: 1 !important;
             visibility: visible !important;
         }
@@ -560,7 +559,7 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
         
-        /* Botones de batalla simplificados */
+        /* Botones de batalla */
         .attack-button, .defend-button {
             background: linear-gradient(135deg, #d42020 0%, #ff4545 100%);
             color: white;
@@ -592,7 +591,7 @@
             transform: translateY(1px);
         }
         
-        /* Contenedor de secciones simplificado */
+        /* Contenedor de secciones */
         .section-container {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(200, 200, 200, 0.1) 100%);
             backdrop-filter: blur(10px);
@@ -608,7 +607,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         
-        /* Mensaje de batalla simplificado */
+        /* Mensaje de batalla */
         #battleMessage {
             display: none;
             position: fixed;
@@ -635,7 +634,7 @@
             }
         }
         
-        /* Botones de navegación simplificados */
+        /* Botones de navegación */
         .nav-btn {
             background: linear-gradient(135deg, rgba(100, 100, 100, 0.7) 0%, rgba(120, 120, 120, 0.7) 100%);
             color: white;
@@ -663,7 +662,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3), 0 5px 10px rgba(255,215,0,0.5);
         }
         
-        /* Contador de colección simplificado */
+        /* Contador de colección */
         #collectionCounter {
             text-align: center;
             font-size: 22px;
@@ -676,7 +675,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
-        /* Cofres simplificados */
+        /* Cofres */
         .chest-container {
             position: relative;
             cursor: pointer;
@@ -725,7 +724,7 @@
             margin: 40px 0;
         }
         
-        /* Animaciones simplificadas */
+        /* Animaciones */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -760,7 +759,7 @@
             }
         }
         
-        /* Efectos de fuegos artificiales simplificados */
+        /* Efectos de fuegos artificiales */
         .firework {
             position: absolute;
             width: 5px;
@@ -1186,165 +1185,187 @@
             text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
         }
         
-        /* Modo Caos */
-        #chaosMode {
-            display: none;
-            padding: 24px;
-            padding-bottom: 150px;
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.4) 0%, rgba(233, 30, 99, 0.4) 100%);
+        /* Modo Arena */
+        #arena {
+            padding: 20px;
             border-radius: 20px;
-            margin-top: 24px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 50, 100, 0.8) 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
-        #chaosMode.active { display: block; }
-        
-        .chaos-header {
+        .arena-header {
             text-align: center;
             margin-bottom: 20px;
         }
         
-        .chaos-event {
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.8) 0%, rgba(233, 30, 99, 0.8) 100%);
-            border-radius: 16px;
-            padding: 16px;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            animation: eventPulse 2s infinite alternate;
-        }
-        
-        @keyframes eventPulse {
-            0% { box-shadow: 0 4px 8px rgba(0,0,0,0.3), 0 5px 10px rgba(156, 39, 176, 0.5); }
-            100% { box-shadow: 0 8px 16px rgba(0,0,0,0.5), 0 10px 20px rgba(233, 30, 99, 0.8); }
-        }
-        
-        .chaos-cards {
+        .arena-stats {
             display: flex;
             justify-content: space-around;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         
-        .chaos-card {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(30, 30, 30, 0.7) 100%);
-            border: 3px solid #9c27b0;
-            border-radius: 20px;
-            padding: 15px;
+        .arena-stat {
             text-align: center;
-            width: 180px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            position: relative;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(30, 30, 30, 0.6) 100%);
+            border-radius: 15px;
+            width: 45%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
-        .chaos-card.player { 
-            border: 3px solid #9c27b0; 
-        }
-        
-        .chaos-card.opponent { 
-            border: 3px solid #e91e63; 
-        }
-        
-        .chaos-card.selected { 
-            border-color: yellow;
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4), 0 5px 10px rgba(255, 255, 0, 0.6);
-        }
-        
-        .chaos-card.swapped {
-            animation: cardSwap 1s ease;
-        }
-        
-        @keyframes cardSwap {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(100px); }
-        }
-        
-        .chaos-card:hover { 
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-        }
-        
-        .chaos-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 12px;
+        .arena-rank {
+            background: linear-gradient(90deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
-        .chaos-card-name { 
-            font-weight: bold; 
-            margin: 12px 0; 
-            font-size: 18px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        .chaos-card-stats { 
-            display: flex; 
-            justify-content: center; 
-            gap: 12px; 
-            font-size: 16px; 
-            margin: 12px 0;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-        
-        .chaos-hp-bar { 
-            height: 10px; 
-            background: linear-gradient(90deg, #333 0%, #222 100%);
-            border-radius: 5px; 
-            overflow: hidden; 
-            margin: 12px 0;
+        .arena-progress {
+            background: linear-gradient(90deg, #333 0%, #555 100%);
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3) inset;
         }
         
-        .chaos-hp-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, #9c27b0 0%, #e91e63 100%);
+        .arena-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
             transition: width 0.5s ease;
-            box-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
         }
         
-        .chaos-hp-text { 
-            font-size: 14px; 
-            text-align: center; 
-            margin-top: 6px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        .arena-progress-text {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
-        .chaos-controls {
+        .arena-battlefield {
+            background: linear-gradient(135deg, rgba(25, 25, 50, 0.7) 0%, rgba(40, 40, 80, 0.7) 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .arena-enemy {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .enemy-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 4px solid #ff3333;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.6), 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.5s ease;
+        }
+        
+        .enemy-image.attacking {
+            animation: bossAttack 0.8s ease;
+        }
+        
+        .enemy-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff3333;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+        
+        .enemy-rank {
+            font-size: 16px;
+            color: #ffcc00;
+            margin-top: 5px;
+        }
+        
+        .arena-cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .arena-card {
+            width: 120px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(30, 30, 30, 0.7) 100%);
+            border: 3px solid #4caf50;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .arena-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .arena-card.shaking {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+        
+        .arena-controls {
             text-align: center;
             margin-top: 20px;
         }
         
-        .chaos-button {
-            background: linear-gradient(135deg, #9c27b0 0%, #e91e63 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            cursor: pointer;
+        .arena-message {
+            text-align: center;
+            font-size: 18px;
             font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(156, 39, 176, 0.4);
-            margin: 0 12px;
+            margin: 15px 0;
+            min-height: 25px;
+            color: #4caf50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
         }
         
-        .chaos-button:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(156, 39, 176, 0.6);
+        .arena-rewards {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(30, 30, 30, 0.6) 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
         }
         
-        .chaos-button:active {
-            transform: translateY(1px);
+        .arena-rewards h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
         }
         
-        .chaos-message {
-            display: none;
+        .reward-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .reward-name {
+            color: #ffffff;
+        }
+        
+        .reward-value {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .arena-rank-up {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -1354,30 +1375,47 @@
             border-radius: 20px;
             text-align: center;
             z-index: 2000;
-            box-shadow: 0 0 50px rgba(156, 39, 176, 0.5), 0 10px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), 0 10px 20px rgba(0, 0, 0, 0.5);
+            display: none;
             animation: messageAppear 0.5s ease forwards;
         }
         
-        .event-history {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(30, 30, 30, 0.6) 100%);
-            border-radius: 15px;
-            padding: 15px;
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .event-history-item {
-            padding: 8px;
-            margin-bottom: 5px;
-            border-radius: 10px;
-            background: rgba(156, 39, 176, 0.3);
-            font-size: 14px;
-        }
-        
-        .event-history-turn {
+        .rank-up-title {
+            font-size: 32px;
             font-weight: bold;
-            color: #e91e63;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+        
+        .rank-up-rank {
+            font-size: 24px;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+        
+        .rank-up-rewards {
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        
+        .rank-up-button {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .rank-up-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
         }
     </style>
 </head>
@@ -1418,27 +1456,60 @@
             </div>
         </div>
         
-        <div id="chaosMode" class="section-container">
-            <div class="chaos-header">
-                <h2 class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">🌀 ¡BATALLA CAÓTICA!</h2>
-                <p class="text-lg">¡Elige una carta y prepárate para el caos! Cada turno ocurrirá un evento loco que cambiará las reglas.</p>
+        <div id="arena" class="section-container">
+            <div class="arena-header">
+                <h2 class="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">🏟️ MODO ARENA</h2>
+                <p class="text-lg">¡Un camino de niveles donde cada cinco victorias subes a un rango superior con enemigos más fuertes y mejores premios!</p>
             </div>
             
-            <div class="chaos-event" id="currentEvent">
-                ¡Esperando el primer evento caótico!
+            <div class="arena-stats">
+                <div class="arena-stat">
+                    <h3 class="text-xl font-bold text-blue-400">TU RANGO</h3>
+                    <div class="arena-rank" id="arenaRank">Rango 1</div>
+                    <div class="arena-progress">
+                        <div id="arenaProgressFill" class="arena-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div id="arenaProgressText" class="arena-progress-text">0 / 5 victorias</div>
+                </div>
+                
+                <div class="arena-stat">
+                    <h3 class="text-xl font-bold text-red-400">ENEMIGO</h3>
+                    <div class="health-bar">
+                        <div id="arenaEnemyHealthBar" class="health-fill boss-health"></div>
+                    </div>
+                    <div id="arenaEnemyHealthText">100 / 100</div>
+                </div>
             </div>
             
-            <div class="chaos-cards" id="chaosCards"></div>
-            
-            <div class="chaos-controls">
-                <button class="chaos-button" onclick="chaosAttack()">⚔️ ATACAR</button>
-                <button class="chaos-button" onclick="chaosDefend()">🛡️ DEFENDER</button>
-                <button class="chaos-button" onclick="startChaosMode()">🔄 NUEVA BATALLA</button>
+            <div class="arena-battlefield" id="arenaBattlefield">
+                <div class="arena-enemy">
+                    <div id="arenaEnemyImage" class="enemy-image">
+                        <img src="https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622" alt="Enemigo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                    </div>
+                    <h3 id="arenaEnemyName" class="enemy-name">Guerrero Novato</h3>
+                    <div id="arenaEnemyRank" class="enemy-rank">Rango 1</div>
+                </div>
+                
+                <div class="arena-cards" id="arenaCards"></div>
             </div>
             
-            <div class="event-history">
-                <h3 class="text-lg font-bold mb-2 text-purple-300">Historial de Eventos</h3>
-                <div id="eventHistoryList"></div>
+            <div class="arena-message" id="arenaMessage">Presiona "INICIAR ARENA" para comenzar tu camino</div>
+            
+            <div class="arena-rewards" id="arenaRewards">
+                <h3>Próximas Recompensas</h3>
+                <div class="reward-item">
+                    <span class="reward-name">Gemas por victoria</span>
+                    <span class="reward-value" id="gemsPerVictory">10</span>
+                </div>
+                <div class="reward-item">
+                    <span class="reward-name">Recompensa de rango</span>
+                    <span class="reward-value" id="rankReward">50 gemas</span>
+                </div>
+            </div>
+            
+            <div class="arena-controls">
+                <button class="btn bg-blue-600 text-lg px-8 py-3" onclick="startArena()" id="startArenaBtn">INICIAR ARENA</button>
+                <button class="btn bg-gray-600 text-lg px-8 py-3" onclick="resetArena()" id="resetArenaBtn" style="display: none;">REINICIAR</button>
             </div>
         </div>
         
@@ -1638,13 +1709,15 @@
         <button class="btn bg-green-600" onclick="rematch()">REVANCHA</button>
         <button class="btn bg-blue-600" onclick="closeBattleMessage()">Cerrar</button>
     </div>
-    <div id="chaosMessage" class="chaos-message">
-        <h2 id="chaosMessageText"></h2>
-        <button class="btn bg-green-600" onclick="chaosRematch()">REVANCHA</button>
-        <button class="btn bg-purple-600" onclick="closeChaosMessage()">Cerrar</button>
+    <div id="arenaRankUp" class="arena-rank-up">
+        <div class="rank-up-title">¡HAS SUBIDO DE RANGO!</div>
+        <div class="rank-up-rank" id="rankUpRank">Rango 2</div>
+        <div class="rank-up-rewards" id="rankUpRewards">Has obtenido 50 gemas</div>
+        <button class="rank-up-button" onclick="closeRankUp()">Continuar</button>
     </div>
     <div class="fixed bottom-0 left-0 right-0 flex justify-center gap-3 z-10 flex-wrap px-4 py-4 bg-black/50 backdrop-blur-md rounded-t-2xl shadow-lg">
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('battle')">Batalla</button>
+        <button class="nav-btn text-sm px-6 py-3" onclick="showView('arena')">Arena</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('coliseum')">Coliseo</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('skinsDuel')">Duelo de Skins</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('deck')">Mazo</button>
@@ -1653,7 +1726,6 @@
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('cupMode')">COPAS</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('tournament')">Torneo</button>
         <button class="nav-btn text-sm px-6 py-3" onclick="showView('achievements')">Logros</button>
-        <button class="nav-btn text-sm px-6 py-3" onclick="showView('chaosMode')">Modo Caos</button>
     </div>
     <script>
         const GEMS_OFFER_END = (function() {
@@ -1669,6 +1741,18 @@
         const DECK_MAX_SIZE = 3;
         const MAX_LEVEL = 100;
         const UPGRADE_COST_BASE = 50;
+        const ARENA_RANKS = [
+            { name: "Rango 1", enemyName: "Guerrero Novato", enemyMultiplier: 1, gemsPerVictory: 10, rankReward: 50 },
+            { name: "Rango 2", enemyName: "Luchador Experimentado", enemyMultiplier: 1.2, gemsPerVictory: 15, rankReward: 75 },
+            { name: "Rango 3", enemyName: "Campeón Regional", enemyMultiplier: 1.5, gemsPerVictory: 20, rankReward: 100 },
+            { name: "Rango 4", enemyName: "Maestro de Batalla", enemyMultiplier: 1.8, gemsPerVictory: 25, rankReward: 150 },
+            { name: "Rango 5", enemyName: "Leyenda Arena", enemyMultiplier: 2.2, gemsPerVictory: 30, rankReward: 200 },
+            { name: "Rango 6", enemyName: "Titán Imbatible", enemyMultiplier: 2.7, gemsPerVictory: 40, rankReward: 300 },
+            { name: "Rango 7", enemyName: "Destructor de Mundos", enemyMultiplier: 3.5, gemsPerVictory: 50, rankReward: 500 },
+            { name: "Rango 8", enemyName: "Dios de la Guerra", enemyMultiplier: 4.5, gemsPerVictory: 75, rankReward: 750 },
+            { name: "Rango 9", enemyName: "Ser Supremo", enemyMultiplier: 6, gemsPerVictory: 100, rankReward: 1000 },
+            { name: "Rango 10", enemyName: "Invencible", enemyMultiplier: 8, gemsPerVictory: 150, rankReward: 2000 }
+        ];
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50 },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100 },
@@ -1811,7 +1895,12 @@
             { id: 25, name: "Afortunado", description: "Gana 500 gemas en una sola partida del Coliseo", icon: "🍀" },
             { id: 26, name: "Osado", description: "Llega al multiplicador x5 en el Coliseo de Oro", icon: "💥" },
             { id: 27, name: "Cazador de Jefes Infiltrados", description: "Derrota a un jefe infiltrado en el Coliseo de Oro", icon: "👑" },
-            { id: 28, name: "Amante del Caos", description: "Gana una partida en el Modo Caos", icon: "🌀" }
+            { id: 28, name: "Gladiador Novato", description: "Juega tu primera partida en el Modo Arena", icon: "⚔️" },
+            { id: 29, name: "Ascendente", description: "Sube al Rango 3 en el Modo Arena", icon: "📈" },
+            { id: 30, name: "Campeón de Arena", description: "Sube al Rango 5 en el Modo Arena", icon: "🏆" },
+            { id: 31, name: "Leyenda de Arena", description: "Sube al Rango 10 en el Modo Arena", icon: "👑" },
+            { id: 32, name: "Invicto Arena", description: "Consigue 10 victorias seguidas en el Modo Arena", icon: "🔥" },
+            { id: 33, name: "Cosechador de Gemas", description: "Recolecta 1000 gemas en el Modo Arena", icon: "💎" }
         ];
         let gameState = {
             playerName: localStorage.getItem('playerName') || 'Jugador',
@@ -1836,7 +1925,13 @@
             skinsDuelPerfectWins: parseInt(localStorage.getItem('skinsDuelPerfectWins') || '0'),
             coliseumWins: parseInt(localStorage.getItem('coliseumWins') || '0'),
             coliseumBestMultiplier: parseInt(localStorage.getItem('coliseumBestMultiplier') || '1'),
-            coliseumBossDefeated: JSON.parse(localStorage.getItem('coliseumBossDefeated') || '[]')
+            coliseumBossDefeated: JSON.parse(localStorage.getItem('coliseumBossDefeated') || '[]'),
+            // Arena mode state
+            arenaRank: parseInt(localStorage.getItem('arenaRank') || '0'),
+            arenaProgress: parseInt(localStorage.getItem('arenaProgress') || '0'),
+            arenaTotalWins: parseInt(localStorage.getItem('arenaTotalWins') || '0'),
+            arenaTotalGems: parseInt(localStorage.getItem('arenaTotalGems') || '0'),
+            arenaWinStreak: parseInt(localStorage.getItem('arenaWinStreak') || '0')
         };
         
         // Variables para el modo Duelo de Skins
@@ -1873,148 +1968,22 @@
             votes: { player: 0, opponent: 0 }
         };
         
-        // Variables para el Modo Caos
-        let chaosState = {
+        // Variables para el modo Arena
+        let arenaState = {
             active: false,
-            playerCard: null,
-            opponentCard: null,
-            turn: 0,
-            currentEvent: null,
-            eventHistory: [],
-            battleEnded: false,
-            playerCardOwner: 'player',
-            opponentCardOwner: 'opponent'
+            playerHealth: 100,
+            maxPlayerHealth: 100,
+            enemyHealth: 100,
+            maxEnemyHealth: 100,
+            playerCards: [],
+            enemyCards: [],
+            battleInterval: null,
+            currentEnemy: null,
+            rank: 0,
+            progress: 0,
+            winsInRank: 0,
+            winsNeededForRankUp: 5
         };
-        
-        // Lista de eventos caóticos posibles
-        const CHAOS_EVENTS = [
-            {
-                name: "Cambio de Dueño",
-                description: "¡Las cartas han cambiado de dueño!",
-                effect: function() {
-                    // Intercambiar las cartas entre el jugador y el oponente
-                    const tempOwner = chaosState.playerCardOwner;
-                    chaosState.playerCardOwner = chaosState.opponentCardOwner;
-                    chaosState.opponentCardOwner = tempOwner;
-                    
-                    // Añadir animación de intercambio
-                    const playerCardEl = document.querySelector('.chaos-card.player');
-                    const opponentCardEl = document.querySelector('.chaos-card.opponent');
-                    
-                    if (playerCardEl && opponentCardEl) {
-                        playerCardEl.classList.add('swapped');
-                        opponentCardEl.classList.add('swapped');
-                        
-                        setTimeout(() => {
-                            playerCardEl.classList.remove('swapped');
-                            opponentCardEl.classList.remove('swapped');
-                        }, 1000);
-                    }
-                    
-                    return "¡Las cartas han cambiado de dueño! Ahora peleas con la carta de tu rival.";
-                }
-            },
-            {
-                name: "Ataque Convertido en Cura",
-                description: "¡El ataque se ha convertido en cura!",
-                effect: function() {
-                    // El próximo ataque curará en lugar de dañar
-                    chaosState.nextAttackIsHeal = true;
-                    return "¡El próximo ataque curará en lugar de dañar!";
-                }
-            },
-            {
-                name: "Inversión de Victoria",
-                description: "¡El que tenga menos vida ganará de golpe!",
-                effect: function() {
-                    // El que tenga menos vida ganará instantáneamente
-                    chaosState.lowestHpWins = true;
-                    
-                    // Comprobar quién tiene menos vida y terminar la batalla
-                    if (chaosState.playerCard.hp < chaosState.opponentCard.hp) {
-                        endChaosBattle(true);
-                    } else if (chaosState.opponentCard.hp < chaosState.playerCard.hp) {
-                        endChaosBattle(false);
-                    } else {
-                        // Empate, continuar la batalla
-                        return "¡Ambas cartas tienen la misma vida! La batalla continúa.";
-                    }
-                    
-                    return "¡El que tiene menos vida gana de golpe!";
-                }
-            },
-            {
-                name: "Doble Daño",
-                description: "¡El próximo ataque causará el doble de daño!",
-                effect: function() {
-                    chaosState.nextAttackDoubleDamage = true;
-                    return "¡El próximo ataque causará el doble de daño!";
-                }
-            },
-            {
-                name: "Inmunidad Total",
-                description: "¡Ambas cartas son inmunes al daño este turno!",
-                effect: function() {
-                    chaosState.bothImmune = true;
-                    return "¡Ambas cartas son inmunes al daño este turno!";
-                }
-            },
-            {
-                name: "Curación Masiva",
-                description: "¡Ambas cartas recuperan toda su vida!",
-                effect: function() {
-                    chaosState.playerCard.hp = chaosState.playerCard.maxHp;
-                    chaosState.opponentCard.hp = chaosState.opponentCard.maxHp;
-                    updateChaosHpBars();
-                    return "¡Ambas cartas han recuperado toda su vida!";
-                }
-            },
-            {
-                name: "Intercambio de Estadísticas",
-                description: "¡Las estadísticas de ataque y defensa se han intercambiado!",
-                effect: function() {
-                    // Intercambiar las estadísticas de ambas cartas
-                    const playerAtk = chaosState.playerCard.atk;
-                    const playerDef = chaosState.playerCard.def;
-                    const opponentAtk = chaosState.opponentCard.atk;
-                    const opponentDef = chaosState.opponentCard.def;
-                    
-                    chaosState.playerCard.atk = opponentAtk;
-                    chaosState.playerCard.def = opponentDef;
-                    chaosState.opponentCard.atk = playerAtk;
-                    chaosState.opponentCard.def = playerDef;
-                    
-                    updateChaosCardStats();
-                    return "¡Las estadísticas de ataque y defensa se han intercambiado!";
-                }
-            },
-            {
-                name: "Confusión Total",
-                description: "¡Las cartas atacarán a su dueño!",
-                effect: function() {
-                    chaosState.attackSelf = true;
-                    return "¡Las cartas atacarán a su propio dueño!";
-                }
-            },
-            {
-                name: "Bendición Divina",
-                description: "¡La carta del jugador recupera 50 puntos de vida!",
-                effect: function() {
-                    chaosState.playerCard.hp = Math.min(chaosState.playerCard.maxHp, chaosState.playerCard.hp + 50);
-                    updateChaosHpBars();
-                    return "¡Tu carta ha recuperado 50 puntos de vida!";
-                }
-            },
-            {
-                name: "Maldición Oscura",
-                description: "¡La carta del oponente pierde 30 puntos de vida!",
-                effect: function() {
-                    chaosState.opponentCard.hp = Math.max(1, chaosState.opponentCard.hp - 30);
-                    updateChaosHpBars();
-                    return "¡La carta del oponente ha perdido 30 puntos de vida!";
-                }
-            }
-        ];
         
         function applyCardUpgrades() {
             ALL_CARDS.forEach(card => {
@@ -2181,6 +2150,7 @@
                 updateUI();
                 renderDeck();
                 renderShop();
+                renderBattleCards();
                 checkAchievements();
                 alert(`¡${card.name} al nivel ${currentLevel + 1}!`);
             }
@@ -2320,6 +2290,12 @@
             localStorage.setItem('coliseumWins', gameState.coliseumWins);
             localStorage.setItem('coliseumBestMultiplier', gameState.coliseumBestMultiplier);
             localStorage.setItem('coliseumBossDefeated', JSON.stringify(gameState.coliseumBossDefeated));
+            // Arena mode state
+            localStorage.setItem('arenaRank', gameState.arenaRank);
+            localStorage.setItem('arenaProgress', gameState.arenaProgress);
+            localStorage.setItem('arenaTotalWins', gameState.arenaTotalWins);
+            localStorage.setItem('arenaTotalGems', gameState.arenaTotalGems);
+            localStorage.setItem('arenaWinStreak', gameState.arenaWinStreak);
             let rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
             const index = rankings.findIndex(r => r.name === gameState.playerName);
             const data = { name: gameState.playerName, trophies: gameState.trophies, avatar: gameState.avatar };
@@ -2390,7 +2366,7 @@
             showView('battle');
         }
         function showView(view) {
-            ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking', 'achievements', 'skinsDuel', 'coliseum', 'chaosMode'].forEach(id => {
+            ['battle', 'deck', 'shop', 'tournament', 'cupMode', 'ranking', 'achievements', 'skinsDuel', 'coliseum', 'arena'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('active');
             });
@@ -2414,7 +2390,7 @@
             if (view === 'achievements') renderAchievements();
             if (view === 'skinsDuel') initSkinsDuel();
             if (view === 'coliseum') initColiseum();
-            if (view === 'chaosMode') initChaosMode();
+            if (view === 'arena') initArena();
         }
         let iaCards = [], playerCards = [], selectedPlayerCard = null, selectedTargetCard = null;
         let isTournament = false, isCupBattle = false, currentTournamentId = null, iaDeckIds = [], iaLevelMultiplier = 1;
@@ -2673,6 +2649,13 @@
             if (coliseumState.baseReward * coliseumState.multiplier >= 500) unlockAchievement(25);
             if (coliseumState.multiplier >= 5) unlockAchievement(26);
             if (gameState.coliseumBossDefeated.length > 0) unlockAchievement(27);
+            // Arena achievements
+            if (gameState.arenaTotalWins >= 1) unlockAchievement(28);
+            if (gameState.arenaRank >= 2) unlockAchievement(29);
+            if (gameState.arenaRank >= 4) unlockAchievement(30);
+            if (gameState.arenaRank >= 9) unlockAchievement(31);
+            if (gameState.arenaWinStreak >= 10) unlockAchievement(32);
+            if (gameState.arenaTotalGems >= 1000) unlockAchievement(33);
         }
         function renderAchievements() {
             const container = document.getElementById('achievementsList');
@@ -2691,6 +2674,13 @@
                 if (a.id === 24) progress = `Victorias: ${gameState.coliseumWins}/5 🏟️`;
                 if (a.id === 25) progress = `Mejor premio: ${coliseumState.baseReward * coliseumState.multiplier}/500 💎`;
                 if (a.id === 26) progress = `Multiplicador: ${coliseumState.multiplier}/5 x`;
+                // Arena progress
+                if (a.id === 28) progress = `Victorias: ${gameState.arenaTotalWins}/1 ⚔️`;
+                if (a.id === 29) progress = `Rango: ${gameState.arenaRank + 1}/3 📈`;
+                if (a.id === 30) progress = `Rango: ${gameState.arenaRank + 1}/5 🏆`;
+                if (a.id === 31) progress = `Rango: ${gameState.arenaRank + 1}/10 👑`;
+                if (a.id === 32) progress = `Racha: ${gameState.arenaWinStreak}/10 🔥`;
+                if (a.id === 33) progress = `Gemas: ${gameState.arenaTotalGems}/1000 💎`;
                 item.innerHTML = `
                     <div class="text-4xl">${a.icon}</div>
                     <div class="flex-1">
@@ -3496,394 +3486,386 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        // Funciones para el Modo Caos
-        function initChaosMode() {
-            if (!chaosState.active) {
-                resetChaosMode();
+        // Funciones para el modo Arena
+        function initArena() {
+            if (!arenaState.active) {
+                resetArena();
             }
-            renderChaosCards();
-            updateChaosHpBars();
+            updateArenaUI();
+            renderArenaCards();
+            updateArenaHealthBars();
         }
         
-        function startChaosMode() {
-            // Reiniciar el estado del juego
-            chaosState = {
-                active: true,
-                playerCard: null,
-                opponentCard: null,
-                turn: 0,
-                currentEvent: null,
-                eventHistory: [],
-                battleEnded: false,
-                playerCardOwner: 'player',
-                opponentCardOwner: 'opponent'
-            };
-            
-            // Seleccionar una carta aleatoria del jugador
-            const playerCards = gameState.currentDeck.map(id => ALL_CARDS.find(c => c.id === id));
-            if (playerCards.length === 0) {
-                alert("¡Necesitas tener cartas en tu mazo para jugar!");
-                return;
+        function startArena() {
+            if (arenaState.active) {
+                if (!confirm("¿Reiniciar la Arena actual? Perderás tu progreso.")) return;
             }
             
-            const playerCardData = playerCards[Math.floor(Math.random() * playerCards.length)];
-            chaosState.playerCard = {
-                ...playerCardData,
-                hp: playerCardData.def,
-                maxHp: playerCardData.def,
-                element: null
-            };
+            resetArena();
+            arenaState.active = true;
             
-            // Seleccionar una carta aleatoria para el oponente
-            const opponentCardData = ALL_CARDS[Math.floor(Math.random() * ALL_CARDS.length)];
-            chaosState.opponentCard = {
-                ...opponentCardData,
-                hp: opponentCardData.def,
-                maxHp: opponentCardData.def,
-                element: null
-            };
+            // Cargar el estado del juego
+            arenaState.rank = gameState.arenaRank;
+            arenaState.progress = gameState.arenaProgress;
+            arenaState.winsInRank = gameState.arenaProgress % 5;
             
-            // Renderizar las cartas
-            renderChaosCards();
+            // Seleccionar 3 cartas aleatorias del jugador
+            const availableCards = ALL_CARDS.filter(card => gameState.ownedCardIds.includes(card.id));
+            const selectedCards = [];
             
-            // Limpiar el historial de eventos
-            document.getElementById('eventHistoryList').innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (availableCards.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableCards.length);
+                    const card = availableCards[randomIndex];
+                    selectedCards.push({...card});
+                    availableCards.splice(randomIndex, 1);
+                }
+            }
             
-            // Iniciar el primer evento
-            triggerChaosEvent();
+            arenaState.playerCards = selectedCards;
             
-            // Actualizar el mensaje
-            document.getElementById('currentEvent').textContent = "¡Comienza la batalla caótica!";
+            // Generar enemigo inicial basado en el rango actual
+            generateArenaEnemy();
+            
+            // Iniciar batalla automática
+            startArenaAutoBattle();
+            
+            // Actualizar UI
+            document.getElementById('startArenaBtn').style.display = 'none';
+            document.getElementById('resetArenaBtn').style.display = 'inline-block';
+            document.getElementById('arenaMessage').textContent = `¡Comienza la batalla contra ${ARENA_RANKS[arenaState.rank].enemyName}!`;
+            
+            // Desbloquear logro
+            unlockAchievement(28);
         }
         
-        function resetChaosMode() {
-            chaosState = {
+        function resetArena() {
+            // Limpiar intervalos si existen
+            if (arenaState.battleInterval) {
+                clearInterval(arenaState.battleInterval);
+                arenaState.battleInterval = null;
+            }
+            
+            // Reiniciar estado del juego
+            arenaState = {
                 active: false,
-                playerCard: null,
-                opponentCard: null,
-                turn: 0,
-                currentEvent: null,
-                eventHistory: [],
-                battleEnded: false,
-                playerCardOwner: 'player',
-                opponentCardOwner: 'opponent'
+                playerHealth: 100,
+                maxPlayerHealth: 100,
+                enemyHealth: 100,
+                maxEnemyHealth: 100,
+                playerCards: [],
+                enemyCards: [],
+                battleInterval: null,
+                currentEnemy: null,
+                rank: 0,
+                progress: 0,
+                winsInRank: 0,
+                winsNeededForRankUp: 5
             };
             
-            document.getElementById('currentEvent').textContent = "¡Esperando el primer evento caótico!";
-            renderChaosCards();
-            updateChaosHpBars();
+            // Actualizar UI
+            document.getElementById('startArenaBtn').style.display = 'inline-block';
+            document.getElementById('resetArenaBtn').style.display = 'none';
+            document.getElementById('arenaMessage').textContent = "Presiona 'INICIAR ARENA' para comenzar tu camino";
+            
+            renderArenaCards();
+            updateArenaHealthBars();
+            updateArenaUI();
         }
         
-        function renderChaosCards() {
-            const container = document.getElementById('chaosCards');
+        function generateArenaEnemy() {
+            // Obtener información del rango actual
+            const currentRank = ARENA_RANKS[arenaState.rank];
+            
+            // Generar cartas para el enemigo basadas en el rango
+            const enemyCards = [];
+            const difficulty = currentRank.enemyMultiplier;
+            
+            // Crear 3 cartas para el enemigo con dificultad ajustada
+            for (let i = 0; i < 3; i++) {
+                const randomCard = {...ALL_CARDS[Math.floor(Math.random() * ALL_CARDS.length)]};
+                randomCard.atk = Math.round(randomCard.atk * difficulty);
+                randomCard.def = Math.round(randomCard.def * difficulty);
+                enemyCards.push(randomCard);
+            }
+            
+            arenaState.enemyCards = enemyCards;
+            arenaState.enemyHealth = 100;
+            arenaState.maxEnemyHealth = 100;
+            arenaState.currentEnemy = currentRank;
+            
+            // Actualizar UI
+            document.getElementById('arenaEnemyName').textContent = currentRank.enemyName;
+            document.getElementById('arenaEnemyRank').textContent = currentRank.name;
+            
+            renderArenaCards();
+            updateArenaHealthBars();
+            updateArenaUI();
+        }
+        
+        function renderArenaCards() {
+            const container = document.getElementById('arenaCards');
             container.innerHTML = '';
             
-            // Renderizar carta del jugador
-            const playerCardEl = document.createElement('div');
-            playerCardEl.className = 'chaos-card player';
-            playerCardEl.innerHTML = `
-                <img src="${chaosState.playerCard.img}" alt="${chaosState.playerCard.name}">
-                <div class="chaos-card-name">${chaosState.playerCard.name}</div>
-                <div class="chaos-card-stats">
-                    <span>⚔️ <span class="player-atk">${chaosState.playerCard.atk}</span></span>
-                    <span>🛡️ <span class="player-def">${chaosState.playerCard.def}</span></span>
-                </div>
-                <div class="chaos-hp-bar">
-                    <div class="chaos-hp-fill" style="width: ${(chaosState.playerCard.hp / chaosState.playerCard.maxHp) * 100}%"></div>
-                </div>
-                <div class="chaos-hp-text">HP: <span class="player-hp">${Math.round(chaosState.playerCard.hp)}</span> / <span class="player-max-hp">${chaosState.playerCard.maxHp}</span></div>
-                <div class="text-xs mt-2 ${chaosState.playerCardOwner === 'player' ? 'text-green-400' : 'text-red-400'}">
-                    Dueño: ${chaosState.playerCardOwner === 'player' ? 'Jugador' : 'Oponente'}
-                </div>
-            `;
-            container.appendChild(playerCardEl);
-            chaosState.playerCard.element = playerCardEl;
+            // Renderizar cartas del jugador
+            arenaState.playerCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'arena-card';
+                cardElement.innerHTML = `
+                    <img src="${card.img}" alt="${card.name}">
+                    <div class="font-bold text-sm">${card.name}</div>
+                    <div class="text-xs">⚔️ ${card.atk} 🛡️ ${card.def}</div>
+                `;
+                container.appendChild(cardElement);
+            });
             
-            // Renderizar carta del oponente
-            const opponentCardEl = document.createElement('div');
-            opponentCardEl.className = 'chaos-card opponent';
-            opponentCardEl.innerHTML = `
-                <img src="${chaosState.opponentCard.img}" alt="${chaosState.opponentCard.name}">
-                <div class="chaos-card-name">${chaosState.opponentCard.name}</div>
-                <div class="chaos-card-stats">
-                    <span>⚔️ <span class="opponent-atk">${chaosState.opponentCard.atk}</span></span>
-                    <span>🛡️ <span class="opponent-def">${chaosState.opponentCard.def}</span></span>
-                </div>
-                <div class="chaos-hp-bar">
-                    <div class="chaos-hp-fill" style="width: ${(chaosState.opponentCard.hp / chaosState.opponentCard.maxHp) * 100}%"></div>
-                </div>
-                <div class="chaos-hp-text">HP: <span class="opponent-hp">${Math.round(chaosState.opponentCard.hp)}</span> / <span class="opponent-max-hp">${chaosState.opponentCard.maxHp}</span></div>
-                <div class="text-xs mt-2 ${chaosState.opponentCardOwner === 'opponent' ? 'text-red-400' : 'text-green-400'}">
-                    Dueño: ${chaosState.opponentCardOwner === 'opponent' ? 'Oponente' : 'Jugador'}
-                </div>
-            `;
-            container.appendChild(opponentCardEl);
-            chaosState.opponentCard.element = opponentCardEl;
+            // Renderizar cartas del enemigo
+            arenaState.enemyCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'arena-card';
+                cardElement.innerHTML = `
+                    <img src="${card.img}" alt="${card.name}">
+                    <div class="font-bold text-sm">${card.name}</div>
+                    <div class="text-xs">⚔️ ${card.atk} 🛡️ ${card.def}</div>
+                `;
+                container.appendChild(cardElement);
+            });
         }
         
-        function updateChaosHpBars() {
-            if (!chaosState.playerCard || !chaosState.opponentCard) return;
-            
+        function updateArenaHealthBars() {
             // Actualizar barra de vida del jugador
-            const playerHpPercent = (chaosState.playerCard.hp / chaosState.playerCard.maxHp) * 100;
-            document.querySelector('.player-hp').textContent = Math.round(chaosState.playerCard.hp);
-            document.querySelector('.chaos-card.player .chaos-hp-fill').style.width = `${playerHpPercent}%`;
+            const playerHealthPercent = (arenaState.playerHealth / arenaState.maxPlayerHealth) * 100;
+            document.getElementById('arenaEnemyHealthBar').style.width = `${playerHealthPercent}%`;
+            document.getElementById('arenaEnemyHealthText').textContent = `${Math.ceil(arenaState.playerHealth)} / ${arenaState.maxPlayerHealth}`;
             
-            // Actualizar barra de vida del oponente
-            const opponentHpPercent = (chaosState.opponentCard.hp / chaosState.opponentCard.maxHp) * 100;
-            document.querySelector('.opponent-hp').textContent = Math.round(chaosState.opponentCard.hp);
-            document.querySelector('.chaos-card.opponent .chaos-hp-fill').style.width = `${opponentHpPercent}%`;
-            
-            // Actualizar información del dueño
-            document.querySelector('.chaos-card.player .text-xs').className = `text-xs mt-2 ${chaosState.playerCardOwner === 'player' ? 'text-green-400' : 'text-red-400'}`;
-            document.querySelector('.chaos-card.player .text-xs').textContent = `Dueño: ${chaosState.playerCardOwner === 'player' ? 'Jugador' : 'Oponente'}`;
-            
-            document.querySelector('.chaos-card.opponent .text-xs').className = `text-xs mt-2 ${chaosState.opponentCardOwner === 'opponent' ? 'text-red-400' : 'text-green-400'}`;
-            document.querySelector('.chaos-card.opponent .text-xs').textContent = `Dueño: ${chaosState.opponentCardOwner === 'opponent' ? 'Oponente' : 'Jugador'}`;
+            // Actualizar barra de vida del enemigo
+            const enemyHealthPercent = (arenaState.enemyHealth / arenaState.maxEnemyHealth) * 100;
+            document.getElementById('arenaEnemyHealthBar').style.width = `${enemyHealthPercent}%`;
+            document.getElementById('arenaEnemyHealthText').textContent = `${Math.ceil(arenaState.enemyHealth)} / ${arenaState.maxEnemyHealth}`;
         }
         
-        function updateChaosCardStats() {
-            if (!chaosState.playerCard || !chaosState.opponentCard) return;
+        function updateArenaUI() {
+            // Actualizar información del rango
+            const currentRank = ARENA_RANKS[arenaState.rank];
+            document.getElementById('arenaRank').textContent = currentRank.name;
             
-            // Actualizar estadísticas del jugador
-            document.querySelector('.player-atk').textContent = chaosState.playerCard.atk;
-            document.querySelector('.player-def').textContent = chaosState.playerCard.def;
+            // Actualizar barra de progreso
+            const progressPercent = (arenaState.winsInRank / arenaState.winsNeededForRankUp) * 100;
+            document.getElementById('arenaProgressFill').style.width = `${progressPercent}%`;
+            document.getElementById('arenaProgressText').textContent = `${arenaState.winsInRank} / ${arenaState.winsNeededForRankUp} victorias`;
             
-            // Actualizar estadísticas del oponente
-            document.querySelector('.opponent-atk').textContent = chaosState.opponentCard.atk;
-            document.querySelector('.opponent-def').textContent = chaosState.opponentCard.def;
+            // Actualizar recompensas
+            document.getElementById('gemsPerVictory').textContent = currentRank.gemsPerVictory;
+            document.getElementById('rankReward').textContent = `${currentRank.rankReward} gemas`;
         }
         
-        function triggerChaosEvent() {
-            if (chaosState.battleEnded) return;
-            
-            // Seleccionar un evento aleatorio
-            const event = CHAOS_EVENTS[Math.floor(Math.random() * CHAOS_EVENTS.length)];
-            chaosState.currentEvent = event;
-            
-            // Aplicar el efecto del evento
-            const effectMessage = event.effect();
-            
-            // Actualizar el mensaje del evento actual
-            document.getElementById('currentEvent').textContent = event.description;
-            
-            // Añadir al historial de eventos
-            addToEventHistory(event.name, effectMessage);
-            
-            // Incrementar el turno
-            chaosState.turn++;
-            
-            // Limpiar efectos de un solo uso
-            setTimeout(() => {
-                if (chaosState.nextAttackIsHeal) chaosState.nextAttackIsHeal = false;
-                if (chaosState.nextAttackDoubleDamage) chaosState.nextAttackDoubleDamage = false;
-                if (chaosState.bothImmune) chaosState.bothImmune = false;
-                if (chaosState.attackSelf) chaosState.attackSelf = false;
-            }, 1000);
-        }
-        
-        function addToEventHistory(eventName, effectMessage) {
-            const historyList = document.getElementById('eventHistoryList');
-            const historyItem = document.createElement('div');
-            historyItem.className = 'event-history-item';
-            historyItem.innerHTML = `
-                <span class="event-history-turn">Turno ${chaosState.turn}:</span> ${eventName} - ${effectMessage}
-            `;
-            
-            // Añadir al principio del historial
-            historyList.insertBefore(historyItem, historyList.firstChild);
-            
-            // Limitar el historial a 10 eventos
-            while (historyList.children.length > 10) {
-                historyList.removeChild(historyList.lastChild);
-            }
-        }
-        
-        function chaosAttack() {
-            if (chaosState.battleEnded || !chaosState.active) return;
-            
-            // Determinar quién ataca a quién según el dueño actual de las cartas
-            let attacker, defender;
-            
-            if (chaosState.attackSelf) {
-                // En modo confusión, cada carta ataca a su dueño
-                if (chaosState.playerCardOwner === 'player') {
-                    attacker = chaosState.playerCard;
-                    defender = chaosState.playerCard;
-                } else {
-                    attacker = chaosState.opponentCard;
-                    defender = chaosState.opponentCard;
-                }
-            } else {
-                // Modo normal: la carta del jugador ataca a la del oponente
-                if (chaosState.playerCardOwner === 'player') {
-                    attacker = chaosState.playerCard;
-                    defender = chaosState.opponentCard;
-                } else {
-                    attacker = chaosState.opponentCard;
-                    defender = chaosState.playerCard;
-                }
-            }
-            
-            // Calcular daño base
-            let damage = Math.max(1, attacker.atk - Math.round(defender.def * 0.3));
-            
-            // Aplicar modificadores de eventos
-            if (chaosState.nextAttackDoubleDamage) {
-                damage *= 2;
-            }
-            
-            if (chaosState.bothImmune) {
-                damage = 0;
-            }
-            
-            if (chaosState.nextAttackIsHeal) {
-                // En lugar de dañar, curar
-                defender.hp = Math.min(defender.maxHp, defender.hp + damage);
-                document.getElementById('currentEvent').textContent = "¡El ataque ha curado en lugar de dañar!";
-            } else {
-                // Aplicar daño
-                defender.hp = Math.max(0, defender.hp - damage);
-            }
-            
-            // Actualizar las barras de vida
-            updateChaosHpBars();
-            
-            // Comprobar si la batalla ha terminado
-            if (chaosState.playerCard.hp <= 0) {
-                endChaosBattle(false);
-                return;
-            } else if (chaosState.opponentCard.hp <= 0) {
-                endChaosBattle(true);
-                return;
-            }
-            
-            // Limpiar efectos de un solo uso
-            chaosState.nextAttackIsHeal = false;
-            chaosState.nextAttackDoubleDamage = false;
-            chaosState.bothImmune = false;
-            chaosState.attackSelf = false;
-            
-            // Siguiente turno
-            chaosState.turn++;
-            
-            // Activar siguiente evento
-            setTimeout(() => {
-                triggerChaosEvent();
-            }, 1500);
-        }
-        
-        function chaosDefend() {
-            if (chaosState.battleEnded || !chaosState.active) return;
-            
-            // Efectos aleatorios de defensa
-            const defenseEffects = [
-                function() {
-                    // Curación normal
-                    const healAmount = Math.floor(Math.random() * 20) + 10;
-                    chaosState.playerCard.hp = Math.min(chaosState.playerCard.maxHp, chaosState.playerCard.hp + healAmount);
-                    updateChaosHpBars();
-                    return `¡Tu carta ha recuperado ${healAmount} puntos de vida!`;
-                },
-                function() {
-                    // Robar vida al oponente
-                    const stealAmount = Math.floor(Math.random() * 15) + 5;
-                    chaosState.playerCard.hp = Math.min(chaosState.playerCard.maxHp, chaosState.playerCard.hp + stealAmount);
-                    chaosState.opponentCard.hp = Math.max(0, chaosState.opponentCard.hp - stealAmount);
-                    updateChaosHpBars();
-                    return `¡Tu carta ha robado ${stealAmount} puntos de vida al oponente!`;
-                },
-                function() {
-                    // Aumentar estadísticas temporalmente
-                    const atkBoost = Math.floor(Math.random() * 10) + 5;
-                    const defBoost = Math.floor(Math.random() * 10) + 5;
-                    chaosState.playerCard.atk += atkBoost;
-                    chaosState.playerCard.def += defBoost;
-                    updateChaosCardStats();
-                    return `¡Tu carta ha ganado ${atkBoost} de ataque y ${defBoost} de defensa!`;
-                },
-                function() {
-                    // Intercambiar vida con el oponente
-                    const tempHp = chaosState.playerCard.hp;
-                    chaosState.playerCard.hp = chaosState.opponentCard.hp;
-                    chaosState.opponentCard.hp = tempHp;
-                    updateChaosHpBars();
-                    return "¡Tu carta ha intercambiado su vida con la del oponente!";
-                }
-            ];
-            
-            // Seleccionar un efecto aleatorio
-            const effectIndex = Math.floor(Math.random() * defenseEffects.length);
-            const effectMessage = defenseEffects[effectIndex]();
-            
-            // Mostrar mensaje
-            document.getElementById('currentEvent').textContent = "Defensa Caótica";
-            document.getElementById('currentEvent').textContent = effectMessage;
-            
-            // Añadir al historial
-            addToEventHistory("Defensa Caótica", effectMessage);
-            
-            // Comprobar si la batalla ha terminado
-            if (chaosState.playerCard.hp <= 0) {
-                endChaosBattle(false);
-                return;
-            }
-            
-            // Siguiente turno
-            chaosState.turn++;
-            
-            // Activar siguiente evento
-            setTimeout(() => {
-                triggerChaosEvent();
-            }, 1500);
-        }
-        
-        function endChaosBattle(playerWon) {
-            chaosState.battleEnded = true;
-            
-            if (playerWon) {
-                gameState.trophies += 25;
-                gameState.diamonds += 15;
-                showChaosMessage("¡FELICIDADES! HAS GANADO EN EL CAOS 🌀");
+        function startArenaAutoBattle() {
+            // Iniciar batalla automática cada 2 segundos
+            arenaState.battleInterval = setInterval(() => {
+                if (!arenaState.active) return;
                 
-                // Comprobar logros
-                unlockAchievement(28); // Logro por ganar en el Modo Caos
+                // Turno del jugador
+                arenaPlayerAutoAttack();
+                
+                // Comprobar si el enemigo ha sido derrotado
+                if (arenaState.enemyHealth <= 0) {
+                    handleArenaEnemyDefeated();
+                    return;
+                }
+                
+                // Turno del enemigo después de un breve retraso
+                setTimeout(() => {
+                    if (!arenaState.active) return;
+                    
+                    arenaEnemyAutoAttack();
+                    
+                    // Comprobar si el jugador ha sido derrotado
+                    if (arenaState.playerHealth <= 0) {
+                        handleArenaPlayerDefeated();
+                    }
+                }, 1000);
+            }, 2000);
+        }
+        
+        function arenaPlayerAutoAttack() {
+            // Seleccionar una carta aleatoria del jugador
+            if (arenaState.playerCards.length === 0) return;
+            
+            const attacker = arenaState.playerCards[Math.floor(Math.random() * arenaState.playerCards.length)];
+            
+            // Seleccionar una carta aleatoria del enemigo
+            if (arenaState.enemyCards.length === 0) return;
+            
+            const target = arenaState.enemyCards[Math.floor(Math.random() * arenaState.enemyCards.length)];
+            
+            // Calcular daño
+            const damage = Math.max(1, attacker.atk - Math.round(target.def * 0.3));
+            arenaState.enemyHealth -= damage;
+            
+            // Actualizar mensaje
+            document.getElementById('arenaMessage').textContent = `${attacker.name} ataca a ${target.name} y causa ${damage} de daño.`;
+            
+            // Efectos de cámara y sacudidas
+            const enemyImage = document.getElementById('arenaEnemyImage');
+            enemyImage.classList.add('shaking');
+            setTimeout(() => enemyImage.classList.remove('shaking'), 500);
+            
+            // Actualizar barras de vida
+            updateArenaHealthBars();
+        }
+        
+        function arenaEnemyAutoAttack() {
+            // Seleccionar una carta aleatoria del enemigo
+            if (arenaState.enemyCards.length === 0) return;
+            
+            const attacker = arenaState.enemyCards[Math.floor(Math.random() * arenaState.enemyCards.length)];
+            
+            // Seleccionar una carta aleatoria del jugador
+            if (arenaState.playerCards.length === 0) return;
+            
+            const target = arenaState.playerCards[Math.floor(Math.random() * arenaState.playerCards.length)];
+            
+            // Calcular daño
+            const damage = Math.max(1, attacker.atk - Math.round(target.def * 0.3));
+            arenaState.playerHealth -= damage;
+            
+            // Actualizar mensaje
+            document.getElementById('arenaMessage').textContent = `${attacker.name} ataca a ${target.name} y causa ${damage} de daño.`;
+            
+            // Efectos de cámara y sacudidas
+            const arenaCards = document.querySelectorAll('.arena-card');
+            arenaCards.forEach(card => {
+                card.classList.add('shaking');
+                setTimeout(() => card.classList.remove('shaking'), 500);
+            });
+            
+            // Actualizar barras de vida
+            updateArenaHealthBars();
+        }
+        
+        function handleArenaEnemyDefeated() {
+            // Detener la batalla actual
+            clearInterval(arenaState.battleInterval);
+            
+            // Incrementar victorias y progreso
+            arenaState.winsInRank++;
+            arenaState.progress++;
+            gameState.arenaProgress = arenaState.progress;
+            gameState.arenaTotalWins++;
+            gameState.arenaWinStreak++;
+            
+            // Obtener recompensa por victoria
+            const currentRank = ARENA_RANKS[arenaState.rank];
+            const victoryReward = currentRank.gemsPerVictory;
+            gameState.diamonds += victoryReward;
+            gameState.arenaTotalGems += victoryReward;
+            
+            // Actualizar mensaje
+            document.getElementById('arenaMessage').textContent = `¡Has derrotado a ${currentRank.enemyName}! Has obtenido ${victoryReward} gemas.`;
+            
+            // Comprobar si es hora de subir de rango
+            if (arenaState.winsInRank >= arenaState.winsNeededForRankUp) {
+                // Subir de rango
+                if (arenaState.rank < ARENA_RANKS.length - 1) {
+                    arenaState.rank++;
+                    gameState.arenaRank = arenaState.rank;
+                    arenaState.winsInRank = 0;
+                    
+                    // Obtener recompensa de rango
+                    const rankReward = currentRank.rankReward;
+                    gameState.diamonds += rankReward;
+                    gameState.arenaTotalGems += rankReward;
+                    
+                    // Mostrar ventana de subida de rango
+                    showRankUp(arenaState.rank, rankReward);
+                    
+                    // Generar nuevo enemigo con mayor dificultad
+                    setTimeout(() => {
+                        generateArenaEnemy();
+                        startArenaAutoBattle();
+                        document.getElementById('arenaMessage').textContent = `¡Nuevo desafío! Enfréntate a ${ARENA_RANKS[arenaState.rank].enemyName}.`;
+                    }, 3000);
+                } else {
+                    // El jugador ha alcanzado el rango máximo
+                    document.getElementById('arenaMessage').textContent = `¡FELICIDADES! Has alcanzado el rango máximo: ${ARENA_RANKS[arenaState.rank].name}.`;
+                    endArena(true);
+                }
             } else {
-                showChaosMessage("HAS SIDO DERROTADO POR EL CAOS...");
+                // Generar nuevo enemigo del mismo rango
+                setTimeout(() => {
+                    generateArenaEnemy();
+                    startArenaAutoBattle();
+                    document.getElementById('arenaMessage').textContent = `¡Sigue adelante! Enfréntate a otro ${currentRank.enemyName}.`;
+                }, 2000);
             }
             
+            // Actualizar UI y guardar estado del juego
+            updateArenaUI();
             saveGame();
             updateUI();
+            checkAchievements();
         }
         
-        function showChaosMessage(msg) {
-            document.getElementById('chaosMessageText').textContent = msg;
-            document.getElementById('chaosMessage').style.display = 'block';
+        function handleArenaPlayerDefeated() {
+            // El jugador ha sido derrotado
+            clearInterval(arenaState.battleInterval);
+            gameState.arenaWinStreak = 0;
+            
+            document.getElementById('arenaMessage').textContent = "HAS SIDO DERROTADO... Tu racha de victorias ha terminado.";
+            
+            // Actualizar UI y guardar estado del juego
+            updateArenaUI();
+            saveGame();
+            updateUI();
+            checkAchievements();
+            
+            // No terminar el modo arena, permitir continuar
+            setTimeout(() => {
+                arenaState.playerHealth = arenaState.maxPlayerHealth;
+                generateArenaEnemy();
+                startArenaAutoBattle();
+                document.getElementById('arenaMessage').textContent = "¡Recupérate y vuelve a la batalla!";
+                updateArenaHealthBars();
+            }, 3000);
         }
         
-        function closeChaosMessage() {
-            document.getElementById('chaosMessage').style.display = 'none';
-            chaosState.battleEnded = false;
+        function showRankUp(rank, reward) {
+            const rankName = ARENA_RANKS[rank - 1].name;
+            document.getElementById('rankUpRank').textContent = rankName;
+            document.getElementById('rankUpRewards').textContent = `Has obtenido ${reward} gemas por subir de rango.`;
+            document.getElementById('arenaRankUp').style.display = 'block';
         }
         
-        function chaosRematch() {
-            closeChaosMessage();
-            startChaosMode();
+        function closeRankUp() {
+            document.getElementById('arenaRankUp').style.display = 'none';
         }
         
-        function createChaosParticles() {
-            for (let i = 0; i < 20; i++) {
-                const p = document.createElement('div');
-                p.className = 'chaos-particle';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = Math.random() * 10 + 10 + 's';
-                p.style.opacity = Math.random() * 0.5 + 0.5;
-                const size = Math.random() * 5 + 5;
-                p.style.width = p.style.height = size + 'px';
-                p.style.background = `hsl(${Math.random()*360},100%,50%)`;
-                document.body.appendChild(p);
+        function endArena(playerWon) {
+            // Detener la batalla
+            clearInterval(arenaState.battleInterval);
+            arenaState.active = false;
+            
+            if (playerWon) {
+                // El jugador ha completado todos los rangos
+                document.getElementById('arenaMessage').textContent = `¡FELICIDADES! Has completado todos los rangos del Modo Arena. Eres un verdadero campeón.`;
+                
+                // Recompensa especial por completar todos los rangos
+                const completionReward = 5000;
+                gameState.diamonds += completionReward;
+                gameState.arenaTotalGems += completionReward;
+                
+                // Mostrar fuegos artificiales
+                startFireworks();
             }
+            
+            // Actualizar UI
+            document.getElementById('startArenaBtn').style.display = 'inline-block';
+            document.getElementById('resetArenaBtn').style.display = 'none';
+            
+            // Guardar estado del juego
+            saveGame();
+            updateUI();
+            checkAchievements();
         }
         
         updateUI();
