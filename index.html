@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎄 Fortnite Cartas CLOUD - FIX CONEXIÓN</title>
+    <title>🎄 Fortnite Cartas CLOUD - MODO BOT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -90,7 +90,7 @@
     <!-- MARQUESINA -->
     <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-red-900 to-indigo-900 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg">
         <div class="animate-scroll flex gap-12 font-black text-[10px] uppercase tracking-widest px-4 text-white">
-            <span>🛡️ CONEXIÓN BLINDADA ACTIVA - EMPAREJAMIENTO INTELIGENTE SIN ERRORES</span>
+            <span>🛡️ MODO BOT DISPONIBLE - ENTRENAR PARA GANAR TROFEOS RÁPIDO</span>
             <span>⚔️ RETOS AMISTOSOS EN EL CLAN - ¡PRACTICA SIN PERDER TROFEOS!</span>
             <span>🎁 RECLAMA TU MILLÓN DE GEMAS EN LA TIENDA</span>
             <span>🌐 PERSISTENCIA TOTAL: TU PROGRESO ESTÁ EN LA NUBE</span>
@@ -106,7 +106,7 @@
             </div>
             <div class="flex items-center gap-2 mt-4">
                 <span id="u-clan" class="clan-tag text-lg hidden"></span>
-                <h2 id="u-name" class="text-3xl font-black italic uppercase tracking-tighter drop-shadow-lg text-white">Jugador</h2>
+                <h2 id="u-name" class="text-3xl font-black italic uppercase tracking-tighter drop-shadow-lg text-white text-white">Jugador</h2>
             </div>
             
             <div class="grid grid-cols-3 gap-2 w-full max-w-md mt-6">
@@ -121,7 +121,7 @@
             <div class="glass-panel p-10 text-center border-4 border-cyan-500/30 mb-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10 text-9xl rotate-12">⚔️</div>
                 <h2 class="text-4xl font-black italic uppercase mb-2 text-cyan-400">MODO BATALLA</h2>
-                <p id="welcome-msg" class="text-white/60 mb-8 font-bold italic">¡Conéctate al instante y destruye a tu oponente!</p>
+                <p id="welcome-msg" class="text-white/60 mb-8 font-bold italic">¡Conéctate al instante o entrena contra el BOT!</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <button onclick="router.navigate('clans')" class="px-8 py-4 bg-yellow-500 text-black font-black rounded-2xl uppercase italic shadow-xl">Sección Clan 🛡️</button>
                     <button onclick="router.navigate('battle')" class="px-8 py-4 bg-cyan-500 text-white font-black rounded-2xl uppercase italic shadow-xl">Duelo Ranked 🌐</button>
@@ -141,14 +141,14 @@
                 <div class="glass-panel p-6 lg:col-span-2 flex flex-col h-[600px] border-cyan-500/10">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Chat: <span id="current-clan-name" class="text-cyan-400">...</span></h3>
-                        <button onclick="clans.leave()" class="text-[8px] text-red-500 font-bold uppercase hover:underline">Salir</button>
+                        <button onclick="clans.leave()" class="text-[8px] text-red-500 font-bold uppercase hover:underline text-red-500">Salir</button>
                     </div>
                     <div id="clan-chat-box" class="flex-1 overflow-y-auto pr-2 space-y-4 chat-container mb-4"></div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="clans.sendChallenge()" class="flex-1 sm:flex-none px-4 py-3 bg-red-600 rounded-xl font-black text-[10px] uppercase italic">⚔️ Retar</button>
+                        <button onclick="clans.sendChallenge()" class="flex-1 sm:flex-none px-4 py-3 bg-red-600 rounded-xl font-black text-[10px] uppercase italic text-white">⚔️ Retar</button>
                         <div class="w-full flex gap-2 mt-1">
-                            <input id="clan-msg-input" type="text" placeholder="Chatear..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none focus:border-cyan-500 text-xs" />
-                            <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
+                            <input id="clan-msg-input" type="text" placeholder="Chatear..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none focus:border-cyan-500 text-xs text-white" />
+                            <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center text-white"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
@@ -157,8 +157,8 @@
 
         <!-- MAZO -->
         <section id="view-deck" class="view">
-            <h2 class="text-3xl font-black uppercase italic tracking-tighter mb-6">TU ESCUADRÓN <span class="text-cyan-400" id="deck-stats">0/101</span></h2>
-            <p class="text-[9px] text-white/40 mb-4 font-bold">DEBES EQUIPAR EXACTAMENTE 3 CARTAS PARA PELEAR.</p>
+            <h2 class="text-3xl font-black uppercase italic tracking-tighter mb-6 text-white text-white">TU ESCUADRÓN <span class="text-cyan-400" id="deck-stats">0/101</span></h2>
+            <p class="text-[9px] text-white/40 mb-4 font-bold uppercase">DEBES EQUIPAR EXACTAMENTE 3 CARTAS PARA PELEAR.</p>
             <div id="deck-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
@@ -173,8 +173,16 @@
             <div id="battle-lobby" class="glass-panel p-10 text-center max-w-lg mx-auto border-2 border-cyan-400/20">
                 <div class="text-5xl mb-6">🌐</div>
                 <h2 class="text-3xl font-black italic mb-2 uppercase text-white">SALA DE DUELO</h2>
-                <input id="room-id-input" type="text" placeholder="CÓDIGO DE SALA" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-4 text-center font-black text-2xl uppercase tracking-tighter outline-none focus:border-cyan-500" />
-                <button onclick="multiplayer.join()" class="w-full py-4 bg-cyan-500 rounded-xl font-black uppercase italic tracking-widest shadow-xl text-white">¡A LA BATALLA! ⚡</button>
+                <input id="room-id-input" type="text" placeholder="CÓDIGO DE SALA" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-4 text-center font-black text-2xl uppercase tracking-tighter outline-none focus:border-cyan-500 text-white" />
+                <div class="flex flex-col gap-3">
+                    <button onclick="multiplayer.join()" class="w-full py-4 bg-cyan-500 rounded-xl font-black uppercase italic tracking-widest shadow-xl text-white">¡A LA BATALLA! ⚡</button>
+                    <div class="flex items-center gap-2 my-2">
+                        <hr class="flex-1 opacity-10">
+                        <span class="text-[8px] font-black opacity-30 uppercase tracking-widest text-white">O ENTRENAR SOLO</span>
+                        <hr class="flex-1 opacity-10">
+                    </div>
+                    <button onclick="multiplayer.join('', false, true)" class="w-full py-4 bg-white/5 border border-white/10 rounded-xl font-black uppercase italic text-xs hover:bg-white hover:text-black transition-all text-white">ENTRENAR CONTRA BOT 🤖</button>
+                </div>
             </div>
             
             <div id="battle-arena" class="hidden space-y-4 max-w-4xl mx-auto">
@@ -197,7 +205,7 @@
 
                 <div class="flex flex-col items-center justify-center h-12">
                    <div id="battle-status" class="text-center font-black uppercase italic text-cyan-400 animate-pulse text-sm">ESPERANDO...</div>
-                   <div id="is-friendly-badge" class="hidden text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded font-black uppercase mt-1">Duelo Amistoso</div>
+                   <div id="battle-mode-badge" class="hidden text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded font-black uppercase mt-1">Duelo Amistoso</div>
                 </div>
 
                 <!-- JUGADOR -->
@@ -218,7 +226,7 @@
                 </div>
                 
                 <div class="text-center">
-                    <button onclick="location.reload()" class="text-[8px] uppercase font-black text-white/20 hover:text-white transition-all tracking-widest">Abandonar Combate</button>
+                    <button onclick="location.reload()" class="text-[8px] uppercase font-black text-white/20 hover:text-white transition-all tracking-widest text-white/20">Abandonar Combate</button>
                 </div>
             </div>
         </section>
@@ -326,9 +334,9 @@
             const uClan = document.getElementById('u-clan');
             if(window.state.clan) { uClan.innerText = `[${window.state.clan}]`; uClan.classList.remove('hidden'); }
             else uClan.classList.add('hidden');
-            document.getElementById('v-diamonds').innerText = window.state.diamonds.toLocaleString();
-            document.getElementById('v-trophies').innerText = window.state.trophies;
-            document.getElementById('v-cups').innerText = window.state.cups;
+            document.getElementById('v-diamonds').innerText = (window.state.diamonds || 0).toLocaleString();
+            document.getElementById('v-trophies').innerText = window.state.trophies || 0;
+            document.getElementById('v-cups').innerText = window.state.cups || 0;
         };
 
         // ROUTER
@@ -346,12 +354,12 @@
             }
         };
 
-        // MULTIPLAYER (EMPAREJAMIENTO INTELIGENTE BLINDADO)
+        // MULTIPLAYER & BOT (MODO ENTRENAMIENTO INTEGRADO)
         window.multiplayer = {
-            room: '', role: '', ref: null, data: null, isFriendly: false, myBattleName: '',
-            join: async (directCode, friendly = false) => {
-                const code = directCode || document.getElementById('room-id-input').value.toUpperCase().trim();
-                if(!code || code.length < 3) return alert("Código de sala inválido");
+            room: '', role: '', ref: null, data: null, isFriendly: false, myBattleName: '', isBotMode: false,
+            join: async (directCode, friendly = false, bot = false) => {
+                const code = bot ? 'BOT_LOCAL' : (directCode || document.getElementById('room-id-input').value.toUpperCase().trim());
+                if(!bot && (!code || code.length < 3)) return alert("Código de sala inválido");
                 
                 // Asegurar mazo de 3 cartas
                 let currentDeck = [...(window.state.currentDeck || [])];
@@ -362,46 +370,63 @@
                    save();
                 }
 
-                window.multiplayer.room = code;
-                window.multiplayer.isFriendly = friendly;
-                window.multiplayer.ref = ref(db, `rooms_v11/${code}`);
-                window.multiplayer.myBattleName = window.state.name;
-                
-                // Mapeo completo del mazo en el momento de entrar
                 const mappedDeck = currentDeck.map(id => {
                     const b = ALL_CARDS.find(x => x.id === id) || ALL_CARDS[0];
                     const lvl = (window.state.upgrades && window.state.upgrades[id]) || 1;
                     return { id: b.id, n: b.name, i: b.img, r: b.rarity, atk: b.baseAtk + (lvl * 10), lvl: lvl };
                 });
 
-                // Lógica de conexión forzada
+                window.multiplayer.isBotMode = bot;
+                window.multiplayer.room = code;
+                window.multiplayer.isFriendly = friendly;
+                
+                if(bot) {
+                    const botPool = ALL_CARDS.slice(0, 30);
+                    const botDeck = [
+                        botPool[Math.floor(Math.random()*botPool.length)],
+                        botPool[Math.floor(Math.random()*botPool.length)],
+                        botPool[Math.floor(Math.random()*botPool.length)]
+                    ].map(b => ({ id: b.id, n: b.name, i: b.img, r: b.rarity, atk: b.baseAtk, lvl: 1 }));
+
+                    const botData = {
+                        p1: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck },
+                        p2: { n: 'BOT_FORTNITE', h: 100, a: 'https://cdn-icons-png.flaticon.com/512/4712/4712035.png', deck: botDeck },
+                        status: 'playing', turn: 'p1', friendly: false
+                    };
+                    window.multiplayer.role = 'p1';
+                    window.multiplayer.sync(botData);
+                    document.getElementById('battle-lobby').classList.add('hidden');
+                    document.getElementById('battle-arena').classList.remove('hidden');
+                    document.getElementById('battle-mode-badge').classList.remove('hidden');
+                    document.getElementById('battle-mode-badge').innerText = "MODO ENTRENAMIENTO 🤖";
+                    router.navigate('battle');
+                    return;
+                }
+
+                window.multiplayer.ref = ref(db, `rooms_v11/${code}`);
+                window.multiplayer.myBattleName = window.state.name;
+
                 const snap = await get(window.multiplayer.ref);
                 const data = snap.val();
 
                 if(!data) {
-                    // Soy P1
                     await set(window.multiplayer.ref, { 
                         p1: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck },
                         status: 'waiting', turn: 'p1', friendly: friendly
                     });
                     window.multiplayer.role = 'p1';
                 } else {
-                    // Intentar unirse como P2
                     if(data.p1 && !data.p2) {
-                        // Verificar nombres duplicados
                         if(data.p1.n === window.state.name) {
                             window.multiplayer.myBattleName += "_" + Math.floor(Math.random()*99);
-                            alert("Nombre duplicado en sala. Entrarás como: " + window.multiplayer.myBattleName);
                         }
                         await update(window.multiplayer.ref, { 
                             p2: { n: window.multiplayer.myBattleName, h: 100, a: window.state.avatar, deck: mappedDeck },
                             status: 'playing'
                         });
                         window.multiplayer.role = 'p2';
-                    } else if(data.p1 && data.p2) {
-                        return alert("La sala está llena");
-                    } else {
-                        // Caso raro: la sala existe pero no hay p1
+                    } else if(data.p1 && data.p2) return alert("Sala llena");
+                    else {
                         await set(window.multiplayer.ref, { 
                             p1: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck },
                             status: 'waiting', turn: 'p1', friendly: friendly
@@ -410,22 +435,18 @@
                     }
                 }
 
-                // Escuchar cambios y forzar estados
-                onValue(window.multiplayer.ref, (snap) => {
-                    const val = snap.val();
+                onValue(window.multiplayer.ref, (snapshot) => {
+                    const val = snapshot.val();
                     if(!val) return location.reload();
-                    
-                    // FORZAR INICIO: Si ambos están pero sigue en waiting
                     if(val.p1 && val.p2 && val.status === 'waiting' && window.multiplayer.role === 'p1') {
                         update(window.multiplayer.ref, { status: 'playing' });
                     }
-                    
                     window.multiplayer.sync(val);
                 });
 
                 document.getElementById('battle-lobby').classList.add('hidden');
                 document.getElementById('battle-arena').classList.remove('hidden');
-                document.getElementById('is-friendly-badge').classList.toggle('hidden', !friendly);
+                document.getElementById('battle-mode-badge').classList.toggle('hidden', !friendly);
                 router.navigate('battle');
                 onDisconnect(window.multiplayer.ref).remove();
             },
@@ -437,7 +458,6 @@
                 const rivalRole = window.multiplayer.role === 'p1' ? 'p2' : 'p1';
                 const rival = data[rivalRole];
 
-                // Render HP
                 document.getElementById('player-full-name').innerText = me.n;
                 document.getElementById('player-avatar-battle').src = me.a;
                 document.getElementById('player-hp-text').innerText = `${me.h} HP`;
@@ -452,10 +472,9 @@
 
                 const status = document.getElementById('battle-status');
                 const isMyTurn = data.status === 'playing' && data.turn === window.multiplayer.role;
-                status.innerText = isMyTurn ? '¡ATACA BB!' : (data.status === 'waiting' ? 'ESPERANDO RIVAL...' : 'ESPERA RIVAL...');
+                status.innerText = isMyTurn ? '¡TU TURNO!' : (data.status === 'waiting' ? 'ESPERANDO...' : 'TURNO RIVAL');
                 if(data.status === 'finished') status.innerText = data.winner === window.multiplayer.role ? '¡VICTORIA!' : 'DERROTA';
 
-                // Render Deck (Cartas SIEMPRE visibles)
                 const deckCont = document.getElementById('player-battle-deck');
                 deckCont.innerHTML = (me.deck || []).map(c => `
                     <div onclick="multiplayer.attack(${c.atk})" class="battle-card-item glass-panel p-2 flex flex-col items-center ${!isMyTurn?'disabled':''} rarity-${c.r}">
@@ -464,25 +483,59 @@
                     </div>
                 `).join('');
 
-                // Render Rival
                 const rivalCont = document.getElementById('rival-deck-display');
                 rivalCont.innerHTML = (rival?.deck || [1,2,3]).map(c => `
-                    <div class="h-14 glass-panel flex items-center justify-center text-[10px] opacity-20 font-black">?</div>
+                    <div class="h-14 glass-panel flex items-center justify-center text-[10px] opacity-20 font-black text-white">?</div>
                 `).join('');
+
+                // BOT THINKING LOOP
+                if(window.multiplayer.isBotMode && data.status === 'playing' && data.turn === 'p2') {
+                    setTimeout(() => {
+                        if(window.multiplayer.data.turn === 'p2') {
+                            const botCards = window.multiplayer.data.p2.deck;
+                            const randomAtk = botCards[Math.floor(Math.random()*botCards.length)].atk;
+                            window.multiplayer.attack(randomAtk);
+                        }
+                    }, 3000);
+                }
             },
             attack: (atk) => {
                 if(window.multiplayer.data.status !== 'playing' || window.multiplayer.data.turn !== window.multiplayer.role) return;
+                
                 const rivalRole = window.multiplayer.role === 'p1' ? 'p2' : 'p1';
                 const dmg = Math.floor(atk / 10) + 5;
                 const newHp = Math.max(0, window.multiplayer.data[rivalRole].h - dmg);
-                const updates = {};
-                updates[`${rivalRole}/h`] = newHp;
-                updates[`turn`] = rivalRole;
+                
+                const nextTurn = rivalRole;
+                const updatedData = { ...window.multiplayer.data };
+                updatedData[rivalRole].h = newHp;
+                updatedData.turn = nextTurn;
+
                 if(newHp <= 0) { 
-                    updates[`status`] = 'finished'; updates[`winner`] = window.multiplayer.role; 
-                    if(!window.multiplayer.data.friendly) { window.state.trophies += 50; window.state.diamonds += 100; save(); }
+                    updatedData.status = 'finished'; 
+                    updatedData.winner = window.multiplayer.role; 
+                    if(window.multiplayer.role === 'p1') {
+                        const winTrophies = window.multiplayer.isBotMode ? 25 : 50;
+                        const winDiamonds = window.multiplayer.isBotMode ? 50 : 100;
+                        window.state.trophies += winTrophies;
+                        window.state.diamonds += winDiamonds;
+                        save();
+                        alert(`¡Has ganado ${winTrophies} Trofeos y ${winDiamonds} Gemas! 🔥`);
+                    }
                 }
-                update(window.multiplayer.ref, updates);
+
+                if(window.multiplayer.isBotMode) {
+                    window.multiplayer.sync(updatedData);
+                } else {
+                    const updates = {};
+                    updates[`${rivalRole}/h`] = newHp;
+                    updates[`turn`] = nextTurn;
+                    if(newHp <= 0) { 
+                        updates[`status`] = 'finished'; 
+                        updates[`winner`] = window.multiplayer.role; 
+                    }
+                    update(window.multiplayer.ref, updates);
+                }
             }
         };
 
@@ -493,8 +546,8 @@
                     const list = snap.val() || {};
                     document.getElementById('clans-list').innerHTML = Object.keys(list).map(name => `
                         <div class="glass-panel p-4 flex justify-between items-center border-white/5 hover:border-cyan-500 cursor-pointer" onclick="clans.join('${name}')">
-                            <span class="clan-tag">[${name}]</span>
-                            <span class="text-[8px] opacity-40 uppercase font-black">${Object.keys(list[name].members || {}).length} M</span>
+                            <span class="clan-tag text-white">[${name}]</span>
+                            <span class="text-[8px] opacity-40 uppercase font-black text-white">${Object.keys(list[name].members || {}).length} M</span>
                         </div>
                     `).join('');
                 });
@@ -533,7 +586,7 @@
                         }
                         return `
                             <div class="flex flex-col ${m.user === window.state.name ? 'items-end' : 'items-start'} px-4">
-                                <span onclick="app.showProfile('${m.user}')" class="text-[8px] opacity-40 uppercase font-black cursor-pointer hover:text-cyan-400">${m.user}</span>
+                                <span onclick="app.showProfile('${m.user}')" class="text-[8px] opacity-40 uppercase font-black cursor-pointer hover:text-cyan-400 text-white">${m.user}</span>
                                 <div class="p-3 ${m.user === window.state.name ? 'bg-cyan-600 rounded-l-2xl' : 'bg-white/5 rounded-r-2xl'} border border-white/5 text-xs text-white">${m.text}</div>
                             </div>
                         `;
@@ -574,7 +627,7 @@
                 document.getElementById('p-deck').innerHTML = (u.currentDeck || []).map(id => {
                     const c = ALL_CARDS.find(x => x.id === id);
                     const lvl = (u.upgrades && u.upgrades[id]) || 1;
-                    return `<div class="w-16 glass-panel p-1 rarity-${c.rarity}"><img src="${c.img}" class="w-full aspect-[3/4] object-cover rounded"><div class="text-[6px] font-black text-center">NV.${lvl}</div></div>`;
+                    return `<div class="w-16 glass-panel p-1 rarity-${c.rarity}"><img src="${c.img}" class="w-full aspect-[3/4] object-cover rounded"><div class="text-[6px] font-black text-center text-white">NV.${lvl}</div></div>`;
                 }).join('');
                 document.getElementById('profile-modal').classList.add('active');
             },
@@ -597,7 +650,7 @@
 
         const renderDeck = () => {
             const cont = document.getElementById('deck-grid');
-            document.getElementById('deck-stats').innerText = `${window.state.owned.length}/101`;
+            document.getElementById('deck-stats').innerText = `${(window.state.owned || []).length}/101`;
             cont.innerHTML = window.state.owned.map(id => {
                 const c = ALL_CARDS.find(x => x.id === id);
                 const lvl = window.state.upgrades[id] || 1;
@@ -606,12 +659,12 @@
                     <div class="glass-panel p-3 rarity-${c.rarity} ${inDeck?'border-yellow-400':''}">
                         <div class="relative h-32 rounded-xl overflow-hidden mb-2">
                             <img src="${c.img}" class="w-full h-full object-cover">
-                            <div class="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black">NV.${lvl}</div>
+                            <div class="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black text-white">NV.${lvl}</div>
                         </div>
                         <div class="text-[9px] font-black uppercase mb-3 truncate italic text-white">${c.name}</div>
                         <div class="grid grid-cols-2 gap-1">
-                            <button onclick="app.toggleDeck(${id})" class="w-full py-2 ${inDeck?'bg-red-600':'bg-cyan-600'} text-[7px] font-black rounded uppercase">${inDeck?'Quitar':'Equipar'}</button>
-                            <button onclick="app.upgrade(${id})" class="w-full py-2 bg-green-600 text-[7px] font-black rounded uppercase">Mejorar</button>
+                            <button onclick="app.toggleDeck(${id})" class="w-full py-2 ${inDeck?'bg-red-600':'bg-cyan-600'} text-[7px] font-black rounded uppercase text-white">${inDeck?'Quitar':'Equipar'}</button>
+                            <button onclick="app.upgrade(${id})" class="w-full py-2 bg-green-600 text-[7px] font-black rounded uppercase text-white">Mejorar</button>
                         </div>
                     </div>
                 `;
@@ -638,10 +691,10 @@
                 const users = Object.values(snap.val() || {}).sort((a,b) => b.trophies - a.trophies).slice(0, 10);
                 document.getElementById('ranking-list').innerHTML = users.map((u, i) => `
                     <div class="glass-panel p-4 flex items-center gap-4 cursor-pointer" onclick="app.showProfile('${u.name}')">
-                        <div class="font-black text-xl opacity-20 w-6">${i+1}</div>
+                        <div class="font-black text-xl opacity-20 w-6 text-white">${i+1}</div>
                         <img src="${u.avatar}" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1 font-bold text-[10px] uppercase text-white">${u.clan?`[${u.clan}]`:''} ${u.name}</div>
-                        <div class="text-yellow-400 font-black italic">${u.trophies} 🏆</div>
+                        <div class="flex-1 font-bold text-[10px] uppercase text-white text-white">${u.clan?`[${u.clan}]`:''} ${u.name}</div>
+                        <div class="text-yellow-400 font-black italic text-yellow-400">${u.trophies} 🏆</div>
                     </div>
                 `).join('');
             });
