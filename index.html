@@ -1,552 +1,497 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🏆 Fortnite Cartas - Torneo</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <style>
-    body { font-family: sans-serif; background: #050505; min-height: 100vh; margin: 0; color: white; }
-    .card { border: 2px solid; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
-    .rarity-common { border-color: #94a3b8; }
-    .rarity-rare { border-color: #22c55e; }
-    .rarity-epic { border-color: #a855f7; }
-    .rarity-legendary { border-color: #f97316; }
-    .rarity-idolos { border-color: #ec4899; }
-    .rarity-animated { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.4); }
-    .rarity-actricesporno { border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.5); }
-    .rarity-tournament { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6,182,212,0.4); }
-    .btn { padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; margin: 4px; transition: all 0.3s; }
-    .btn-primary { background: #06b6d4; color: white; }
-    .btn-primary:hover { background: #0891b2; }
-    .btn-success { background: #22c55e; color: white; }
-    .btn-success:hover { background: #16a34a; }
-    .btn-danger { background: #ef4444; color: white; }
-    .btn-danger:hover { background: #dc2626; }
-    .input { padding: 8px; border-radius: 8px; border: 1px solid #333; background: #111; color: white; margin: 4px; }
-    .tournament-bracket { border: 2px solid #fbbf24; background: rgba(251,191,36,0.1); padding: 15px; border-radius: 12px; }
-    .hp-bar { height: 20px; background: #111; border-radius: 10px; overflow: hidden; margin: 8px 0; }
-    .hp-fill { height: 100%; transition: width 0.5s; border-radius: 10px; }
-    .player-hp { background: linear-gradient(90deg, #06b6d4, #0891b2); }
-    .enemy-hp { background: linear-gradient(90deg, #ef4444, #dc2626); }
-    .enemy-card { border: 2px solid #ef4444; background: rgba(239,68,68,0.1); padding: 10px; border-radius: 8px; margin: 10px 0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Cartas - Ultimate Tournament</title>
+    
+    <!-- CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <!-- Import Map para Gemini API -->
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+
+    <style>
+        body {
+            background-color: #020202;
+            color: white;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0a0a0a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        /* Animaciones de Batalla */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-2deg); }
+            75% { transform: translateX(8px) rotate(2deg); }
+        }
+        .animate-shake { animation: shake 0.2s ease-in-out 2; }
+
+        @keyframes jump-up {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-40px) scale(1.1); }
+            100% { transform: translateY(0); }
+        }
+        .animate-attack-player { animation: jump-up 0.4s cubic-bezier(.36,.07,.19,.97); }
+
+        @keyframes jump-down {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(40px) scale(1.1); }
+            100% { transform: translateY(0); }
+        }
+        .animate-attack-enemy { animation: jump-down 0.4s cubic-bezier(.36,.07,.19,.97); }
+
+        @keyframes float-dmg {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.5); }
+        }
+        .damage-popup {
+            position: absolute;
+            pointer-events: none;
+            font-weight: 900;
+            z-index: 100;
+            animation: float-dmg 0.8s forwards;
+            text-shadow: 2px 2px 0 black;
+        }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
-      authDomain: "juego-de-cartas-f7284.firebaseapp.com",
-      databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com",
-      projectId: "juego-de-cartas-f7284"
-    };
-    
-    try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-    const db = firebase.database();
-    
-    const CARDS = [
-      { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50, price: 50 },
-      { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100, price: 100 },
-      { id: 2, name: "Escudera", rarity: "common", baseAtk: 55, baseDef: 65, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", shopPrice: 50, price: 50 },
-      { id: 3, name: "Azulita", rarity: "rare", baseAtk: 70, baseDef: 55, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", shopPrice: 80, price: 80 },
-      { id: 4, name: "Tormenta", rarity: "epic", baseAtk: 80, baseDef: 45, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", shopPrice: 120, price: 120 },
-      { id: 5, name: "Furia", rarity: "legendary", baseAtk: 90, baseDef: 40, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", shopPrice: 200, price: 200 },
-      { id: 6, name: "Asesina", rarity: "legendary", baseAtk: 95, baseDef: 30, level: 1, img: "https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", shopPrice: 250, price: 250 },
-      { id: 7, name: "Francine Smith", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://wimg.rule34.xxx/images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", shopPrice: 1000, price: 1000 },
-      { id: 11, name: "Campeón Sombra", rarity: "tournament", baseAtk: 140, baseDef: 100, level: 1, img: "https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", shopPrice: null, price: 0 },
-      { id: 12, name: "Maestro del Fuego", rarity: "tournament", baseAtk: 150, baseDef: 90, level: 1, img: "https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", shopPrice: null, price: 0 },
-      { id: 13, name: "Rey del Hielo", rarity: "tournament", baseAtk: 135, baseDef: 110, level: 1, img: "https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", shopPrice: null, price: 0 },
-      { id: 14, name: "Felina", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", shopPrice: 300, price: 300 },
-      { id: 16, name: "Serenade", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/3001/sample_59915a49be3c0b2a86030615f562d3c1.jpg?15147757", shopPrice: 700, price: 700 },
-      { id: 17, name: "Cammy and Chun-Li", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590", shopPrice: 700, price: 700 },
-      { id: 18, name: "Briar", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/2510/sample_ea2393689e00c9127748cc78a08ef6b5.jpg?15205865", shopPrice: 700, price: 700 },
-      { id: 19, name: "Torrenta", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/1506/sample_b060c3279b1a9b0a7da0e19bb15fa2d5.jpg?15273482", shopPrice: 700, price: 700 },
-      { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700, price: 700 },
-      { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000, price: 2000 },
-      { id: 23, name: "Amy Wong Thicc", rarity: "epic", baseAtk: 88, baseDef: 55, level: 1, img: "https://rule34.xxx/samples/2701/sample_eae1882d43a188cdcbb129ca7ad3e12e.jpg?14901475", shopPrice: 400, price: 400 },
-      { id: 24, name: "Neon Strike", rarity: "epic", baseAtk: 90, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/902/sample_2e1d3d88982219e96d1bb68453e57b27.jpg?14884672", shopPrice: 450, price: 450 },
-      { id: 25, name: "Beach Rebel", rarity: "epic", baseAtk: 85, baseDef: 60, level: 1, img: "https://rule34.xxx/samples/2019/sample_fd1e4fb4f37cab745ed074ee637ee911.jpg?14877326", shopPrice: 500, price: 500 },
-      { id: 26, name: "Panda Girl", rarity: "epic", baseAtk: 82, baseDef: 58, level: 1, img: "https://rule34.xxx/samples/1674/sample_9c2a1dc61194fef31518afef6288438d.jpg?14876583", shopPrice: 550, price: 550 },
-      { id: 27, name: "Beach Blonde", rarity: "epic", baseAtk: 92, baseDef: 48, level: 1, img: "https://rule34.xxx/samples/890/sample_ce7401fb27ce9a94e218feb294e9d107.jpg?14851213", shopPrice: 600, price: 600 },
-      { id: 29, name: "Samurai Blue", rarity: "epic", baseAtk: 87, baseDef: 62, level: 1, img: "https://wimg.rule34.xxx/images/2149/86cb609ba898ff4285cfe105c5237f1a.png?14777959", shopPrice: 700, price: 700 },
-      { id: 31, name: "D.Va & Uraraka", rarity: "epic", baseAtk: 93, baseDef: 52, level: 1, img: "https://rule34.xxx/samples/2122/sample_cadb0b375ac7de3414d0db39d552e7d4.jpg?14666699", shopPrice: 800, price: 800 },
-      { id: 32, name: "Laguna", rarity: "epic", baseAtk: 89, baseDef: 55, level: 1, img: "https://rule34.xxx/samples/842/sample_727d3f80cc43d197f3977fb5c9dfdc22.jpg?14662037", shopPrice: 850, price: 850 },
-      { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: 2500, price: 2500 },
-      { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, baseDef: 85, level: 1, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: 2800, price: 2800 },
-      { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 3000, price: 3000 },
-      { id: 37, name: "Muñeca Simpsons", rarity: "legendary", baseAtk: 115, baseDef: 75, level: 1, img: "https://wimg.rule34.xxx/images/1370/e31706328b6ffa7e207dbb2df991f116.gif", shopPrice: 1500, price: 1500 },
-      { id: 38, name: "Princesa Peach", rarity: "legendary", baseAtk: 130, baseDef: 85, level: 1, img: "https://files.catbox.moe/0k9j2p.gif", shopPrice: 2000, price: 2000 },
-      { id: 39, name: "Braixen Thicc Rider", rarity: "animated", baseAtk: 140, baseDef: 90, level: 1, img: "https://wimg.rule34.xxx/images/1620/752edf7523feb1cfac185fd1cf2a0785.gif", shopPrice: null, price: 0 },
-      { id: 40, name: "Espeon Gym Thrust", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://wimg.rule34.xxx/images/617/c15df1e76636ca51743b135ad3817685.gif", shopPrice: null, price: 0 },
-      { id: 41, name: "Sylveon Forest Bounce", rarity: "animated", baseAtk: 135, baseDef: 95, level: 1, img: "https://wimg.rule34.xxx/images/701/e6fb4ba874eced64a960455ed6c03770.gif", shopPrice: null, price: 0 },
-      { id: 42, name: "Otaku Girl", rarity: "animated", baseAtk: 500, baseDef: 120, level: 1, img: "https://wimg.rule34.xxx/images/3636/2238fbcefc001a701fe5e1f8c5236fe5.gif", shopPrice: 1800, price: 1800 },
-      { id: 43, name: "Belle Beast Ride", rarity: "animated", baseAtk: 150, baseDef: 90, level: 1, img: "https://cdn2.hentaigifz.com/116588/belle-from-beauty-and-the-beast-scaled.webp", shopPrice: null, price: 0 },
-      { id: 44, name: "Emo Bad Belle", rarity: "animated", baseAtk: 140, baseDef: 95, level: 1, img: "https://cdn2.hentaigifz.com/116536/emo-scaled.webp", shopPrice: null, price: 0 },
-      { id: 45, name: "Betty Boop Tease", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://cdn2.hentaigifz.com/116498/betty-boop-scaled.webp", shopPrice: null, price: 0 },
-      { id: 46, name: "Dexter's Mom Beach", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500, price: 2500 },
-      { id: 47, name: "Keqing Thicc Ride", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116288/hentai-scaled.webp", shopPrice: 2500, price: 2500 },
-      { id: 48, name: "Leona Gym Thrust", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116388/tmr-scaled.webp", shopPrice: 2500, price: 2500 },
-      { id: 49, name: "Strange Hero Facesit", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116364/strangeh-scaled.webp", shopPrice: 2500, price: 2500 },
-      { id: 50, name: "Busting The Fuck Out", rarity: "animated", baseAtk: 5000, baseDef: 2500, level: 1, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000, price: 5000 },
-      { id: 51, name: "Motoko Kusanagi Ride", rarity: "animated", baseAtk: 1600, baseDef: 1100, level: 1, img: "https://cdn2.hentaigifz.com/114768/fantasy-fuck-scaled.webp", shopPrice: 2800, price: 2800 },
-      { id: 53, name: "Eirin Yagokoro Dildo", rarity: "animated", baseAtk: 1550, baseDef: 1150, level: 1, img: "https://cdn2.hentaigifz.com/115486/bucketheadero-eirin-yagokoro-touhou-scaled.webp", shopPrice: 2700, price: 2700 },
-      { id: 54, name: "Raven Big Ass", rarity: "animated", baseAtk: 1800, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/115298/raven-big-ass-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 57, name: "Bubblegum Tit Shake", rarity: "animated", baseAtk: 1500, baseDef: 1300, level: 1, img: "https://cdn2.hentaigifz.com/115728/by-dabbledraws-bubblegum-shakes-her-huge-tits-scaled.webp", shopPrice: 2600, price: 2600 },
-      { id: 58, name: "Vinyl Luna Smirk", rarity: "animated", baseAtk: 1680, baseDef: 1120, level: 1, img: "https://cdn2.hentaigifz.com/115614/smirk-scaled.webp", shopPrice: 2880, price: 2880 },
-      { id: 59, name: "Best Nelson Ride", rarity: "animated", baseAtk: 1900, baseDef: 950, level: 1, img: "https://cdn2.hentaigifz.com/115978/best-nelson-scaled.webp", shopPrice: 3100, price: 3100 },
-      { id: 60, name: "Dragon Momma Slut", rarity: "animated", baseAtk: 2000, baseDef: 900, level: 1, img: "https://cdn2.hentaigifz.com/116346/dragon-momma-slut-chelodoy-scaled.webp", shopPrice: 3200, price: 3200 },
-      { id: 61, name: "Samantha Bounce", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113850/gif-samantha-1-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 62, name: "Tracer Riding", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113896/tracer-ridingirastris-ii-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 63, name: "Jane Jetson MILF", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114176/milf-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 64, name: "Blonde Ahegao", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114102/blonde-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 65, name: "Mommy's Milk", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114104/mommys-milk-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 66, name: "Modeus Tight Fuck", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114096/hentai-fuck-tight-pussy-with-big-tits-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 67, name: "Family Guy XXXmas", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114026/holy-crap-xxxmas-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 68, name: "Harness Pussy Fuck", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114034/pussy-hentai-fuck-scaled.webp", shopPrice: 4000, price: 4000 },
-      { id: 69, name: "Lisa Footjob", rarity: "legendary", baseAtk: 105, baseDef: 60, level: 1, img: "https://cdn.truyen-hentai.com/lisa-genshin-impact?interlace=1&quality=90&type=jpeg&url=https://i.redd.it/2rhrtyfu486g1.jpeg&width=920&sign=fT55BfklnZBR2KbkAiywdF3fKOyO99UCruuDvfceJcs", shopPrice: 500, price: 500 },
-      { id: 71, name: "Susan Long MILF", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116566/hentai-milf-susan-long-american-dragon-jake-long-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 72, name: "TMR Thicc", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116442/tmr-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 73, name: "Jinx League of Legends", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/3971/sample_2da1c8ff33fe588f243910961ed11a06.jpg?13091729", shopPrice: 1200, price: 1200 },
-      { id: 74, name: "Ahri Fox Legend", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/2954/sample_2386105dbcb97ac0248cc3ea8500b84a.jpg?13155724", shopPrice: 1200, price: 1200 },
-      { id: 75, name: "Seraphine Popstar", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/4746/sample_37fa548a5434c08a3a4bf02284abedb6.jpg?13157246", shopPrice: 1200, price: 1200 },
-      { id: 76, name: "Sonia Pokemon Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/3480/sample_bcffd58f4d3323097bff61a131fefcf7.jpg?13212611", shopPrice: 1200, price: 1200 },
-      { id: 77, name: "Eula Genshin Impact", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://wimg.rule34.xxx/images/1177/99745673e25c63e0080cf6ddcf048f56.png?13214170", shopPrice: 1200, price: 1200 },
-      { id: 78, name: "Noelle Genshin Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/1177/sample_07014603b1bc2a1ee520415c2ce8bd60.jpg?13214737", shopPrice: 1200, price: 1200 },
-      { id: 79, name: "Gwen Spider Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/139/sample_c4fd8a7f5d51c72b9fc2b5136650e90c.jpg?15817313", shopPrice: 1200, price: 1200 },
-      { id: 80, name: "Starfire Teen Titans", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/368/sample_8237312d0b56c4a8bcd6b0f4b287c6da3b16140a.jpg?15828521", shopPrice: 1200, price: 1200 },
-      { id: 81, name: "Raven Teen Titans Slut", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/3787/sample_46e881b34ef3f92e8a012f9d2d351e28.jpg?15825868", shopPrice: 1200, price: 1200 },
-      { id: 82, name: "Robin Teen Titans Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx/samples/1227/sample_4af1e5c47506f9fbbe762fb71a2c3395.jpg?15824410", shopPrice: 1200, price: 1200 },
-      { id: 83, name: "Big Tit Teen Fucking", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116478/big-tit-teen-fucking-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 84, name: "Sekis Thicc", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116488/sekis-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 85, name: "Hentai Ride Animated", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116444/hentai-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 86, name: "Big Tits Hentai Gif", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116430/big-tits-hentai-gif-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 87, name: "Babe Animated", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116376/babe-scaled.webp", shopPrice: 3000, price: 3000 },
-      { id: 88, name: "Rosalía Motomami", rarity: "idolos", baseAtk: 155, baseDef: 105, level: 1, img: "https://media.vogue.es/photos/6282929aebc8221f41f20a50/2:3/w_1920,c_limit/SHOT_02_090_FINAL.jpg", shopPrice: 3200, price: 3200 },
-      { id: 89, name: "Mmm Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114202/mmm-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 90, name: "Eighty-Five Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114046/85-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 91, name: "Princess Peach Tit Bounce", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114432/princess-peach-bouncing-them-titties-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 92, name: "Demon Princess Meaty", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114680/demon-princess-fucking-a-meaty-cock-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 93, name: "Nice Ass Fuck Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114454/nice-ass-fuck-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 94, name: "Automatass Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/115204/automatass-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 95, name: "2B Perfect Ass Doggy", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/112817/2b-perfect-ass-doggy-style-3d-hentai-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 96, name: "Green Slime Cum Clothes", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/112481/green-slime-turns-clothes-to-cum-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 97, name: "Ass Animated Thicc", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113095/ass-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 98, name: "Widowmaker Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113718/widowmaker-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 99, name: "Futa Madmew Redapple2", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113534/futa-madmew-by-redapple2-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 100, name: "Tifa Blacked 3", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113370/tifa-blacked-3-scaled.webp", shopPrice: 5500, price: 5500 },
-      { id: 101, name: "Milf Handjob Wet", rarity: "actricesporno", baseAtk: 12000, baseDef: 6000, level: 1, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000, price: 7000 }
-    ];
-    
-    const TOURNAMENT_ENEMIES = [
-      { phase: 1, name: "Novato Timmy", atk: 40, hp: 100, reward: 100, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 1, name: "Cadete Bob", atk: 45, hp: 110, reward: 120, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 2, name: "Soldado Dave", atk: 55, hp: 130, reward: 200, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 2, name: "Veterano Pete", atk: 60, hp: 150, reward: 250, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 3, name: "Élite Mike", atk: 70, hp: 180, reward: 350, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 3, name: "Comandante Tom", atk: 80, hp: 200, reward: 400, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-      { phase: 4, name: "CAMPEÓN SHADOW", atk: 100, hp: 250, reward: 1000, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" }
-    ];
-    
-    const PHASES = { 0: "No Iniciado", 1: "Octavos", 2: "Cuartos", 3: "Semifinales", 4: "Final" };
-    
-    function App() {
-      const [loading, setLoading] = useState(true);
-      const [view, setView] = useState("news");
-      const [userName, setUserName] = useState("");
-      const [user, setUser] = useState(null);
-      const [owned, setOwned] = useState([0, 1, 2]);
-      const [deck, setDeck] = useState([0]);
-      const [diamonds, setDiamonds] = useState(1000);
-      const [tournamentPhase, setTournamentPhase] = useState(0);
-      const [currentEnemy, setCurrentEnemy] = useState(null);
-      const [playerTournamentHp, setPlayerTournamentHp] = useState(100);
-      const [enemyTournamentHp, setEnemyTournamentHp] = useState(100);
-      const [tournamentLog, setTournamentLog] = useState([]);
-      const [battleResult, setBattleResult] = useState(null);
-      
-      useEffect(() => {
-        const stored = localStorage.getItem("fortnite_user");
-        const storedDeck = localStorage.getItem("fortnite_deck");
-        const storedOwned = localStorage.getItem("fortnite_owned");
-        const storedDiamonds = localStorage.getItem("fortnite_diamonds");
-        
-        if (stored) {
-          setUserName(stored);
-          setUser({ name: stored, avatar: CARDS[0].img });
-          if (storedDeck) setDeck(JSON.parse(storedDeck));
-          if (storedOwned) setOwned(JSON.parse(storedOwned));
-          if (storedDiamonds) setDiamonds(parseInt(storedDiamonds));
-          setLoading(false);
-        } else {
-          const name = prompt("Tu nombre:") || "Player1";
-          localStorage.setItem("fortnite_user", name);
-          setUserName(name);
-          setUser({ name: name, avatar: CARDS[0].img });
-          setLoading(false);
-        }
-      }, []);
-      
-      const saveData = () => {
-        localStorage.setItem("fortnite_deck", JSON.stringify(deck));
-        localStorage.setItem("fortnite_owned", JSON.stringify(owned));
-        localStorage.setItem("fortnite_diamonds", diamonds.toString());
-        if (user) {
-          db.ref("users/" + user.name).set({
-            name: user.name,
-            owned: owned,
-            deck: deck,
-            diamonds: diamonds
-          });
-        }
-      };
-      
-      const buyCard = (cardId) => {
-        const card = CARDS.find(c => c.id === cardId);
-        if (card && diamonds >= card.shopPrice) {
-          if (!owned.includes(cardId)) {
-            setDiamonds(diamonds - card.shopPrice);
-            setOwned([...owned, cardId]);
-            saveData();
-            alert("¡Carta comprada!");
-          } else {
-            alert("Ya tienes esta carta");
-          }
-        } else {
-          alert("No tienes suficientes gemas");
-        }
-      };
-      
-      const toggleDeck = (cardId) => {
-        if (deck.includes(cardId)) {
-          setDeck(deck.filter(id => id !== cardId));
-        } else if (deck.length < 3) {
-          setDeck([...deck, cardId]);
-        }
-        saveData();
-      };
-      
-      const claimGift = () => {
-        setDiamonds(diamonds + 10000);
-        saveData();
-        alert("¡+10,000 gemas!");
-      };
-      
-      const startTournament = () => {
-        if (deck.length === 0) {
-          alert("Necesitas al menos 1 carta en tu mazo");
-          return;
-        }
-        setTournamentPhase(1);
-        const firstEnemy = TOURNAMENT_ENEMIES.filter(e => e.phase === 1)[0];
-        setCurrentEnemy(firstEnemy);
-        setPlayerTournamentHp(100);
-        setEnemyTournamentHp(firstEnemy.hp);
-        setTournamentLog(["¡Comienza el torneo!"]);
-        setBattleResult(null);
-      };
-      
-      const attackEnemy = () => {
-        if (!currentEnemy || tournamentPhase === 0 || battleResult) return;
-        const randomCardId = deck[Math.floor(Math.random() * deck.length)];
-        const playerCard = CARDS.find(c => c.id === randomCardId);
-        if (!playerCard) return;
-        const playerDamage = Math.floor(playerCard.baseAtk / 5);
-        const enemyDamage = Math.floor(currentEnemy.atk / 5);
-        const newEnemyHp = Math.max(0, enemyTournamentHp - playerDamage);
-        setEnemyTournamentHp(newEnemyHp);
-        const newPlayerHp = Math.max(0, playerTournamentHp - enemyDamage);
-        setPlayerTournamentHp(newPlayerHp);
-        setTournamentLog(prev => [
-          ...prev,
-          `Tu carta ${playerCard.name} hace ${playerDamage} de daño`,
-          `${currentEnemy.name} te hace ${enemyDamage} de daño`
-        ]);
-        if (newEnemyHp <= 0) {
-          setDiamonds(diamonds + currentEnemy.reward);
-          setBattleResult({
-            winner: "player",
-            message: `¡Ganaste! +${currentEnemy.reward} 💎`
-          });
-          saveData();
-        } else if (newPlayerHp <= 0) {
-          setBattleResult({
-            winner: "enemy",
-            message: `¡Perdiste! ${currentEnemy.name} te derrotó`
-          });
-        }
-      };
-      
-      const nextTournamentRound = () => {
-        if (tournamentPhase === 0) return;
-        const nextPhase = tournamentPhase + 1;
-        if (nextPhase > 4) {
-          alert("¡Felicidades! Has completado el torneo 🏆");
-          setTournamentPhase(0);
-          setCurrentEnemy(null);
-          setBattleResult(null);
-          setTournamentLog([]);
-        } else {
-          setTournamentPhase(nextPhase);
-          const nextEnemy = TOURNAMENT_ENEMIES.filter(e => e.phase === nextPhase)[0];
-          if (nextEnemy) {
-            setCurrentEnemy(nextEnemy);
-            setPlayerTournamentHp(100);
-            setEnemyTournamentHp(nextEnemy.hp);
-            setBattleResult(null);
-            setTournamentLog([
-              `¡Avanzas a ${PHASES[nextPhase]}!`,
-              `Te enfrentas a ${nextEnemy.name}`
-            ]);
-          }
-        }
-      };
-      
-      const resetTournament = () => {
-        setTournamentPhase(0);
-        setCurrentEnemy(null);
-        setPlayerTournamentHp(100);
-        setEnemyTournamentHp(100);
-        setBattleResult(null);
-        setTournamentLog([]);
-      };
-      
-      if (loading) {
-        return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#050505" }}>
-          <h2 style={{ color: "white", fontSize: "24px" }}>🎄 Cargando...</h2>
-        </div>;
-      }
-      
-      return (
-        <div style={{ padding: "20px", paddingBottom: "120px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <div>
-              <h1 style={{ margin: 0, fontSize: "28px", fontWeight: "bold" }}>🎄 Fortnite Cartas</h1>
-              <p style={{ margin: 0, opacity: 0.7 }}>Hola, {userName}</p>
-            </div>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-              <span style={{ fontSize: "18px" }}>💎 {diamonds.toLocaleString()}</span>
-              <img src={user.avatar} style={{ width: 50, height: 50, borderRadius: "50%" }} alt="avatar" />
-            </div>
-          </div>
-          
-          {view === "news" && (
-            <div>
-              <h2>📰 Novedades</h2>
-              <div className="card" style={{ padding: "20px", textAlign: "center", marginBottom: "20px" }}>
-                <p>Bienvenido a Fortnite Cartas CLOUD!</p>
-                <p>Recoge gemas, compra cartas y participa en torneos.</p>
-                <button className="btn btn-primary" onClick={claimGift} style={{ marginTop: "15px", padding: "12px 24px" }}>
-                  🎁 10,000 GEMAS GRATIS
-                </button>
-              </div>
-              <div className="tournament-bracket" style={{ textAlign: "center" }}>
-                <h3 style={{ fontSize: "24px", color: "#fbbf24", marginBottom: "15px" }}>🏆 TORNEO ACTIVO</h3>
-                <p style={{ opacity: 0.8 }}>Gana recompensas exclusivas venciendo enemigos</p>
-                <div style={{ display: "flex", justifyContent: "center", gap: "15px", marginTop: "20px", flexWrap: "wrap" }}>
-                  {Object.entries(PHASES).filter(([phase]) => parseInt(phase) > 0).map(([phase, name]) => (
-                    <div key={phase} style={{ background: tournamentPhase >= parseInt(phase) ? "#fbbf24" : "#333", color: tournamentPhase >= parseInt(phase) ? "#000" : "#666", padding: "8px 16px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" }}>
-                      {name}
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+        import { GoogleGenAI } from "@google/genai";
+
+        // --- CONSTANTES Y CONFIGURACIÓN ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
+            authDomain: "juego-de-cartas-f7284.firebaseapp.com",
+            databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com",
+            projectId: "juego-de-cartas-f7284"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const RARITY_STYLES = {
+            common: 'border-slate-400 shadow-[0_0_5px_rgba(148,163,184,0.3)]',
+            rare: 'border-green-500 shadow-[0_0_5px_rgba(34,197,94,0.3)]',
+            epic: 'border-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]',
+            legendary: 'border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]',
+            idolos: 'border-pink-500 shadow-[0_0_12px_rgba(236,72,153,0.6)]',
+            animated: 'border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.7)]',
+            actricesporno: 'border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.8)]',
+            tournament: 'border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.7)]',
+        };
+
+        const CARDS = [
+            { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50, price: 50 },
+            { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100, price: 100 },
+            { id: 2, name: "Escudera", rarity: "common", baseAtk: 55, baseDef: 65, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", shopPrice: 50, price: 50 },
+            { id: 3, name: "Azulita", rarity: "rare", baseAtk: 70, baseDef: 55, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", shopPrice: 80, price: 80 },
+            { id: 4, name: "Tormenta", rarity: "epic", baseAtk: 80, baseDef: 45, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", shopPrice: 120, price: 120 },
+            { id: 5, name: "Furia", rarity: "legendary", baseAtk: 90, baseDef: 40, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", shopPrice: 200, price: 200 },
+            { id: 6, name: "Asesina", rarity: "legendary", baseAtk: 95, baseDef: 30, level: 1, img: "https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", shopPrice: 250, price: 250 },
+            { id: 7, name: "Francine Smith", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://wimg.rule34.xxx/images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", shopPrice: 1000, price: 1000 },
+            { id: 11, name: "Campeón Sombra", rarity: "tournament", baseAtk: 140, baseDef: 100, level: 1, img: "https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", shopPrice: null, price: 0 },
+            { id: 12, name: "Maestro del Fuego", rarity: "tournament", baseAtk: 150, baseDef: 90, level: 1, img: "https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", shopPrice: null, price: 0 },
+            { id: 13, name: "Rey del Hielo", rarity: "tournament", baseAtk: 135, baseDef: 110, level: 1, img: "https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", shopPrice: null, price: 0 },
+            { id: 14, name: "Felina", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx/samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", shopPrice: 300, price: 300 },
+            { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000, price: 2000 },
+            { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: 2500, price: 2500 },
+            { id: 46, name: "Dexter's Mom Beach", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500, price: 2500 },
+            { id: 50, name: "Busting Out", rarity: "animated", baseAtk: 5000, baseDef: 2500, level: 1, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000, price: 5000 },
+            { id: 61, name: "Samantha Bounce", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113850/gif-samantha-1-scaled.webp", shopPrice: 4000, price: 4000 },
+            { id: 101, name: "Milf Handjob Wet", rarity: "actricesporno", baseAtk: 12000, baseDef: 6000, level: 1, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000, price: 7000 }
+        ];
+
+        const TOURNAMENT_ENEMIES = [
+            { phase: 1, name: "Novato Timmy", atk: 40, hp: 100, reward: 100, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
+            { phase: 2, name: "Soldado Dave", atk: 55, hp: 130, reward: 200, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
+            { phase: 3, name: "Comandante Tom", atk: 80, hp: 200, reward: 400, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
+            { phase: 4, name: "CAMPEÓN SHADOW", atk: 120, hp: 300, reward: 2000, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" }
+        ];
+
+        const PHASES = { 0: "Inicio", 1: "Octavos", 2: "Cuartos", 3: "Semifinal", 4: "Final" };
+
+        // --- COMPONENTE CARDITEM ---
+        const CardItem = ({ card, onClick, actionLabel, actionClass, disabled }) => (
+            <div className={`relative flex flex-col bg-zinc-900/80 border-2 rounded-xl p-1.5 transition-all active:scale-95 ${RARITY_STYLES[card.rarity]} ${disabled ? 'opacity-50 grayscale' : ''}`}>
+                <div className="relative aspect-[3/4] overflow-hidden rounded-lg mb-2 bg-black">
+                    <img src={card.img} alt={card.name} className="w-full h-full object-cover" loading="lazy" />
+                    <div className={`absolute top-1 right-1 px-1 py-0.5 rounded text-[7px] uppercase font-black text-white ${card.rarity === 'common' ? 'bg-zinc-500' : 'bg-black/60 shadow-lg'}`}>
+                        {card.rarity}
                     </div>
-                  ))}
                 </div>
-              </div>
-            </div>
-          )}
-          
-          {view === "tournament" && (
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h2>🏆 Torneo</h2>
-                {tournamentPhase > 0 && <button className="btn btn-danger" onClick={resetTournament}>Abandonar Torneo</button>}
-              </div>
-              {tournamentPhase === 0 ? (
-                <div className="tournament-bracket" style={{ textAlign: "center", padding: "40px" }}>
-                  <h3 style={{ fontSize: "32px", color: "#fbbf24", marginBottom: "20px" }}>🏆 MODO TORNEO</h3>
-                  <p style={{ fontSize: "16px", marginBottom: "30px", opacity: 0.8 }}>Vence a 7 enemigos progresivos para ganar grandes recompensas</p>
-                  <div style={{ marginBottom: "30px" }}>
-                    <h4 style={{ marginBottom: "15px", color: "#fbbf24" }}>Recompensas:</h4>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
-                      {TOURNAMENT_ENEMIES.map((enemy, idx) => (
-                        <div key={idx} style={{ background: "rgba(255,255,255,0.05)", padding: "15px", borderRadius: "8px", border: "1px solid rgba(251,191,36,0.3)" }}>
-                          <div style={{ fontSize: "14px", marginBottom: "5px" }}>{enemy.name}</div>
-                          <div style={{ fontSize: "12px", opacity: 0.7 }}>{PHASES[enemy.phase]}</div>
-                          <div style={{ fontSize: "16px", color: "#fbbf24", marginTop: "5px" }}>💎 {enemy.reward}</div>
-                        </div>
-                      ))}
+                <div className="flex-1 px-1">
+                    <h4 className="text-[10px] font-black truncate text-zinc-100 uppercase mb-1">{card.name}</h4>
+                    <div className="flex justify-between items-center text-[9px] mb-2 font-bold">
+                        <span className="text-red-400">⚔️ {card.baseAtk}</span>
+                        <span className="text-cyan-400">🛡️ {card.baseDef}</span>
                     </div>
-                  </div>
-                  <button className="btn btn-primary" onClick={startTournament} style={{ fontSize: "18px", padding: "15px 40px" }}>🏆 INICIAR TORNEO</button>
                 </div>
-              ) : (
-                <div className="tournament-bracket">
-                  <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                    <span style={{ fontSize: "18px", opacity: 0.7 }}>Fase actual:</span>
-                    <div style={{ fontSize: "24px", color: "#fbbf24", fontWeight: "bold" }}>{PHASES[tournamentPhase]}</div>
-                  </div>
-                  {currentEnemy && (
-                    <div className="enemy-card">
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                          <img src={currentEnemy.avatar} style={{ width: 60, height: 60, borderRadius: "50%" }} alt="enemigo" />
-                          <div>
-                            <h3 style={{ margin: 0, fontSize: "20px" }}>{currentEnemy.name}</h3>
-                            <p style={{ margin: 0, opacity: 0.7 }}>ATK: {currentEnemy.atk} | HP: {currentEnemy.hp}</p>
-                          </div>
+                {onClick && (
+                    <button onClick={onClick} disabled={disabled} className={`w-full py-2 rounded-lg text-[9px] font-black uppercase transition-all shadow-lg ${actionClass || 'bg-zinc-800 text-white'}`}>
+                        {actionLabel || 'Ver'}
+                    </button>
+                )}
+            </div>
+        );
+
+        // --- COMPONENTE PRINCIPAL APP ---
+        const App = () => {
+            const [view, setView] = useState('news');
+            const [diamonds, setDiamonds] = useState(1000);
+            const [owned, setOwned] = useState([0, 1, 2]);
+            const [deck, setDeck] = useState([0]);
+            const [userName, setUserName] = useState('');
+            const [userAvatar, setUserAvatar] = useState(CARDS[0].img);
+            const [loading, setLoading] = useState(true);
+
+            // Perfil
+            const [isEditingName, setIsEditingName] = useState(false);
+            const [isSelectingAvatar, setIsSelectingAvatar] = useState(false);
+            const [tempName, setTempName] = useState('');
+
+            // Batalla
+            const [tournamentPhase, setTournamentPhase] = useState(0);
+            const [currentEnemy, setCurrentEnemy] = useState(null);
+            const [playerHp, setPlayerHp] = useState(100);
+            const [enemyHp, setEnemyHp] = useState(100);
+            const [battleLog, setBattleLog] = useState([]);
+            const [battleResult, setBattleResult] = useState(null);
+            const [isAttacking, setIsAttacking] = useState(false);
+            const [attackerIdx, setAttackerIdx] = useState(null);
+            const [enemyHit, setEnemyHit] = useState(false);
+            const [playerHit, setPlayerHit] = useState(false);
+            const [enemyAttacking, setEnemyAttacking] = useState(false);
+            const [dmgPopups, setDmgPopups] = useState([]);
+
+            // IA
+            const [aiAdvice, setAiAdvice] = useState('');
+            const [isAiLoading, setIsAiLoading] = useState(false);
+
+            // Inicialización
+            useEffect(() => {
+                let storedUser = localStorage.getItem('ft_user');
+                if (!storedUser) {
+                    storedUser = prompt("Tu nombre:") || "Comandante_" + Math.floor(Math.random() * 1000);
+                    localStorage.setItem('ft_user', storedUser);
+                }
+                setUserName(storedUser);
+                setTempName(storedUser);
+                
+                // Cargar de Firebase
+                setLoading(true);
+                db.ref('users/' + storedUser).once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        setDiamonds(data.diamonds || 0);
+                        setOwned(data.owned || [0, 1, 2]);
+                        setDeck(data.deck || [0]);
+                        setUserAvatar(data.avatar || CARDS[0].img);
+                    }
+                    setLoading(false);
+                });
+            }, []);
+
+            const sync = useCallback((upd) => {
+                if (userName) db.ref('users/' + userName).update(upd);
+            }, [userName]);
+
+            // Sistema de Batalla
+            const spawnPopup = (val, x, y, color) => {
+                const id = Date.now();
+                setDmgPopups(prev => [...prev, {id, val, x, y, color}]);
+                setTimeout(() => setDmgPopups(prev => prev.filter(p => p.id !== id)), 800);
+            };
+
+            const attackAction = async () => {
+                if (!currentEnemy || battleResult || isAttacking) return;
+                setIsAttacking(true);
+                
+                const randomIdx = Math.floor(Math.random() * deck.length);
+                const pCard = CARDS.find(c => c.id === deck[randomIdx]);
+                if (!pCard) { setIsAttacking(false); return; }
+
+                setAttackerIdx(randomIdx);
+                await new Promise(r => setTimeout(r, 200));
+                
+                const pDmg = Math.floor(pCard.baseAtk / 5 + (Math.random() * 5));
+                const nEHp = Math.max(0, enemyHp - pDmg);
+                setEnemyHit(true);
+                spawnPopup(pDmg, 50, 30, 'text-red-500');
+                setEnemyHp(nEHp);
+                setBattleLog(prev => [`⚔️ ${pCard.name}: ${pDmg} Daño`, ...prev]);
+
+                await new Promise(r => setTimeout(r, 300));
+                setEnemyHit(false);
+                setAttackerIdx(null);
+
+                if (nEHp <= 0) {
+                    const nD = diamonds + currentEnemy.reward;
+                    setDiamonds(nD); sync({ diamonds: nD });
+                    setBattleResult({ winner: 'player', message: `¡Ganas! +${currentEnemy.reward} 💎` });
+                    setIsAttacking(false);
+                    return;
+                }
+
+                await new Promise(r => setTimeout(r, 400));
+                setEnemyAttacking(true);
+                await new Promise(r => setTimeout(r, 200));
+
+                const eDmg = Math.floor(currentEnemy.atk / 5 + (Math.random() * 3));
+                const nPHp = Math.max(0, playerHp - eDmg);
+                setPlayerHit(true);
+                spawnPopup(eDmg, 50, 70, 'text-cyan-500');
+                setPlayerHp(nPHp);
+                setBattleLog(prev => [`💥 ${currentEnemy.name} golpea: ${eDmg} Daño`, ...prev]);
+
+                await new Promise(r => setTimeout(r, 300));
+                setPlayerHit(false);
+                setEnemyAttacking(false);
+                if (nPHp <= 0) setBattleResult({ winner: 'enemy', message: "Caíste en combate." });
+                setIsAttacking(false);
+            };
+
+            const fetchAdvice = async () => {
+                setIsAiLoading(true);
+                try {
+                    // Nota: En un entorno de navegador real sin proxy, 
+                    // process.env.API_KEY debe reemplazarse por el valor real o un input.
+                    // Aquí se usa el estándar del sistema.
+                    const ai = new GoogleGenAI({ apiKey: "TU_API_KEY_AQUI_O_DEJALA_COMO_ESTA" });
+                    const deckInfo = deck.map(id => CARDS.find(c => c.id === id).name).join(', ');
+                    const prompt = `Como estratega de Fortnite, aconseja a ${userName} que tiene este mazo: ${deckInfo} y ${diamonds} gemas. Sé breve y épico.`;
+                    const res = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
+                    setAiAdvice(res.text || "¡Lucha con valor!");
+                } catch { setAiAdvice("El oráculo está en silencio..."); }
+                finally { setIsAiLoading(false); }
+            };
+
+            if (loading) return <div className="h-screen flex items-center justify-center bg-black text-white font-black animate-pulse">CARGANDO...</div>;
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen pb-24 bg-[#020202] text-white flex flex-col relative overflow-hidden">
+                    
+                    {/* Selector de Avatar */}
+                    {isSelectingAvatar && (
+                        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col p-8 animate-in fade-in duration-300">
+                           <div className="flex justify-between items-center mb-8">
+                             <h2 className="text-2xl font-black italic text-cyan-400 uppercase">Avatar</h2>
+                             <button onClick={() => setIsSelectingAvatar(false)} className="bg-zinc-800 w-12 h-12 rounded-full">✕</button>
+                           </div>
+                           <div className="grid grid-cols-3 gap-4 overflow-y-auto custom-scrollbar">
+                             {owned.map(id => {
+                               const c = CARDS.find(x => x.id === id);
+                               return (
+                                 <button key={id} onClick={() => { setUserAvatar(c.img); sync({ avatar: c.img }); setIsSelectingAvatar(false); }}
+                                  className="aspect-square rounded-2xl overflow-hidden border-2 border-zinc-800 hover:border-cyan-500 transition-all active:scale-90 shadow-xl">
+                                   <img src={c.img} className="w-full h-full object-cover" />
+                                 </button>
+                               );
+                             })}
+                           </div>
                         </div>
-                        <div style={{ fontSize: "20px", color: "#fbbf24" }}>💎 {currentEnemy.reward}</div>
-                      </div>
-                      <div className="hp-bar">
-                        <div className="hp-fill enemy-hp" style={{ width: `${(enemyTournamentHp / currentEnemy.hp) * 100}%` }} />
-                      </div>
-                      <div style={{ textAlign: "center", opacity: 0.7, fontSize: "12px" }}>{enemyTournamentHp} / {currentEnemy.hp} HP</div>
-                    </div>
-                  )}
-                  <div className="card" style={{ margin: "15px 0" }}>
-                    <div style={{ marginBottom: "15px" }}>
-                      <h3 style={{ margin: "0 0 10px 0" }}>Tus HP</h3>
-                      <div className="hp-bar">
-                        <div className="hp-fill player-hp" style={{ width: `${playerTournamentHp}%` }} />
-                      </div>
-                      <div style={{ textAlign: "center", opacity: 0.7, fontSize: "12px" }}>{playerTournamentHp} / 100 HP</div>
-                    </div>
-                    {!battleResult ? (
-                      <div>
-                        <p style={{ opacity: 0.7, marginBottom: "10px" }}>Mazo ({deck.length} cartas):</p>
-                        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "20px" }}>
-                          {deck.map(cardId => {
-                            const card = CARDS.find(c => c.id === cardId);
-                            if (!card) return null;
-                            return (
-                              <div key={cardId} className={"card rarity-" + card.rarity} style={{ width: "80px", padding: "5px" }}>
-                                <img src={card.img} alt={card.name} style={{ width: "100%", borderRadius: "4px", marginBottom: "5px" }} />
-                                <p style={{ margin: 0, fontSize: "10px" }}>{card.name}</p>
-                                <p style={{ margin: 0, fontSize: "10px", opacity: 0.7 }}>ATK: {card.baseAtk}</p>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <button className="btn btn-primary" onClick={attackEnemy} style={{ width: "100%", fontSize: "18px", padding: "15px" }}>⚔️ ATACAR</button>
-                      </div>
-                    ) : (
-                      <div style={{ textAlign: "center", padding: "20px" }}>
-                        {battleResult.winner === "player" ? (
-                          <div>
-                            <h3 style={{ color: "#22c55e", fontSize: "24px", marginBottom: "10px" }}>🎉 ¡VICTORIA!</h3>
-                            <p style={{ fontSize: "18px", marginBottom: "20px" }}>{battleResult.message}</p>
-                            <button className="btn btn-success" onClick={nextTournamentRound} style={{ fontSize: "16px", padding: "12px 30px" }}>Siguiente Ronda ➡️</button>
-                          </div>
-                        ) : (
-                          <div>
-                            <h3 style={{ color: "#ef4444", fontSize: "24px", marginBottom: "10px" }}>💀 DERROTA</h3>
-                            <p style={{ fontSize: "18px", marginBottom: "20px" }}>{battleResult.message}</p>
-                            <button className="btn btn-danger" onClick={resetTournament} style={{ fontSize: "16px", padding: "12px 30px" }}>Reiniciar Torneo 🔄</button>
-                          </div>
-                        )}
-                      </div>
                     )}
-                  </div>
-                  {tournamentLog.length > 0 && (
-                    <div className="card" style={{ marginTop: "15px", maxHeight: "200px", overflowY: "auto" }}>
-                      <h4 style={{ margin: "0 0 10px 0", fontSize: "14px", opacity: 0.7 }}>📜 Log de Batalla</h4>
-                      {tournamentLog.map((log, idx) => (
-                        <div key={idx} style={{ padding: "5px", fontSize: "12px", opacity: 0.8, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>{log}</div>
-                      ))}
-                    </div>
-                  )}
+
+                    <header className="p-4 flex justify-between items-center bg-zinc-950/90 border-b border-zinc-800 sticky top-0 z-50 backdrop-blur-md">
+                        <div className="flex items-center gap-3">
+                            <button onClick={() => setIsSelectingAvatar(true)} className="relative w-12 h-12">
+                                <img src={userAvatar} className="w-12 h-12 rounded-full border-2 border-cyan-500/50 object-cover" />
+                                <div className="absolute -bottom-1 -right-1 bg-cyan-600 text-[8px] w-4 h-4 flex items-center justify-center rounded-full border border-black">✎</div>
+                            </button>
+                            <div>
+                                <h1 className="text-sm font-black text-white italic uppercase leading-none">FT CLOUD</h1>
+                                <p className="text-[10px] opacity-60 font-bold truncate max-w-[100px]">{userName}</p>
+                            </div>
+                        </div>
+                        <div className="bg-zinc-900/50 px-3 py-1.5 rounded-2xl text-xs font-black border border-zinc-800 text-amber-500 italic">
+                            💎 {diamonds.toLocaleString()}
+                        </div>
+                    </header>
+
+                    <main className="flex-1 p-4 overflow-y-auto custom-scrollbar relative">
+                        {view === 'tournament' && (
+                            <div className="h-full flex flex-col space-y-4">
+                                {tournamentPhase === 0 ? (
+                                    <div className="flex-1 flex flex-col items-center justify-center space-y-8 bg-zinc-900/30 rounded-[3rem] border border-zinc-800 p-10 text-center shadow-2xl">
+                                        <div className="text-8xl drop-shadow-[0_0_30px_rgba(245,158,11,0.5)]">🏆</div>
+                                        <h2 className="text-3xl font-black text-amber-500 italic tracking-tighter uppercase leading-none">Torneo Ultimate</h2>
+                                        <button onClick={() => {
+                                            if(!deck.length) return alert("Carga tu mazo");
+                                            setTournamentPhase(1);
+                                            const e = TOURNAMENT_ENEMIES[0];
+                                            setCurrentEnemy(e); setEnemyHp(e.hp); setPlayerHp(100); setBattleResult(null); setBattleLog(["¡Lucha!"]);
+                                        }} className="w-full py-5 bg-amber-600 text-black font-black rounded-3xl shadow-xl active:scale-95 transition-all">ENTRAR A LA ARENA</button>
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 flex flex-col space-y-4 relative">
+                                        {/* Boss HUD */}
+                                        <div className={`transition-all ${enemyHit ? 'animate-shake' : ''}`}>
+                                            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-2xl">
+                                                <div className="flex items-center gap-3 z-10">
+                                                    <div className={`w-14 h-14 rounded-xl overflow-hidden border-2 border-red-500/50 ${enemyAttacking ? 'animate-attack-enemy' : ''}`}>
+                                                        <img src={currentEnemy?.avatar} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <h3 className="text-xs font-black uppercase text-red-500 italic">{currentEnemy?.name}</h3>
+                                                </div>
+                                                <div className="z-10 text-right">
+                                                    <div className="text-[10px] font-black">{enemyHp} HP</div>
+                                                    <div className="w-20 h-1.5 bg-black rounded-full overflow-hidden border border-zinc-800 mt-1">
+                                                        <div className="h-full bg-red-600 transition-all duration-500" style={{ width: `${(enemyHp/(currentEnemy?.hp||100))*100}%` }} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Battle Arena */}
+                                        <div className="flex-1 relative min-h-[140px] flex items-center justify-center overflow-visible">
+                                            {dmgPopups.map(p => (
+                                                <div key={p.id} className={`damage-popup ${p.color} text-4xl`} style={{ left: `${p.x}%`, top: `${p.y}%` }}>-{p.val}</div>
+                                            ))}
+                                            <div className="text-zinc-900 text-6xl font-black italic select-none opacity-20 uppercase tracking-tighter">Versus</div>
+                                        </div>
+
+                                        {/* Player HUD */}
+                                        <div className={`transition-all ${playerHit ? 'animate-shake' : ''}`}>
+                                            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-3xl space-y-4 shadow-2xl relative">
+                                                <div className="flex justify-between items-center text-[10px] font-black uppercase text-cyan-500">
+                                                    <span>Escuadrón</span>
+                                                    <span>{playerHp} HP</span>
+                                                </div>
+                                                <div className="flex justify-center gap-2 h-28 items-end">
+                                                    {deck.map((id, idx) => {
+                                                        const c = CARDS.find(x => x.id === id);
+                                                        return (
+                                                            <div key={idx} className={`w-16 h-24 rounded-lg overflow-hidden border-2 bg-black transition-all ${attackerIdx === idx ? 'animate-attack-player border-cyan-400 z-50' : 'border-zinc-800'}`}>
+                                                                <img src={c.img} className="w-full h-full object-cover" />
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {!battleResult ? (
+                                                    <button onClick={attackAction} disabled={isAttacking} className="w-full py-4 bg-cyan-600 rounded-2xl font-black uppercase text-xs tracking-widest active:scale-95 disabled:opacity-50 transition-all">💥 ATACAR</button>
+                                                ) : (
+                                                    <div className="text-center space-y-4 pt-2">
+                                                        <div className={`text-2xl font-black italic ${battleResult.winner === 'player' ? 'text-green-500' : 'text-red-500'}`}>{battleResult.winner === 'player' ? '¡VICTORIA!' : 'DERROTA'}</div>
+                                                        <button onClick={battleResult.winner === 'player' ? () => {
+                                                            const nP = tournamentPhase + 1;
+                                                            if (nP > 4) { alert("¡CAMPEÓN!"); setTournamentPhase(0); }
+                                                            else {
+                                                                setTournamentPhase(nP); const e = TOURNAMENT_ENEMIES.find(x => x.phase === nP);
+                                                                setCurrentEnemy(e); setEnemyHp(e.hp); setPlayerHp(100); setBattleResult(null);
+                                                            }
+                                                        } : () => setTournamentPhase(0)} className="w-full py-3 bg-zinc-800 rounded-xl font-black text-[10px] uppercase">Continuar</button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {view === 'news' && (
+                            <div className="space-y-6">
+                                <section className="bg-zinc-900 border border-zinc-800 p-10 rounded-[3rem] text-center shadow-2xl relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-cyan-500/5"></div>
+                                    <img src={userAvatar} className="w-24 h-24 rounded-full mx-auto mb-6 border-2 border-cyan-500 shadow-2xl object-cover" />
+                                    <h2 className="text-2xl font-black italic tracking-tighter mb-2 uppercase">Base Cloud</h2>
+                                    <p className="text-xs opacity-50 mb-8 italic italic">Progreso sincronizado en la nube.</p>
+                                    <button onClick={() => { setDiamonds(d => d + 10000); alert("¡Bono!"); }} className="w-full bg-cyan-600 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl">Gemas Diarias</button>
+                                </section>
+                            </div>
+                        )}
+
+                        {view === 'shop' && (
+                            <div className="grid grid-cols-2 gap-3 pb-4">
+                                {CARDS.filter(c => !owned.includes(c.id)).map(card => (
+                                    <CardItem key={card.id} card={card} onClick={() => {
+                                        if (diamonds >= card.shopPrice) {
+                                            const nO = [...owned, card.id]; const nD = diamonds - card.shopPrice;
+                                            setOwned(nO); setDiamonds(nD); sync({ owned: nO, diamonds: nD });
+                                        } else alert("Pobre...");
+                                    }} actionLabel={`💎 ${card.shopPrice}`} actionClass="bg-green-600" />
+                                ))}
+                            </div>
+                        )}
+
+                        {view === 'deck' && (
+                            <div className="space-y-6">
+                                <h3 className="text-[10px] font-black text-zinc-600 uppercase tracking-widest px-2 italic">Escuadrón ({deck.length}/3)</h3>
+                                <div className="grid grid-cols-3 gap-3 bg-zinc-900/20 border-2 border-dashed border-zinc-800 rounded-[2rem] p-4 min-h-[160px]">
+                                    {deck.map(id => {
+                                        const c = CARDS.find(x => x.id === id);
+                                        return <CardItem key={id} card={c} onClick={() => { const nD = deck.filter(x => x !== id); setDeck(nD); sync({ deck: nD }); }} actionLabel="✕" actionClass="bg-red-900/20 text-red-500" />;
+                                    })}
+                                </div>
+                                <h3 className="text-[10px] font-black text-zinc-600 uppercase tracking-widest px-2 italic">Reserva ({owned.length})</h3>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {owned.map(id => {
+                                        const c = CARDS.find(x => x.id === id); const isIn = deck.includes(id);
+                                        return <CardItem key={id} card={c} onClick={() => {
+                                            if (isIn) { const nD = deck.filter(x => x !== id); setDeck(nD); sync({ deck: nD }); }
+                                            else if (deck.length < 3) { const nD = [...deck, id]; setDeck(nD); sync({ deck: nD }); }
+                                        }} actionLabel={isIn ? "✓" : "+"} actionClass={isIn ? "bg-red-600/20 text-red-500" : "bg-cyan-600 shadow-lg"} />;
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'ai-strategy' && (
+                            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-8 bg-zinc-900/30 rounded-[3rem] border border-purple-500/20">
+                                <div className="text-7xl drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">🧙‍♂️</div>
+                                <h2 className="text-2xl font-black italic tracking-tighter text-purple-400 uppercase">Oráculo Sabio</h2>
+                                <div className="bg-black/60 p-6 rounded-2xl border border-zinc-800 min-h-[140px] text-[10px] italic opacity-80 leading-relaxed shadow-inner">
+                                    {isAiLoading ? "Consultando el meta de la isla..." : (aiAdvice || "Invoca consejos estratégicos para dominar el torneo.")}
+                                </div>
+                                <button onClick={fetchAdvice} disabled={isAiLoading} className="w-full py-5 bg-purple-600 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl disabled:opacity-30">INVOCAR SABIDURÍA</button>
+                            </div>
+                        )}
+                    </main>
+
+                    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-zinc-950/95 border-t border-zinc-800 py-6 flex justify-around items-center z-50 rounded-t-[2.5rem] shadow-[0_-20px_60px_rgba(0,0,0,1)] px-4 backdrop-blur-xl">
+                        <NavBtn active={view === 'news'} onClick={() => setView('news')} label="HOME" icon="🏠" />
+                        <NavBtn active={view === 'tournament'} onClick={() => setView('tournament')} label="WAR" icon="🏆" />
+                        <NavBtn active={view === 'shop'} onClick={() => setView('shop')} label="SHOP" icon="🛒" />
+                        <NavBtn active={view === 'deck'} onClick={() => setView('deck')} label="DECK" icon="🃏" />
+                        <NavBtn active={view === 'ai-strategy'} onClick={() => setView('ai-strategy')} label="SAGE" icon="🧙‍♂️" />
+                    </nav>
                 </div>
-              )}
-            </div>
-          )}
-          
-          {view === "shop" && (
-            <div>
-              <h2>🛒 Tienda</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "10px" }}>
-                {CARDS.filter(card => !owned.includes(card.id)).map(card => (
-                  <div key={card.id} className={"card rarity-" + card.rarity}>
-                    <img src={card.img} alt={card.name} style={{ width: "100%", borderRadius: "4px", marginBottom: "10px" }} />
-                    <h3 style={{ margin: "0 0 5px 0", fontSize: "14px" }}>{card.name}</h3>
-                    <p style={{ margin: "0 0 10px 0", fontSize: "12px" }}>ATK: {card.baseAtk} | DEF: {card.baseDef}</p>
-                    <button className="btn btn-success" onClick={() => buyCard(card.id)} disabled={diamonds < card.shopPrice} style={{ opacity: diamonds < card.shopPrice ? 0.5 : 1, width: "100%" }}>💎 {card.shopPrice}</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {view === "deck" && (
-            <div>
-              <h2>🃏 Mazo ({deck.length}/3)</h2>
-              <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
-                {deck.map(cardId => {
-                  const card = CARDS.find(c => c.id === cardId);
-                  if (!card) return null;
-                  return (
-                    <div key={cardId} className={"card rarity-" + card.rarity} style={{ width: "120px" }}>
-                      <img src={card.img} alt={card.name} style={{ width: "100%", borderRadius: "4px" }} />
-                      <p style={{ margin: "5px 0", fontSize: "12px" }}>{card.name}</p>
-                      <p style={{ margin: "0 0 5px 0", fontSize: "10px", opacity: 0.7 }}>ATK: {card.baseAtk}</p>
-                      <button className="btn btn-danger" onClick={() => toggleDeck(card.id)} style={{ width: "100%", fontSize: "12px" }}>❌</button>
-                    </div>
-                  );
-                })}
-              </div>
-              <h3>Colección ({owned.length}/{CARDS.length})</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: "10px" }}>
-                {owned.map(cardId => {
-                  const card = CARDS.find(c => c.id === cardId);
-                  if (!card) return null;
-                  return (
-                    <div key={cardId} className={"card rarity-" + card.rarity} style={{ opacity: deck.includes(cardId) ? 1 : 0.5 }}>
-                      <img src={card.img} alt={card.name} style={{ width: "100%", borderRadius: "4px" }} />
-                      <p style={{ margin: "5px 0", fontSize: "12px" }}>{card.name}</p>
-                      <p style={{ margin: "0 0 5px 0", fontSize: "10px", opacity: 0.7 }}>ATK: {card.baseAtk}</p>
-                      <button className="btn" onClick={() => toggleDeck(card.id)} style={{ background: deck.includes(cardId) ? "#ef4444" : "#06b6d4", width: "100%", fontSize: "12px" }}>{deck.includes(cardId) ? "❌" : "➕"}</button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          
-          {view === "cards" && (
-            <div>
-              <h2>📚 Todas las Cartas ({CARDS.length})</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "10px" }}>
-                {CARDS.map(card => (
-                  <div key={card.id} className={"card rarity-" + card.rarity}>
-                    <img src={card.img} alt={card.name} style={{ width: "100%", borderRadius: "4px", marginBottom: "10px" }} />
-                    <h3 style={{ margin: "0 0 5px 0", fontSize: "14px" }}>{card.name}</h3>
-                    <p style={{ margin: "0 0 5px 0", fontSize: "12px" }}><span style={{ color: "#ef4444" }}>ATK: {card.baseAtk}</span> | <span style={{ color: "#06b6d4" }}>DEF: {card.baseDef}</span></p>
-                    <p style={{ margin: "5px 0 0 0", fontSize: "10px", opacity: 0.7 }}>{card.rarity.toUpperCase()}</p>
-                    <p style={{ margin: "0", fontSize: "12px", color: "#fbbf24" }}>💎 {card.shopPrice}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.9)", padding: "12px", display: "flex", justifyContent: "space-around", borderTop: "2px solid #333", boxShadow: "0 -2px 20px rgba(0,0,0,0.5)" }}>
-            <button className="btn" onClick={() => setView("news")} style={{ background: view === "news" ? "#06b6d4" : "#333", fontSize: "14px" }}>🏠</button>
-            <button className="btn" onClick={() => setView("tournament")} style={{ background: view === "tournament" ? "#fbbf24" : "#333", fontSize: "14px", color: view === "tournament" ? "#000" : "#fff" }}>🏆</button>
-            <button className="btn" onClick={() => setView("shop")} style={{ background: view === "shop" ? "#06b6d4" : "#333", fontSize: "14px" }}>🛒</button>
-            <button className="btn" onClick={() => setView("deck")} style={{ background: view === "deck" ? "#06b6d4" : "#333", fontSize: "14px" }}>🃏</button>
-            <button className="btn" onClick={() => setView("cards")} style={{ background: view === "cards" ? "#06b6d4" : "#333", fontSize: "14px" }}>📚</button>
-          </nav>
-        </div>
-      );
-    }
-    
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
-  </script>
+            );
+        };
+
+        const NavBtn = ({ active, onClick, icon, label }) => (
+            <button onClick={onClick} className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${active ? 'scale-110' : 'opacity-20 hover:opacity-50'}`}>
+                <span className={`text-xl w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${active ? 'bg-cyan-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.6)]' : 'bg-zinc-900 text-zinc-400'}`}>{icon}</span>
+                <span className={`text-[7px] font-black tracking-widest ${active ? 'text-cyan-400' : 'text-zinc-600'}`}>{label}</span>
+            </button>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
