@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎄 Fortnite Cartas CLOUD - VERTICAL CARDS</title>
+    <title>🎄 Fortnite Cartas CLOUD - MEGA UPDATE 101</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -32,16 +32,17 @@
         .nav-btn.active { color: white; background: rgba(255, 255, 255, 0.1); transform: scale(1.1); }
         .nav-btn.active::after { content: ''; position: absolute; bottom: 15%; width: 4px; height: 4px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 10px #06b6d4; }
 
-        /* RAREZAS CON SOPORTE VERTICAL */
+        /* RAREZAS */
         .rarity-common { border: 2px solid #94a3b8; }
         .rarity-rare { border: 2px solid #22c55e; }
         .rarity-epic { border: 2px solid #a855f7; }
         .rarity-legendary { border: 2px solid #f97316; }
         .rarity-idolos { border: 2px solid #ec4899; }
+        .rarity-paises { border: 2px solid #3b82f6; }
+        .rarity-tournament { border: 2px solid #6366f1; box-shadow: 0 0 10px #6366f1; }
         .rarity-animated { border: 2px solid #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
         .rarity-actricesporno { border: 2px solid #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
 
-        /* FORMATO VERTICAL 2:3 */
         .card-vertical {
             aspect-ratio: 2 / 3;
             width: 100%;
@@ -57,44 +58,15 @@
         .chat-container::-webkit-scrollbar { width: 4px; }
         .chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-        .clan-tag { font-family: monospace; font-weight: 900; color: #fbbf24; }
-        
-        .profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .profile-modal.active { display: flex; }
-
         .animate-scroll { animation: scroll 40s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        
-        .battle-card-item { transition: all 0.3s; cursor: pointer; }
-        .battle-card-item:hover { transform: translateY(-5px); filter: brightness(1.2); }
-        .battle-card-item.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
 
-        .challenge-msg {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
-            border: 2px solid rgba(220, 38, 38, 0.5);
-            animation: pulse-glow 2s infinite;
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
-            50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); }
-        }
-
-        /* REVEAL ATTACK ANIMATION */
         #attack-reveal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
+            display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px); align-items: center; justify-content: center; pointer-events: none;
         }
         #attack-reveal-overlay.active { display: flex; }
-        .reveal-card-anim {
-            animation: cardReveal 1.5s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
-        }
+        .reveal-card-anim { animation: cardReveal 1.5s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards; }
         @keyframes cardReveal {
             0% { transform: scale(0) rotate(-20deg); opacity: 0; }
             20% { transform: scale(1.1) rotate(5deg); opacity: 1; }
@@ -102,24 +74,14 @@
             100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
         }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
 </head>
 <body>
 
     <div id="loading-screen">
         <div class="spinner mb-6"></div>
-        <h2 class="text-xl font-black uppercase italic tracking-widest animate-pulse">Cargando Novedades...</h2>
-        <p class="text-white/20 text-[10px] mt-2 uppercase font-bold" id="loading-status">Conectando...</p>
+        <h2 class="text-xl font-black uppercase italic tracking-widest animate-pulse">Cargando 101 Cartas...</h2>
     </div>
 
-    <!-- REVELACIÓN DE ATAQUE -->
     <div id="attack-reveal-overlay">
         <div class="flex flex-col items-center reveal-card-anim">
             <h3 id="reveal-text" class="text-2xl font-black italic uppercase text-yellow-400 mb-6 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)] text-center px-4"></h3>
@@ -131,23 +93,19 @@
 
     <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-red-900 to-indigo-900 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg">
         <div class="animate-scroll flex gap-12 font-black text-[10px] uppercase tracking-widest px-4 text-white">
-            <span>📰 SISTEMA DE NOTICIAS CLOUD ACTIVADO</span>
-            <span>📺 REPETICIONES DISPONIBLES EN EL CHAT DE CLAN</span>
-            <span>🛡️ MODO BOT ACTIVO - ENTRENAR PARA GANAR TROFEOS</span>
+            <span>🔥 GRAN ACTUALIZACIÓN: 101 CARTAS NUEVAS</span>
+            <span>📺 REPLAYS Y NOTICIAS ACTIVADAS</span>
+            <span>🎁 GEMAS GRATIS EN LA TIENDA</span>
         </div>
     </div>
 
     <div class="container mx-auto px-4 pt-16 pb-32">
         <header class="flex flex-col items-center mb-8">
-            <div class="relative group cursor-pointer" onclick="app.showSelfProfile()">
-                <img id="u-avatar" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-2xl object-cover bg-black" />
-                <div class="absolute bottom-0 right-0 bg-cyan-500 w-6 h-6 rounded-full flex items-center justify-center text-[10px] border-2 border-white"><i class="fas fa-user text-white"></i></div>
-            </div>
+            <img id="u-avatar" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-2xl object-cover bg-black" />
             <div class="flex items-center gap-2 mt-4">
-                <span id="u-clan" class="clan-tag text-lg hidden text-yellow-500"></span>
-                <h2 id="u-name" class="text-3xl font-black italic uppercase tracking-tighter drop-shadow-lg text-white">Jugador</h2>
+                <span id="u-clan" class="clan-tag text-lg hidden"></span>
+                <h2 id="u-name" class="text-3xl font-black italic uppercase tracking-tighter text-white">Jugador</h2>
             </div>
-            
             <div class="grid grid-cols-3 gap-2 w-full max-w-md mt-6">
                 <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block uppercase">Trofeos</span><div id="v-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
                 <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block uppercase">Gemas</span><div id="v-diamonds" class="text-cyan-400 font-black text-lg">0</div></div>
@@ -155,141 +113,68 @@
             </div>
         </header>
 
-        <!-- VISTA NOTICIAS -->
         <section id="view-news" class="view active">
-            <h2 class="text-2xl font-black italic uppercase mb-6 text-white text-center">Novedades del Campo 🗞️</h2>
-            <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="text-center py-10 opacity-30 italic col-span-full">Buscando noticias...</div>
-            </div>
+            <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"></div>
         </section>
 
-        <!-- VISTA CLANES -->
         <section id="view-clans" class="view">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="glass-panel p-6">
-                    <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-4 italic">Clanes</h3>
-                    <div id="clans-list" class="space-y-2 max-h-96 overflow-y-auto chat-container pr-2"></div>
-                    <button onclick="clans.showCreate()" class="w-full mt-4 py-3 bg-white/5 border border-white/10 rounded-xl font-black uppercase text-[10px] hover:bg-cyan-500/20 text-white">Crear Clan</button>
+                    <div id="clans-list" class="space-y-2 max-h-96 overflow-y-auto chat-container"></div>
+                    <button onclick="clans.showCreate()" class="w-full mt-4 py-3 bg-white/10 rounded-xl font-black uppercase text-[10px]">Crear Clan</button>
                 </div>
-
-                <div class="glass-panel p-6 lg:col-span-2 flex flex-col h-[600px] border-cyan-500/10">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Chat: <span id="current-clan-name" class="text-cyan-400">...</span></h3>
-                        <button onclick="clans.leave()" class="text-[8px] text-red-500 font-bold uppercase hover:underline">Salir</button>
-                    </div>
-                    <div id="clan-chat-box" class="flex-1 overflow-y-auto pr-2 space-y-4 chat-container mb-4"></div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="clans.sendChallenge()" class="flex-1 sm:flex-none px-4 py-3 bg-red-600 rounded-xl font-black text-[10px] uppercase italic text-white">⚔️ Retar</button>
-                        <div class="w-full flex gap-2 mt-1">
-                            <input id="clan-msg-input" type="text" placeholder="Escribir..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none focus:border-cyan-500 text-xs text-white" />
-                            <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center text-white"><i class="fas fa-paper-plane"></i></button>
-                        </div>
+                <div class="glass-panel p-6 lg:col-span-2 flex flex-col h-[500px]">
+                    <div id="clan-chat-box" class="flex-1 overflow-y-auto space-y-4 chat-container mb-4"></div>
+                    <div class="flex gap-2">
+                        <input id="clan-msg-input" type="text" placeholder="Escribir..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none text-white text-xs" />
+                        <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl text-white"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VISTA BATALLA -->
         <section id="view-battle" class="view">
-            <div id="battle-lobby" class="glass-panel p-10 text-center max-w-lg mx-auto border-2 border-cyan-400/20">
-                <div class="text-5xl mb-6">🌐</div>
-                <h2 class="text-3xl font-black italic mb-2 uppercase text-white">ARENA</h2>
-                <input id="room-id-input" type="text" placeholder="CÓDIGO SALA" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-4 text-center font-black text-2xl uppercase tracking-tighter outline-none focus:border-cyan-500 text-white" />
-                <div class="flex flex-col gap-3">
-                    <button onclick="multiplayer.join()" class="w-full py-4 bg-cyan-500 rounded-xl font-black uppercase italic tracking-widest shadow-xl text-white">A LA BATALLA ⚡</button>
-                    <button onclick="multiplayer.join('', false, true)" class="w-full py-4 bg-white/5 border border-white/10 rounded-xl font-black uppercase italic text-xs hover:bg-white hover:text-black transition-all text-white">VS BOT 🤖</button>
-                </div>
+            <div id="battle-lobby" class="glass-panel p-10 text-center max-w-lg mx-auto">
+                <button onclick="multiplayer.join('', false, true)" class="w-full py-4 bg-cyan-500 rounded-xl font-black uppercase italic text-white">ENTRENAR VS BOT 🤖</button>
             </div>
-            
             <div id="battle-arena" class="hidden space-y-4 max-w-4xl mx-auto">
-                <div class="glass-panel p-4 border-2 border-red-500/20 relative">
-                    <div id="replay-badge" class="hidden absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 px-3 py-1 rounded-full font-black text-[8px] uppercase italic">REPETICIÓN 📺</div>
-                    <div class="flex items-center gap-4">
-                        <img id="rival-avatar" src="" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover bg-gray-900" />
+                <div class="glass-panel p-4 border-2 border-red-500/20">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img id="rival-avatar" src="" class="w-12 h-12 rounded-full object-cover" />
                         <div class="flex-1">
-                            <div class="flex justify-between font-black uppercase text-[10px] mb-1 text-white">
-                                <span id="rival-full-name">...</span>
-                                <span id="rival-hp-text" class="text-red-500">100 HP</span>
-                            </div>
-                            <div class="w-full bg-black h-2 rounded-full overflow-hidden">
-                                <div id="rival-hp-bar" class="h-full bg-red-600 transition-all duration-500" style="width: 100%"></div>
-                            </div>
+                            <div class="flex justify-between font-black text-[10px]"><span id="rival-full-name">...</span><span id="rival-hp-text">100 HP</span></div>
+                            <div class="w-full bg-black h-2 rounded-full overflow-hidden"><div id="rival-hp-bar" class="h-full bg-red-600 transition-all duration-500"></div></div>
                         </div>
                     </div>
-                    <!-- RIVAL DECK VERTICAL -->
-                    <div id="rival-deck-display" class="grid grid-cols-3 gap-3 mt-4 max-w-[300px] mx-auto"></div>
                 </div>
-
-                <div class="flex flex-col items-center justify-center h-12">
-                   <div id="battle-status" class="text-center font-black uppercase italic text-cyan-400 animate-pulse text-sm">ESPERANDO...</div>
-                   <div id="battle-mode-badge" class="hidden text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded font-black uppercase mt-1">DUELO</div>
-                </div>
-
+                <div id="battle-status" class="text-center font-black uppercase italic text-cyan-400 h-8"></div>
                 <div class="glass-panel p-4 border-2 border-cyan-500/20">
-                    <div class="flex items-center gap-4">
-                        <div class="flex-1 text-right">
-                            <div class="flex flex-row-reverse justify-between font-black uppercase text-[10px] mb-1 text-white">
-                                <span id="player-full-name">Tú</span>
-                                <span id="player-hp-text" class="text-cyan-400">100 HP</span>
-                            </div>
-                            <div class="w-full bg-black h-2 rounded-full overflow-hidden">
-                                <div id="player-hp-bar" class="h-full bg-cyan-500 transition-all duration-500" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        <img id="player-avatar-battle" src="" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover bg-gray-900" />
-                    </div>
-                    <!-- PLAYER DECK VERTICAL -->
-                    <div id="player-battle-deck" class="grid grid-cols-3 gap-3 mt-4 min-h-[120px] max-w-[300px] mx-auto"></div>
-                </div>
-                
-                <div class="text-center">
-                    <button id="exit-battle-btn" onclick="location.reload()" class="text-[8px] uppercase font-black text-white/20 hover:text-white transition-all tracking-widest text-white">Abandonar</button>
-                    <button id="exit-replay-btn" onclick="location.reload()" class="hidden px-8 py-3 bg-white text-black rounded-xl font-black uppercase italic text-[10px]">Salir de Repetición</button>
+                    <div id="player-battle-deck" class="grid grid-cols-3 gap-3 max-w-[300px] mx-auto"></div>
                 </div>
             </div>
         </section>
 
-        <!-- VISTAS DECK, SHOP, RANKING -->
         <section id="view-deck" class="view">
-            <h2 class="text-3xl font-black uppercase italic tracking-tighter mb-6 text-white">COLECCIÓN <span class="text-cyan-400" id="deck-stats">0/101</span></h2>
             <div id="deck-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
         </section>
 
         <section id="view-shop" class="view">
-            <div class="text-center mb-8"><button onclick="shop.claimMegaGift()" class="px-12 py-6 bg-yellow-400 text-black font-black rounded-3xl text-xl uppercase italic shadow-xl">🎁 1,000,000 GEMAS GRATIS</button></div>
+            <div class="text-center mb-8"><button onclick="shop.claimMegaGift()" class="px-8 py-4 bg-yellow-400 text-black font-black rounded-2xl uppercase">🎁 1,000,000 GEMAS</button></div>
             <div id="shop-items" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
         </section>
-
-        <section id="view-ranking" class="view"><div id="ranking-list" class="max-w-lg mx-auto space-y-3"></div></section>
     </div>
 
-    <!-- PERFIL -->
-    <div id="profile-modal" class="profile-modal" onclick="app.closeProfile()">
-        <div class="glass-panel p-8 max-w-sm w-full mx-4 text-center border-2 border-cyan-500/40" onclick="event.stopPropagation()">
-            <img id="p-avatar" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-2xl mx-auto mb-4 object-cover bg-gray-900" />
-            <div id="p-clan" class="clan-tag text-sm mb-1 uppercase font-black text-yellow-500"></div>
-            <h3 id="p-name" class="text-3xl font-black uppercase italic mb-6 text-white text-white">NOMBRE</h3>
-            <div class="grid grid-cols-2 gap-3 mb-8">
-                <div class="bg-black/40 p-4 rounded-2xl text-white"><span class="text-[7px] text-white/40 block uppercase font-black">Trofeos</span><div id="p-trophies" class="text-yellow-400 font-black text-xl">0</div></div>
-                <div class="bg-black/40 p-4 rounded-2xl text-white"><span class="text-[7px] text-white/40 block uppercase font-black">Copas</span><div id="p-cups" class="text-orange-400 font-black text-xl">0</div></div>
-            </div>
-            <div id="p-deck" class="flex justify-center gap-2 mb-8"></div>
-            <button onclick="app.closeProfile()" class="w-full py-4 bg-white text-black font-black rounded-2xl uppercase text-xs italic">Cerrar</button>
-        </div>
-    </div>
-
-    <nav class="fixed bottom-0 inset-x-0 h-24 bg-black/80 backdrop-blur-3xl border-t border-white/10 flex items-center justify-around px-2 z-50">
-        <button onclick="router.navigate('news')" id="nav-news" class="nav-btn active flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-home mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Home</span></button>
-        <button onclick="router.navigate('battle')" id="nav-battle" class="nav-btn flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-swords mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Duelo</span></button>
-        <button onclick="router.navigate('clans')" id="nav-clans" class="nav-btn flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-shield-alt mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Clan</span></button>
-        <button onclick="router.navigate('deck')" id="nav-deck" class="nav-btn flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-layer-group mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Mazo</span></button>
-        <button onclick="router.navigate('shop')" id="nav-shop" class="nav-btn flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-shopping-bag mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Shop</span></button>
-        <button onclick="router.navigate('ranking')" id="nav-ranking" class="nav-btn flex flex-col items-center justify-center flex-1 h-full"><i class="fas fa-list-ol mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Rank</span></button>
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-black/90 border-t border-white/10 flex items-center justify-around z-50">
+        <button onclick="router.navigate('news')" class="nav-btn flex flex-col items-center"><i class="fas fa-home"></i><span class="text-[7px] font-black uppercase">Home</span></button>
+        <button onclick="router.navigate('battle')" class="nav-btn flex flex-col items-center"><i class="fas fa-swords"></i><span class="text-[7px] font-black uppercase">Duelo</span></button>
+        <button onclick="router.navigate('clans')" class="nav-btn flex flex-col items-center"><i class="fas fa-shield-alt"></i><span class="text-[7px] font-black uppercase">Clan</span></button>
+        <button onclick="router.navigate('deck')" class="nav-btn flex flex-col items-center"><i class="fas fa-layer-group"></i><span class="text-[7px] font-black uppercase">Mazo</span></button>
+        <button onclick="router.navigate('shop')" class="nav-btn flex flex-col items-center"><i class="fas fa-shopping-bag"></i><span class="text-[7px] font-black uppercase">Shop</span></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, update, remove, onDisconnect, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, update, remove, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
@@ -298,411 +183,218 @@
             storageBucket: "juego-de-cartas-f7284.firebasestorage.app",
             messagingSenderId: "702565143174",
             appId: "1:702565143174:web:48a7def7e76a1e9c907707",
-            measurementId: "G-9RST4H1M1P",
             databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com"
         };
 
         const fbApp = initializeApp(firebaseConfig);
         const db = getDatabase(fbApp);
 
-        // CARTAS
-        const ALL_CARDS = [];
-        for(let i=0; i<=101; i++) {
-            ALL_CARDS.push({
-                id: i, name: `Skin #${i}`, rarity: i>90?"animated":i>70?"actricesporno":i>50?"idolos":i>30?"legendary":"rare",
-                baseAtk: 100+i, baseDef: 80+i, price: 100+(i*10), img: `https://picsum.photos/seed/${i+45}/300/450`
-            });
-        }
-        const overrides = [
-            { id: 0, name: "Ramírez", img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg" },
-            { id: 1, name: "Fortaleza", img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png" },
-            { id: 2, name: "Escudera", img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg" },
-            { id: 50, name: "Busting The Fuck Out", rarity: "animated", baseAtk: 5000, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp" }
+        const ALL_CARDS = [
+            { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50 },
+            { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100 },
+            { id: 2, name: "Escudera", rarity: "common", baseAtk: 55, baseDef: 65, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", shopPrice: 50 },
+            { id: 3, name: "Azulita", rarity: "rare", baseAtk: 70, baseDef: 55, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", shopPrice: 80 },
+            { id: 4, name: "Tormenta", rarity: "epic", baseAtk: 80, baseDef: 45, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", shopPrice: 120 },
+            { id: 5, name: "Furia", rarity: "legendary", baseAtk: 90, baseDef: 40, level: 1, img: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", shopPrice: 200 },
+            { id: 6, name: "Asesina", rarity: "legendary", baseAtk: 95, baseDef: 30, level: 1, img: "https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", shopPrice: 250 },
+            { id: 7, name: "Francine Smith", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://wimg.rule34.xxx//images/1888/0334e8239c387a302348c01810815aef.jpeg?15738062", shopPrice: 1000 },
+            { id: 11, name: "Campeón Sombra", rarity: "tournament", baseAtk: 140, baseDef: 100, level: 1, img: "https://s100.erome.com/2418/B2TgruwR/61zc8Veb.png?v=1712563892", shopPrice: null },
+            { id: 12, name: "Maestro del Fuego", rarity: "tournament", baseAtk: 150, baseDef: 90, level: 1, img: "https://s326.erome.com/5139/YBnb1NTO/pN2evqNZ.jpeg?v=1750357395", shopPrice: null },
+            { id: 13, name: "Rey del Hielo", rarity: "tournament", baseAtk: 135, baseDef: 110, level: 1, img: "https://s10.erome.com/6694/EUAdAxk1/1zdVPLQh.jpeg?v=1764732026", shopPrice: null },
+            { id: 14, name: "Felina", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2288/sample_ce3c07d28a9fdd2475d6fc67df8ff4e4.jpg?15302020", shopPrice: 300 },
+            { id: 16, name: "Serenade", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/3001/sample_59915a49be3c0b2a86030615f562d3c1.jpg?15147757", shopPrice: 700 },
+            { id: 17, name: "Cammy and Chun-Li", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/714/sample_799c5e73f8d6f088e9a1930fe6d3f791.jpg?15175590", shopPrice: 700 },
+            { id: 18, name: "Briar", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2510/sample_ea2393689e00c9127748cc78a08ef6b5.jpg?15205865", shopPrice: 700 },
+            { id: 19, name: "Torrenta", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1506/sample_b060c3279b1a9b0a7da0e19bb15fa2d5.jpg?15273482", shopPrice: 700 },
+            { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700 },
+            { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, level: 1, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000 },
+            { id: 22, name: "Carmela", rarity: "paises", baseAtk: 100, baseDef: 60, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 500 },
+            { id: 23, name: "Amy Wong Thicc", rarity: "epic", baseAtk: 88, baseDef: 55, level: 1, img: "https://rule34.xxx//samples/2701/sample_eae1882d43a188cdcbb129ca7ad3e12e.jpg?14901475", shopPrice: 400 },
+            { id: 24, name: "Neon Strike", rarity: "epic", baseAtk: 90, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/902/sample_2e1d3d88982219e96d1bb68453e57b27.jpg?14884672", shopPrice: 450 },
+            { id: 25, name: "Beach Rebel", rarity: "epic", baseAtk: 85, baseDef: 60, level: 1, img: "https://rule34.xxx//samples/2019/sample_fd1e4fb4f37cab745ed074ee637ee911.jpg?14877326", shopPrice: 500 },
+            { id: 26, name: "Panda Girl", rarity: "epic", baseAtk: 82, baseDef: 58, level: 1, img: "https://rule34.xxx//samples/1674/sample_9c2a1dc61194fef31518afef6288438d.jpg?14876583", shopPrice: 550 },
+            { id: 27, name: "Beach Blonde", rarity: "epic", baseAtk: 92, baseDef: 48, level: 1, img: "https://rule34.xxx//samples/890/sample_ce7401fb27ce9a94e218feb294e9d107.jpg?14851213", shopPrice: 600 },
+            { id: 28, name: "Wonder Slut", rarity: "epic", baseAtk: 95, baseDef: 45, level: 1, img: "https://rule34.xxx//samples/890/sample_5007ec807529d5075eebb9fc67df9f09.jpg?14851228", shopPrice: 650 },
+            { id: 29, name: "Samurai Blue", rarity: "epic", baseAtk: 87, baseDef: 62, level: 1, img: "https://wimg.rule34.xxx//images/2149/86cb609ba898ff4285cfe105c5237f1a.png?14777959", shopPrice: 700 },
+            { id: 30, name: "Pink Facesit", rarity: "epic", baseAtk: 80, baseDef: 65, level: 1, img: "https://rule34.xxx//samples/1545/sample_6ebdf1e38f29cb2e1d1cda76622fea1c.jpg?14763252", shopPrice: 750 },
+            { id: 31, name: "D.Va & Uraraka", rarity: "epic", baseAtk: 93, baseDef: 52, level: 1, img: "https://rule34.xxx//samples/2122/sample_cadb0b375ac7de3414d0db39d552e7d4.jpg?14666699", shopPrice: 800 },
+            { id: 32, name: "Laguna", rarity: "epic", baseAtk: 89, baseDef: 55, level: 1, img: "https://rule34.xxx//samples/842/sample_727d3f80cc43d197f3977fb5c9dfdc22.jpg?14662037", shopPrice: 850 },
+            { id: 33, name: "Facesit Dominatrix", rarity: "epic", baseAtk: 94, baseDef: 50, level: 1, img: "https://rule34.xxx//samples/2314/sample_6bdcff4bfa032aed2751a5370a24cf05.jpg?14637455", shopPrice: 900 },
+            { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, baseDef: 90, level: 1, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: 2500 },
+            { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, baseDef: 85, level: 1, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: 2800 },
+            { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, baseDef: 100, level: 1, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 3000 },
+            { id: 37, name: "Muñeca Simpsons", rarity: "legendary", baseAtk: 115, baseDef: 75, level: 1, img: "https://wimg.rule34.xxx/images/1370/e31706328b6ffa7e207dbb2df991f116.gif", shopPrice: 1500 },
+            { id: 38, name: "Princesa Peach", rarity: "legendary", baseAtk: 130, baseDef: 85, level: 1, img: "https://files.catbox.moe/0k9j2p.gif", shopPrice: 2000 },
+            { id: 39, name: "Braixen Thicc Rider", rarity: "animated", baseAtk: 140, baseDef: 90, level: 1, img: "https://wimg.rule34.xxx/images/1620/752edf7523feb1cfac185fd1cf2a0785.gif", shopPrice: null },
+            { id: 40, name: "Espeon Gym Thrust", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://wimg.rule34.xxx/images/617/c15df1e76636ca51743b135ad3817685.gif", shopPrice: null },
+            { id: 41, name: "Sylveon Forest Bounce", rarity: "animated", baseAtk: 135, baseDef: 95, level: 1, img: "https://wimg.rule34.xxx/images/701/e6fb4ba874eced64a960455ed6c03770.gif", shopPrice: null },
+            { id: 42, name: "Otaku Girl", rarity: "animated", baseAtk: 500, baseDef: 120, level: 1, img: "https://wimg.rule34.xxx/images/3636/2238fbcefc001a701fe5e1f8c5236fe5.gif", shopPrice: 1800 },
+            { id: 43, name: "Belle Beast Ride", rarity: "animated", baseAtk: 150, baseDef: 90, level: 1, img: "https://cdn2.hentaigifz.com/116588/belle-from-beauty-and-the-beast-scaled.webp", shopPrice: null },
+            { id: 44, name: "Emo Bad Belle", rarity: "animated", baseAtk: 140, baseDef: 95, level: 1, img: "https://cdn2.hentaigifz.com/116536/emo-scaled.webp", shopPrice: null },
+            { id: 45, name: "Betty Boop Tease", rarity: "animated", baseAtk: 145, baseDef: 85, level: 1, img: "https://cdn2.hentaigifz.com/116498/betty-boop-scaled.webp", shopPrice: null },
+            { id: 46, name: "Dexter's Mom Beach", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500 },
+            { id: 47, name: "Keqing Thicc Ride", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116288/hentai-scaled.webp", shopPrice: 2500 },
+            { id: 48, name: "Leona Gym Thrust", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116388/tmr-scaled.webp", shopPrice: 2500 },
+            { id: 49, name: "Strange Hero Facesit", rarity: "animated", baseAtk: 1200, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116364/strangeh-scaled.webp", shopPrice: 2500 },
+            { id: 50, name: "Busting The Fuck Out", rarity: "animated", baseAtk: 5000, baseDef: 2500, level: 1, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000 },
+            { id: 51, name: "Motoko Kusanagi Ride", rarity: "animated", baseAtk: 1600, baseDef: 1100, level: 1, img: "https://cdn2.hentaigifz.com/114768/fantasy-fuck-scaled.webp", shopPrice: 2800 },
+            { id: 52, name: "Nezuko Asshole Fuck", rarity: "animated", baseAtk: 1700, baseDef: 1050, level: 1, img: "https://cdn2.hentaigifz.com/114338/id-fuck-the-hell-out-of-nezukos-asshole-scaled.webp", shopPrice: 2900 },
+            { id: 53, name: "Eirin Yagokoro Dildo", rarity: "animated", baseAtk: 1550, baseDef: 1150, level: 1, img: "https://cdn2.hentaigifz.com/115486/bucketheadero-eirin-yagokoro-touhou-scaled.webp", shopPrice: 2700 },
+            { id: 54, name: "Jessie Ass Throw", rarity: "animated", baseAtk: 1650, baseDef: 1200, level: 1, img: "https://cdn2.hentaigifz.com/115328/jessie-throwing-that-ass-way-out-scaled.webp", shopPrice: 2850 },
+            { id: 55, name: "Raven Big Ass", rarity: "animated", baseAtk: 1800, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/115298/raven-big-ass-scaled.webp", shopPrice: 3000 },
+            { id: 56, name: "Strapon Futa", rarity: "animated", baseAtk: 1750, baseDef: 1080, level: 1, img: "https://cdn2.hentaigifz.com/115150/strapon-scaled.webp", shopPrice: 2950 },
+            { id: 57, name: "Bubblegum Tit Shake", rarity: "animated", baseAtk: 1500, baseDef: 1300, level: 1, img: "https://cdn2.hentaigifz.com/115728/by-dabbledraws-bubblegum-shakes-her-huge-tits-scaled.webp", shopPrice: 2600 },
+            { id: 58, name: "Vinyl Luna Smirk", rarity: "animated", baseAtk: 1680, baseDef: 1120, level: 1, img: "https://cdn2.hentaigifz.com/115614/smirk-scaled.webp", shopPrice: 2880 },
+            { id: 59, name: "Best Nelson Ride", rarity: "animated", baseAtk: 1900, baseDef: 950, level: 1, img: "https://cdn2.hentaigifz.com/115978/best-nelson-scaled.webp", shopPrice: 3100 },
+            { id: 60, name: "Dragon Momma Slut", rarity: "animated", baseAtk: 2000, baseDef: 900, level: 1, img: "https://cdn2.hentaigifz.com/116346/dragon-momma-slut-chelodoy-scaled.webp", shopPrice: 3200 },
+            { id: 61, name: "Samantha Bounce", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113850/gif-samantha-1-scaled.webp", shopPrice: 4000 },
+            { id: 62, name: "Tracer Riding", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113896/tracer-ridingirastris-ii-scaled.webp", shopPrice: 4000 },
+            { id: 63, name: "Jane Jetson MILF", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114176/milf-scaled.webp", shopPrice: 4000 },
+            { id: 64, name: "Blonde Ahegao", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114102/blonde-scaled.webp", shopPrice: 4000 },
+            { id: 65, name: "Mommy's Milk", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114104/mommys-milk-scaled.webp", shopPrice: 4000 },
+            { id: 66, name: "Modeus Tight Fuck", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114096/hentai-fuck-tight-pussy-with-big-tits-scaled.webp", shopPrice: 4000 },
+            { id: 67, name: "Family Guy XXXmas", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114026/holy-crap-xxxmas-scaled.webp", shopPrice: 4000 },
+            { id: 68, name: "Harness Pussy Fuck", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114034/pussy-hentai-fuck-scaled.webp", shopPrice: 4000 },
+            { id: 69, name: "Lisa Footjob", rarity: "legendary", baseAtk: 105, baseDef: 60, level: 1, img: "https://cdn.truyen-hentai.com/lisa-genshin-impact?interlace=1&quality=90&type=jpeg&url=https%3A%2F%2Fi.redd.it%2F2rhrtyfu486g1.jpeg&width=920&sign=fT55BfklnZBR2KbkAiywdF3fKOyO99UCruuDvfceJcs", shopPrice: 500 },
+            { id: 71, name: "Susan Long MILF", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116566/hentai-milf-susan-long-american-dragon-jake-long-scaled.webp", shopPrice: 3000 },
+            { id: 72, name: "TMR Thicc", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116442/tmr-scaled.webp", shopPrice: 3000 },
+            { id: 73, name: "Jinx League of Legends", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/3971/sample_2da1c8ff33fe588f243910961ed11a06.jpg?13091729", shopPrice: 1200 },
+            { id: 74, name: "Ahri Fox Legend", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/2954/sample_2386105dbcb97ac0248cc3ea8500b84a.jpg?13155724", shopPrice: 1200 },
+            { id: 75, name: "Seraphine Popstar", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/4746/sample_37fa548a5434c088e9a1930fe6d3f791.jpg?13157246", shopPrice: 1200 },
+            { id: 76, name: "Sonia Pokemon Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/3480/sample_bcffd58f4d3323097bff61a131fefcf7.jpg?13212611", shopPrice: 1200 },
+            { id: 77, name: "Eula Genshin Impact", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://wimg.rule34.xxx//images/1177/99745673e25c63e0080cf6ddcf048f56.png?13214170", shopPrice: 1200 },
+            { id: 78, name: "Noelle Genshin Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/1177/sample_07014603b1bc2a1ee520415c2ce8bd60.jpg?13214737", shopPrice: 1200 },
+            { id: 79, name: "Gwen Spider Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/139/sample_c4fd8a7f5d51c72b9fc2b5136650e90c.jpg?15817313", shopPrice: 1200 },
+            { id: 80, name: "Starfire Teen Titans", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/368/sample_8237312d0b56c4a8bcd6b0f4b287c6da3b16140a.jpg?15828521", shopPrice: 1200 },
+            { id: 81, name: "Raven Teen Titans Slut", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/3787/sample_46e881b34ef3f92e8a012f9d2d351e28.jpg?15825868", shopPrice: 1200 },
+            { id: 82, name: "Robin Teen Titans Thicc", rarity: "legendary", baseAtk: 110, baseDef: 70, level: 1, img: "https://rule34.xxx//samples/1227/sample_4af1e5c47506f9fbbe762fb71a2c3395.jpg?15824410", shopPrice: 1200 },
+            { id: 83, name: "Big Tit Teen Fucking", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116478/big-tit-teen-fucking-scaled.webp", shopPrice: 3000 },
+            { id: 84, name: "Sekis Thicc", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116488/sekis-scaled.webp", shopPrice: 3000 },
+            { id: 85, name: "Hentai Ride Animated", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116444/hentai-scaled.webp", shopPrice: 3000 },
+            { id: 86, name: "Big Tits Hentai Gif", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116430/big-tits-hentai-gif-scaled.webp", shopPrice: 3000 },
+            { id: 87, name: "Babe Animated", rarity: "animated", baseAtk: 1600, baseDef: 1000, level: 1, img: "https://cdn2.hentaigifz.com/116376/babe-scaled.webp", shopPrice: 3000 },
+            { id: 88, name: "Rosalía Motomami", rarity: "idolos", baseAtk: 155, baseDef: 105, level: 1, img: "https://media.vogue.es/photos/6282929aebc8221f41f20a50/2:3/w_1920,c_limit/SHOT_02_090_FINAL.jpg", shopPrice: 3200 },
+            { id: 89, name: "Mmm Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114202/mmm-scaled.webp", shopPrice: 5500 },
+            { id: 90, name: "Eighty-Five Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114046/85-scaled.webp", shopPrice: 5500 },
+            { id: 91, name: "Princess Peach Tit Bounce", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114432/princess-peach-bouncing-them-titties-scaled.webp", shopPrice: 5500 },
+            { id: 92, name: "Demon Princess Meaty", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114680/demon-princess-fucking-a-meaty-cock-scaled.webp", shopPrice: 5500 },
+            { id: 93, name: "Nice Ass Fuck Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/114454/nice-ass-fuck-scaled.webp", shopPrice: 5500 },
+            { id: 94, name: "Automatass Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/115204/automatass-scaled.webp", shopPrice: 5500 },
+            { id: 95, name: "2B Perfect Ass Doggy", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/112817/2b-perfect-ass-doggy-style-3d-hentai-scaled.webp", shopPrice: 5500 },
+            { id: 96, name: "Green Slime Cum Clothes", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/112481/green-slime-turns-clothes-to-cum-scaled.webp", shopPrice: 5500 },
+            { id: 97, name: "Ass Animated Thicc", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113095/ass-scaled.webp", shopPrice: 5500 },
+            { id: 98, name: "Widowmaker Animated", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113718/widowmaker-scaled.webp", shopPrice: 5500 },
+            { id: 99, name: "Futa Madmew Redapple2", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113534/futa-madmew-by-redapple2-scaled.webp", shopPrice: 5500 },
+            { id: 100, name: "Tifa Blacked 3", rarity: "animated", baseAtk: 10000, baseDef: 5000, level: 1, img: "https://cdn2.hentaigifz.com/113370/tifa-blacked-3-scaled.webp", shopPrice: 5500 },
+            { id: 101, name: "Milf Handjob Wet", rarity: "actricesporno", baseAtk: 12000, baseDef: 6000, level: 1, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000 }
         ];
-        overrides.forEach(o => { const c = ALL_CARDS.find(x => x.id === o.id); if(c) Object.assign(c, o); });
 
-        // ESTADO
         window.state = null;
-        const syncToCloud = () => { if(window.state) set(ref(db, `users_v11/${window.state.name}`), window.state); };
-        const save = () => { localStorage.setItem('cards_master_name', window.state.name); renderGlobalUI(); syncToCloud(); };
+        const save = () => { localStorage.setItem('cards_master_name', window.state.name); renderGlobalUI(); set(ref(db, `users_v11/${window.state.name}`), window.state); };
 
         const initSession = async () => {
-            let storedName = localStorage.getItem('cards_master_name');
-            if(!storedName) {
-                storedName = prompt("Nombre Batalla:").toUpperCase().replace(/\s/g,'_').substring(0,12);
-                if(!storedName) storedName = "CADETE_" + Math.floor(Math.random()*999);
-            }
+            let storedName = localStorage.getItem('cards_master_name') || prompt("Nombre:").toUpperCase();
             const snap = await get(ref(db, `users_v11/${storedName}`));
-            if(snap.exists()) {
-                window.state = snap.val();
-                if(!window.state.upgrades) window.state.upgrades = {};
-                if(!window.state.currentDeck) window.state.currentDeck = [0, 1, 2];
-            } else {
-                window.state = {
-                    name: storedName, diamonds: 1000, trophies: 0, cups: 0,
-                    owned: [0, 1, 2], currentDeck: [0, 1, 2], clan: null,
-                    avatar: 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037',
-                    upgrades: {}
-                };
-            }
-            save(); renderGlobalUI(); initNews();
-            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
+            window.state = snap.exists() ? snap.val() : { name: storedName, diamonds: 1000, trophies: 0, cups: 0, owned: [0, 1, 2], currentDeck: [0, 1, 2], avatar: 'https://picsum.photos/200' };
+            save(); initNews(); document.getElementById('loading-screen').style.display = 'none';
         };
 
         const initNews = () => {
-            onValue(ref(db, 'news_v11'), (snap) => {
-                const news = snap.val();
-                const cont = document.getElementById('news-container');
-                if(!news) {
-                    cont.innerHTML = '<div class="glass-panel p-10 text-center opacity-40 col-span-full uppercase font-black text-xs italic">No hay novedades hoy</div>';
-                    return;
-                }
-                cont.innerHTML = Object.entries(news).map(([id, n]) => `
-                    <div class="glass-panel overflow-hidden border-cyan-500/20 group">
-                        <img src="${n.img || 'https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=500'}" class="w-full h-40 object-cover group-hover:scale-105 transition-all">
-                        <div class="p-6">
-                            <h3 class="text-xl font-black uppercase italic text-cyan-400 mb-2">${n.title}</h3>
-                            <p class="text-xs text-white/60 leading-relaxed">${n.msg}</p>
-                        </div>
+            onValue(ref(db, 'news_v11'), (s) => {
+                const data = s.val() || {};
+                document.getElementById('news-container').innerHTML = Object.entries(data).map(([id, n]) => `
+                    <div class="glass-panel overflow-hidden border-cyan-500/20">
+                        <img src="${n.img}" class="w-full h-40 object-cover">
+                        <div class="p-4"><h3 class="font-black text-cyan-400 uppercase">${n.title}</h3><p class="text-[10px] opacity-60">${n.msg}</p></div>
                     </div>
                 `).join('');
             });
         };
 
-        const renderGlobalUI = () => {
-            if(!window.state) return;
-            document.getElementById('u-name').innerText = window.state.name;
-            document.getElementById('u-avatar').src = window.state.avatar;
-            const uClan = document.getElementById('u-clan');
-            if(window.state.clan) { uClan.innerText = `[${window.state.clan}]`; uClan.classList.remove('hidden'); }
-            else uClan.classList.add('hidden');
-            document.getElementById('v-diamonds').innerText = (window.state.diamonds || 0).toLocaleString();
-            document.getElementById('v-trophies').innerText = window.state.trophies || 0;
-            document.getElementById('v-cups').innerText = window.state.cups || 0;
-        };
-
-        // ROUTER
         window.router = {
             navigate: (view) => {
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 document.getElementById('view-' + view).classList.add('active');
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                const btn = document.getElementById('nav-' + view);
-                if(btn) btn.classList.add('active');
-                if(view === 'clans') clans.init();
                 if(view === 'deck') renderDeck();
                 if(view === 'shop') renderShop();
-                if(view === 'ranking') renderRanking();
-            }
-        };
-
-        // MULTIPLAYER & REPLAYS & REVEAL
-        window.multiplayer = {
-            room: '', role: '', ref: null, data: null, isFriendly: false, isBotMode: false, isReplay: false,
-            join: async (directCode, friendly = false, bot = false) => {
-                const code = bot ? 'BOT_LOCAL' : (directCode || document.getElementById('room-id-input').value.toUpperCase().trim());
-                if(!bot && (!code || code.length < 3)) return alert("Código inválido");
-                
-                window.multiplayer.isReplay = false;
-                window.multiplayer.isBotMode = bot;
-                window.multiplayer.room = code;
-                window.multiplayer.isFriendly = friendly;
-                
-                const mappedDeck = window.state.currentDeck.map(id => {
-                    const b = ALL_CARDS.find(x => x.id === id) || ALL_CARDS[0];
-                    const lvl = (window.state.upgrades && window.state.upgrades[id]) || 1;
-                    return { id: b.id, n: b.name, i: b.img, r: b.rarity, atk: b.baseAtk + (lvl * 10), lvl: lvl };
-                });
-
-                if(bot) {
-                    const botData = { p1: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck }, p2: { n: 'BOT_FORTNITE', h: 100, a: 'https://cdn-icons-png.flaticon.com/512/4712/4712035.png', deck: [ALL_CARDS[0], ALL_CARDS[1], ALL_CARDS[2]] }, status: 'playing', turn: 'p1' };
-                    window.multiplayer.role = 'p1'; window.multiplayer.sync(botData);
-                    document.getElementById('battle-lobby').classList.add('hidden');
-                    document.getElementById('battle-arena').classList.remove('hidden');
-                    router.navigate('battle'); return;
-                }
-
-                window.multiplayer.ref = ref(db, `rooms_v11/${code}`);
-                const snap = await get(window.multiplayer.ref);
-                const data = snap.val();
-
-                if(!data) {
-                    await set(window.multiplayer.ref, { p1: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck }, status: 'waiting', turn: 'p1', friendly: friendly, history: [] });
-                    window.multiplayer.role = 'p1';
-                } else {
-                    if(!data.p2) {
-                        await update(window.multiplayer.ref, { p2: { n: window.state.name, h: 100, a: window.state.avatar, deck: mappedDeck }, status: 'playing' });
-                        window.multiplayer.role = 'p2';
-                    } else if(data.p1 && data.p2) return alert("Sala llena");
-                }
-
-                onValue(window.multiplayer.ref, (s) => {
-                    const val = s.val();
-                    if(!val) return;
-                    if(val.p1 && val.p2 && val.status === 'waiting' && window.multiplayer.role === 'p1') update(window.multiplayer.ref, { status: 'playing' });
-                    window.multiplayer.sync(val);
-                });
-
-                document.getElementById('battle-lobby').classList.add('hidden');
-                document.getElementById('battle-arena').classList.remove('hidden');
-                router.navigate('battle');
-            },
-            sync: (data) => {
-                const prevTurn = window.multiplayer.data?.turn;
-                window.multiplayer.data = data;
-                const me = data[window.multiplayer.role];
-                if(!me) return;
-                const rival = data[window.multiplayer.role === 'p1' ? 'p2' : 'p1'];
-
-                document.getElementById('player-full-name').innerText = me.n;
-                document.getElementById('player-avatar-battle').src = me.a;
-                document.getElementById('player-hp-bar').style.width = me.h + '%';
-                document.getElementById('player-hp-text').innerText = `${me.h} HP`;
-
-                if(rival) {
-                    document.getElementById('rival-full-name').innerText = rival.n;
-                    document.getElementById('rival-avatar').src = rival.a;
-                    document.getElementById('rival-hp-bar').style.width = rival.h + '%';
-                    document.getElementById('rival-hp-text').innerText = `${rival.h} HP`;
-                }
-
-                const isMyTurn = data.status === 'playing' && data.turn === window.multiplayer.role;
-                document.getElementById('battle-status').innerText = isMyTurn ? 'TU TURNO' : 'ESPERA...';
-                
-                // REVEAL LOGIC: Si el turno acaba de cambiar a mí, significa que el rival atacó
-                if (data.status === 'playing' && prevTurn && prevTurn !== window.multiplayer.role && data.turn === window.multiplayer.role && data.lastAttack) {
-                    window.multiplayer.showReveal(data.lastAttack.cardName, data.lastAttack.cardImg);
-                }
-
-                if(data.status === 'finished') {
-                    document.getElementById('battle-status').innerText = data.winner === window.multiplayer.role ? 'VICTORIA' : 'DERROTA';
-                    if(data.friendly && !window.multiplayer.isReplay && window.multiplayer.role === 'p1') set(ref(db, `replays_v11/${window.multiplayer.room}`), data);
-                }
-
-                const deckCont = document.getElementById('player-battle-deck');
-                deckCont.innerHTML = (me.deck || []).map(c => `
-                    <div onclick="multiplayer.attack(${c.atk}, '${c.n}', '${c.i}')" class="battle-card-item glass-panel p-1 flex flex-col items-center ${!isMyTurn?'disabled':''} rarity-${c.r || 'rare'} aspect-[2/3]">
-                        <img src="${c.i}" class="w-full h-full object-cover rounded shadow-inner">
-                        <div class="absolute bottom-1 bg-black/80 px-1 rounded text-[5px] font-black text-cyan-400 uppercase tracking-tighter">ATK ${c.atk}</div>
-                    </div>
-                `).join('');
-
-                const rivalCont = document.getElementById('rival-deck-display');
-                rivalCont.innerHTML = (rival?.deck || [1,2,3]).map(c => `
-                    <div class="glass-panel aspect-[2/3] flex items-center justify-center text-[10px] opacity-20 font-black text-white">?</div>
-                `).join('');
-
-                if(window.multiplayer.isBotMode && data.status === 'playing' && data.turn === 'p2') {
-                    setTimeout(() => { if(window.multiplayer.data.turn === 'p2') window.multiplayer.attack(80, 'BOT_CARGA', 'https://cdn-icons-png.flaticon.com/512/4712/4712035.png'); }, 2000);
-                }
-            },
-            showReveal: (name, img) => {
-                const overlay = document.getElementById('attack-reveal-overlay');
-                document.getElementById('reveal-text').innerText = `¡EL RIVAL ATACA CON ${name}!`;
-                document.getElementById('reveal-img').src = img;
-                overlay.classList.add('active');
-                setTimeout(() => overlay.classList.remove('active'), 1500);
-            },
-            attack: (atk, name, img) => {
-                if(window.multiplayer.data.status !== 'playing' || window.multiplayer.data.turn !== window.multiplayer.role) return;
-                const rivalRole = window.multiplayer.role === 'p1' ? 'p2' : 'p1';
-                const dmg = Math.floor(atk / 10) + 5;
-                const newHp = Math.max(0, window.multiplayer.data[rivalRole].h - dmg);
-                
-                const history = window.multiplayer.data.history || [];
-                history.push({ attacker: window.multiplayer.role, dmg: dmg, cardName: name, cardImg: img });
-
-                const updates = { turn: rivalRole, history: history, lastAttack: { attacker: window.multiplayer.role, cardName: name, cardImg: img } };
-                updates[`${rivalRole}/h`] = newHp;
-                if(newHp <= 0) { 
-                    updates.status = 'finished'; updates.winner = window.multiplayer.role;
-                    if(!window.multiplayer.isFriendly) { window.state.trophies += 50; window.state.diamonds += 100; save(); }
-                }
-
-                if(window.multiplayer.isBotMode) {
-                    const next = {...window.multiplayer.data, ...updates};
-                    next[rivalRole].h = newHp;
-                    window.multiplayer.sync(next);
-                } else {
-                    update(window.multiplayer.ref, updates);
-                }
-            },
-            watchReplay: async (roomId) => {
-                const snap = await get(ref(db, `replays_v11/${roomId}`));
-                if(!snap.exists()) return alert("No hay replay");
-                const replayData = snap.val();
-                window.multiplayer.isReplay = true;
-                window.multiplayer.role = 'p1';
-                document.getElementById('battle-lobby').classList.add('hidden');
-                document.getElementById('battle-arena').classList.remove('hidden');
-                document.getElementById('replay-badge').classList.remove('hidden');
-                document.getElementById('exit-battle-btn').classList.add('hidden');
-                document.getElementById('exit-replay-btn').classList.remove('hidden');
-                router.navigate('battle');
-
-                let current = JSON.parse(JSON.stringify(replayData));
-                current.p1.h = 100; current.p2.h = 100; current.status = 'playing';
-                window.multiplayer.sync(current);
-
-                const history = replayData.history || [];
-                for(let i=0; i<history.length; i++){
-                    await new Promise(r => setTimeout(r, 2000));
-                    const move = history[i];
-                    window.multiplayer.showReveal(move.cardName, move.cardImg);
-                    await new Promise(r => setTimeout(r, 1500));
-                    
-                    const target = move.attacker === 'p1' ? 'p2' : 'p1';
-                    current[target].h = Math.max(0, current[target].h - move.dmg);
-                    current.turn = target === 'p1' ? 'p2' : 'p1';
-                    if(i === history.length - 1) { current.status = 'finished'; current.winner = move.attacker; }
-                    window.multiplayer.sync(current);
-                }
-            }
-        };
-
-        // CLANES
-        window.clans = {
-            init: () => {
-                onValue(ref(db, 'clans_v11'), (snap) => {
-                    const list = snap.val() || {};
-                    document.getElementById('clans-list').innerHTML = Object.keys(list).map(name => `
-                        <div class="glass-panel p-4 flex justify-between items-center border-white/5 hover:border-cyan-500 cursor-pointer text-white" onclick="clans.join('${name}')">
-                            <span class="clan-tag">[${name}]</span>
-                            <span class="text-[8px] opacity-40 uppercase font-black">${Object.keys(list[name].members || {}).length} M</span>
-                        </div>
-                    `).join('');
-                });
-                if(window.state.clan) clans.listenChat(window.state.clan);
-            },
-            join: (name) => {
-                if(window.state.clan) remove(ref(db, `clans_v11/${window.state.clan}/members/${window.state.name}`));
-                window.state.clan = name; set(ref(db, `clans_v11/${name}/members/${window.state.name}`), true);
-                save(); clans.init();
-            },
-            leave: () => {
-                if(window.state.clan) { remove(ref(db, `clans_v11/${window.state.clan}/members/${window.state.name}`)); window.state.clan = null; save(); clans.init(); }
-            },
-            showCreate: () => {
-                const n = prompt("Siglas (3-5):").toUpperCase().replace(/\s/g,'').substring(0,5);
-                if(n && n.length >= 3) clans.join(n);
-            },
-            listenChat: (name) => {
-                document.getElementById('current-clan-name').innerText = `[${name}]`;
-                onValue(ref(db, `clans_v11/${name}/chat`), (snap) => {
-                    const msgs = snap.val() || {};
-                    const cont = document.getElementById('clan-chat-box');
-                    cont.innerHTML = Object.entries(msgs).map(([mid, m]) => {
-                        if(m.type === 'challenge') {
-                            const isFinished = m.status === 'finished';
-                            return `
-                                <div class="challenge-msg p-4 rounded-2xl mx-4 space-y-3">
-                                    <div class="text-[9px] font-black uppercase ${isFinished?'text-cyan-400':'text-red-500'}">${isFinished?'⚔️ DUELO FINALIZADO':'⚔️ RETO AMISTOSO'}</div>
-                                    <div class="font-bold text-xs text-white">${m.user} desafió al clan</div>
-                                    ${!isFinished ? (m.user !== window.state.name ? `<button onclick="clans.acceptChallenge('${mid}', '${m.roomId}')" class="w-full py-2 bg-white text-black rounded-lg font-black text-[10px] uppercase">ACEPTAR</button>` : `<div class="text-[8px] opacity-40 text-center italic text-white/40">Esperando...</div>`) 
-                                    : `<button onclick="multiplayer.watchReplay('${m.roomId}')" class="w-full py-2 bg-indigo-600 text-white rounded-lg font-black text-[10px] uppercase italic">VER REPETICIÓN 📺</button>`}
-                                </div>
-                            `;
-                        }
-                        return `
-                            <div class="flex flex-col ${m.user === window.state.name ? 'items-end' : 'items-start'} px-4">
-                                <span class="text-[8px] opacity-40 uppercase font-black text-white/40">${m.user}</span>
-                                <div class="p-3 ${m.user === window.state.name ? 'bg-cyan-600 rounded-l-2xl' : 'bg-white/5 rounded-r-2xl'} border border-white/5 text-xs text-white">${m.text}</div>
-                            </div>
-                        `;
-                    }).join('');
-                    cont.scrollTop = cont.scrollHeight;
-                });
-            },
-            sendMsg: () => {
-                const inp = document.getElementById('clan-msg-input');
-                if(!inp.value.trim() || !window.state.clan) return;
-                push(ref(db, `clans_v11/${window.state.clan}/chat`), { user: window.state.name, text: inp.value.trim(), time: Date.now() });
-                inp.value = '';
-            },
-            sendChallenge: () => {
-                const rid = 'CLAN_' + Math.floor(Math.random()*9999);
-                push(ref(db, `clans_v11/${window.state.clan}/chat`), { user: window.state.name, type: 'challenge', roomId: rid, status: 'waiting', time: Date.now() });
-                multiplayer.join(rid, true);
-            },
-            acceptChallenge: (mid, rid) => {
-                update(ref(db, `clans_v11/${window.state.clan}/chat/${mid}`), { status: 'finished' });
-                multiplayer.join(rid, true);
-            }
-        };
-
-        // UI GENERAL
-        window.app = {
-            showProfile: async (name) => {
-                const s = await get(ref(db, `users_v11/${name}`));
-                if(!s.exists()) return;
-                const u = s.val();
-                document.getElementById('p-name').innerText = u.name;
-                document.getElementById('p-avatar').src = u.avatar;
-                document.getElementById('p-clan').innerText = u.clan ? `[${u.clan}]` : 'Sin Clan';
-                document.getElementById('p-trophies').innerText = u.trophies || 0;
-                document.getElementById('p-cups').innerText = u.cups || 0;
-                document.getElementById('p-deck').innerHTML = (u.currentDeck || []).map(id => `<div class="w-12 glass-panel p-1 aspect-[2/3]"><img src="${ALL_CARDS[id].img}" class="w-full h-full object-cover rounded"></div>`).join('');
-                document.getElementById('profile-modal').classList.add('active');
-            },
-            showSelfProfile: () => app.showProfile(window.state.name),
-            closeProfile: () => document.getElementById('profile-modal').classList.remove('active'),
-            toggleDeck: (id) => {
-                if(window.state.currentDeck.includes(id)) window.state.currentDeck = window.state.currentDeck.filter(x => x !== id);
-                else { if(window.state.currentDeck.length >= 3) return alert("Máximo 3"); window.state.currentDeck.push(id); }
-                save(); renderDeck();
             }
         };
 
         const renderDeck = () => {
-            const g = document.getElementById('deck-grid');
-            document.getElementById('deck-stats').innerText = `${(window.state.owned || []).length}/101`;
-            g.innerHTML = window.state.owned.map(id => {
-                const c = ALL_CARDS[id]; const inD = window.state.currentDeck.includes(id);
+            document.getElementById('deck-grid').innerHTML = window.state.owned.map(id => {
+                const c = ALL_CARDS.find(x => x.id === id);
                 return `
-                    <div class="glass-panel p-3 rarity-${c.rarity} ${inD?'border-yellow-400':''} flex flex-col">
-                        <div class="card-vertical mb-3">
-                            <img src="${c.img}" class="w-full h-full object-cover rounded shadow-inner">
-                        </div>
-                        <div class="text-[8px] font-black uppercase truncate text-white italic mb-3">${c.name}</div>
-                        <div class="flex flex-col gap-2 mt-auto">
-                            <button onclick="app.toggleDeck(${id})" class="w-full py-2 ${inD?'bg-red-600':'bg-cyan-600'} text-[7px] font-black rounded uppercase text-white shadow-lg">${inD?'Quitar':'Equipar'}</button>
-                        </div>
+                    <div class="glass-panel p-2 rarity-${c.rarity}">
+                        <div class="card-vertical mb-2"><img src="${c.img}" class="w-full h-full object-cover rounded"></div>
+                        <div class="text-[8px] font-black truncate">${c.name}</div>
                     </div>
                 `;
             }).join('');
         };
 
         window.shop = {
-            claimMegaGift: () => { window.state.diamonds += 1000000; save(); alert("¡Millonario! 💎"); renderShop(); },
+            claimMegaGift: () => { window.state.diamonds += 1000000; save(); alert("Gemas obtenidas 💎"); renderShop(); },
             buy: (id) => {
-                const c = ALL_CARDS[id];
-                if(window.state.diamonds >= c.price) { window.state.diamonds -= c.price; window.state.owned.push(id); save(); renderShop(); }
+                const c = ALL_CARDS.find(x => x.id === id);
+                if(window.state.diamonds >= c.shopPrice) {
+                    window.state.diamonds -= c.shopPrice; window.state.owned.push(id); save(); renderShop();
+                }
             }
         };
+
         const renderShop = () => {
-            document.getElementById('shop-items').innerHTML = ALL_CARDS.filter(c => !window.state.owned.includes(c.id)).slice(0,20).map(c => `
-                <div class="glass-panel p-3 rarity-${c.rarity} flex flex-col">
-                    <div class="card-vertical mb-3">
-                        <img src="${c.img}" class="w-full h-full object-cover rounded shadow-inner">
-                    </div>
-                    <div class="text-[8px] font-black uppercase truncate text-white italic mb-3">${c.name}</div>
-                    <button onclick="shop.buy(${c.id})" class="w-full py-2 bg-white text-black text-[8px] font-black rounded uppercase shadow-xl">💎 ${c.price}</button>
+            document.getElementById('shop-items').innerHTML = ALL_CARDS
+                .filter(c => c.shopPrice !== null && !window.state.owned.includes(c.id))
+                .slice(0,20).map(c => `
+                <div class="glass-panel p-2 rarity-${c.rarity} flex flex-col">
+                    <div class="card-vertical mb-2"><img src="${c.img}" class="w-full h-full object-cover rounded"></div>
+                    <button onclick="shop.buy(${c.id})" class="mt-auto w-full py-2 bg-white text-black text-[8px] font-black rounded uppercase">💎 ${c.shopPrice}</button>
                 </div>
             `).join('');
         };
 
-        const renderRanking = () => {
-            onValue(ref(db, 'users_v11'), (s) => {
-                const us = Object.values(s.val() || {}).sort((a,b) => b.trophies - a.trophies).slice(0,10);
-                document.getElementById('ranking-list').innerHTML = us.map((u, i) => `
-                    <div class="glass-panel p-4 flex items-center gap-4 text-white">
-                        <div class="font-black text-lg opacity-20 w-6">${i+1}</div>
-                        <img src="${u.avatar}" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1 font-bold text-[10px] uppercase">${u.name}</div>
-                        <div class="text-yellow-400 font-black">${u.trophies} 🏆</div>
+        window.multiplayer = {
+            data: null, role: 'p1',
+            join: (c, f, bot) => {
+                const me = { n: window.state.name, h: 100, a: window.state.avatar, deck: window.state.currentDeck.map(id => ALL_CARDS.find(x => x.id === id)) };
+                const rival = { n: 'BOT', h: 100, a: 'https://picsum.photos/100', deck: [ALL_CARDS[0], ALL_CARDS[1], ALL_CARDS[2]] };
+                window.multiplayer.data = { p1: me, p2: rival, status: 'playing', turn: 'p1' };
+                document.getElementById('battle-lobby').classList.add('hidden');
+                document.getElementById('battle-arena').classList.remove('hidden');
+                window.multiplayer.sync();
+            },
+            sync: () => {
+                const d = window.multiplayer.data;
+                document.getElementById('rival-full-name').innerText = d.p2.n;
+                document.getElementById('rival-hp-bar').style.width = d.p2.h + '%';
+                document.getElementById('player-battle-deck').innerHTML = d.p1.deck.map(c => `
+                    <div onclick="multiplayer.attack(${c.baseAtk}, '${c.name}', '${c.img}')" class="glass-panel p-1 aspect-[2/3] rarity-${c.rarity}">
+                        <img src="${c.img}" class="w-full h-full object-cover rounded">
                     </div>
                 `).join('');
-            });
+            },
+            showReveal: (name, img) => {
+                const overlay = document.getElementById('attack-reveal-overlay');
+                document.getElementById('reveal-text').innerText = `¡ATAQUE CON ${name}!`;
+                document.getElementById('reveal-img').src = img;
+                overlay.classList.add('active');
+                setTimeout(() => overlay.classList.remove('active'), 1500);
+            },
+            attack: (atk, name, img) => {
+                window.multiplayer.showReveal(name, img);
+                setTimeout(() => {
+                    window.multiplayer.data.p2.h = Math.max(0, window.multiplayer.data.p2.h - 20);
+                    window.multiplayer.sync();
+                    if(window.multiplayer.data.p2.h <= 0) alert("¡Ganaste!");
+                }, 1500);
+            }
+        };
+
+        const renderGlobalUI = () => {
+            document.getElementById('u-name').innerText = window.state.name;
+            document.getElementById('u-avatar').src = window.state.avatar;
+            document.getElementById('v-diamonds').innerText = window.state.diamonds.toLocaleString();
+            document.getElementById('v-trophies').innerText = window.state.trophies;
         };
 
         initSession();
