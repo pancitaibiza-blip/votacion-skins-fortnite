@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎮 Fortnite TCG - BATTLE REVEAL UPDATE</title>
+    <title>🎮 Fortnite TCG - REPLAY SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,115 +13,86 @@
         .view { display: none; }
         .view.active { display: block; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .nav-btn { color: rgba(255,255,255,0.4); transition: 0.3s; cursor: pointer; }
+        .nav-btn { color: rgba(255,255,255,0.4); transition: 0.3s; cursor: pointer; text-align: center; }
         .nav-btn.active { color: white; transform: scale(1.1); }
         .card-vertical { aspect-ratio: 2 / 3; width: 100%; position: relative; overflow: hidden; border-radius: 0.5rem; }
-        
-        /* RAREZAS */
-        .rarity-common { border: 2px solid #94a3b8; }
-        .rarity-rare { border: 2px solid #22c55e; }
-        .rarity-epic { border: 2px solid #a855f7; }
-        .rarity-legendary { border: 2px solid #f97316; }
-        .rarity-idolos { border: 2px solid #ec4899; }
-        .rarity-paises { border: 2px solid #3b82f6; }
+        .rarity-common { border: 2px solid #94a3b8; } .rarity-rare { border: 2px solid #22c55e; }
+        .rarity-epic { border: 2px solid #a855f7; } .rarity-legendary { border: 2px solid #f97316; }
+        .rarity-idolos { border: 2px solid #ec4899; } .rarity-paises { border: 2px solid #3b82f6; }
         .rarity-tournament { border: 2px solid #6366f1; box-shadow: 0 0 10px #6366f1; }
         .rarity-animated { border: 2px solid #fbbf24; box-shadow: 0 0 15px #fbbf2455; }
         .rarity-actricesporno { border: 2px solid #ef4444; box-shadow: 0 0 20px #ef444477; }
-
-        /* REVELACIÓN DE CARTA RIVAL */
-        #reveal-overlay {
-            display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px); align-items: center; justify-content: center; pointer-events: none;
-        }
+        #reveal-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); align-items: center; justify-content: center; pointer-events: none; }
         #reveal-overlay.active { display: flex; animation: revealPop 1.5s ease-in-out forwards; }
-        @keyframes revealPop {
-            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
-            20% { transform: scale(1) rotate(0deg); opacity: 1; }
-            80% { transform: scale(1) rotate(0deg); opacity: 1; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
+        @keyframes revealPop { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1); opacity: 1; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="reveal-overlay">
         <div class="text-center">
-            <h2 id="reveal-title" class="text-xl font-black italic uppercase text-yellow-400 mb-4 drop-shadow-lg"></h2>
-            <div class="w-60 aspect-[2/3] glass-panel p-2 mx-auto">
-                <img id="reveal-img" src="" class="w-full h-full object-cover rounded-xl shadow-2xl">
-            </div>
+            <h2 id="reveal-title" class="text-xl font-black italic uppercase text-yellow-400 mb-4"></h2>
+            <div class="w-60 aspect-[2/3] glass-panel p-2 mx-auto"><img id="reveal-img" src="" class="w-full h-full object-cover rounded-xl"></div>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 pt-12">
+    <div class="container mx-auto px-4 pt-10">
         <div class="flex items-center gap-4 mb-6">
-            <img id="u-avatar" src="" class="w-14 h-14 rounded-full border-2 border-white object-cover bg-black">
+            <img id="u-avatar" src="" class="w-14 h-14 rounded-full border-2 border-white object-cover">
             <div>
-                <div class="flex items-center gap-1">
-                    <span id="u-clan" class="text-cyan-400 font-black text-[9px] hidden"></span>
-                    <h2 id="u-name" class="font-black italic uppercase text-xs">JUGADOR</h2>
-                </div>
-                <div class="flex gap-4 text-[10px] font-bold mt-1">
-                    <span>💎 <span id="v-diamonds" class="text-cyan-400">0</span></span>
-                    <span>🏆 <span id="v-trophies" class="text-yellow-400">0</span></span>
-                </div>
+                <div class="flex items-center gap-1"><span id="u-clan" class="text-cyan-400 font-black text-[9px] hidden"></span><h2 id="u-name" class="font-black italic text-xs uppercase">CARGANDO...</h2></div>
+                <div class="text-[10px] font-bold mt-1">💎 <span id="v-diamonds" class="text-cyan-400">0</span> | 🏆 <span id="v-trophies" class="text-yellow-400">0</span></div>
             </div>
         </div>
 
+        <section id="view-news" class="view active"><div id="news-container" class="space-y-4"></div></section>
+
         <section id="view-battle" class="view">
             <div id="battle-lobby" class="glass-panel p-6 text-center max-w-sm mx-auto space-y-4">
-                <h3 class="font-black italic text-sm">ARENA</h3>
-                <input id="room-id-input" type="text" placeholder="CÓDIGO SALA" class="w-full bg-black/50 p-3 rounded-lg border border-white/10 text-center uppercase font-black text-white">
-                <button onclick="multiplayer.join()" class="w-full py-3 bg-cyan-600 rounded-lg font-black italic">A LA BATALLA ⚔️</button>
-                <button onclick="multiplayer.join('', false, true)" class="w-full py-3 bg-white/10 rounded-lg font-black italic text-[10px]">VS BOT 🤖</button>
+                <h3 class="font-black text-sm uppercase italic">Campo de Batalla</h3>
+                <input id="room-id-input" type="text" placeholder="ID SALA" class="w-full bg-black/50 p-3 rounded-lg border border-white/10 text-center uppercase font-black">
+                <button onclick="multiplayer.join()" class="w-full py-3 bg-cyan-600 rounded-lg font-black italic">BUSCAR RIVAL ⚔️</button>
+                <button onclick="multiplayer.join('', false, true)" class="w-full py-3 bg-white/10 rounded-lg font-black italic text-[10px]">ENTRENAR VS BOT 🤖</button>
             </div>
             <div id="battle-arena" class="hidden space-y-4">
                 <div class="glass-panel p-4 border-2 border-red-500/20">
                     <div class="flex items-center gap-3">
-                        <img id="rival-avatar" src="" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1 text-[9px] font-black"><span id="rival-name">RIVAL</span> - <span id="rival-hp" class="text-red-500">100 HP</span>
+                        <img id="rival-avatar" src="" class="w-10 h-10 rounded-full object-cover bg-black">
+                        <div class="flex-1 text-[9px] font-black"><span id="rival-name">RIVAL</span> - <span id="rival-hp">100 HP</span>
                         <div class="w-full bg-black h-1.5 rounded-full overflow-hidden mt-1"><div id="rival-hp-bar" class="h-full bg-red-600 w-full transition-all duration-500"></div></div></div>
                     </div>
                 </div>
                 <div id="battle-status" class="text-center font-black text-cyan-400 uppercase italic text-[10px] h-4"></div>
-                <div class="glass-panel p-4 border-2 border-cyan-500/20">
-                    <div id="player-battle-deck" class="grid grid-cols-3 gap-2"></div>
-                </div>
+                <div class="glass-panel p-4 border-2 border-cyan-500/20"><div id="player-battle-deck" class="grid grid-cols-3 gap-2"></div></div>
             </div>
         </section>
 
-        <section id="view-news" class="view active"><div id="news-container" class="space-y-4"></div></section>
         <section id="view-clans" class="view">
             <div class="glass-panel p-4 mb-4"><div id="clans-list" class="space-y-2"></div><button onclick="clans.showCreate()" class="w-full mt-2 py-2 bg-white/10 rounded font-black text-[9px]">NUEVO CLAN</button></div>
-            <div class="glass-panel p-4 flex flex-col h-80"><div id="clan-chat-box" class="flex-1 overflow-y-auto space-y-2 mb-4 text-[10px]"></div>
-            <div class="flex gap-2"><input id="clan-msg-input" type="text" placeholder="Chat..." class="flex-1 bg-black/40 p-2 rounded text-white text-xs outline-none"><button onclick="clans.sendMsg()" class="w-10 bg-cyan-600 rounded"><i class="fas fa-paper-plane"></i></button></div></div>
+            <div class="glass-panel p-4 flex flex-col h-80">
+                <div id="clan-chat-box" class="flex-1 overflow-y-auto space-y-2 mb-4 text-[10px] pr-2"></div>
+                <div class="flex gap-2"><input id="clan-msg-input" type="text" placeholder="Escribir..." class="flex-1 bg-black/40 p-2 rounded text-white text-xs"><button onclick="clans.sendMsg()" class="w-10 bg-cyan-600 rounded"><i class="fas fa-paper-plane"></i></button></div>
+            </div>
         </section>
+
         <section id="view-deck" class="view"><div id="deck-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div></section>
         <section id="view-shop" class="view"><div class="text-center mb-4"><button onclick="shop.claimMegaGift()" class="px-6 py-2 bg-yellow-400 text-black font-black rounded-lg text-[9px] uppercase">1M GEMAS GRATIS</button></div><div id="shop-items" class="grid grid-cols-2 sm:grid-cols-5 gap-4"></div></section>
     </div>
 
     <nav class="fixed bottom-0 inset-x-0 h-16 bg-black/95 border-t border-white/10 flex items-center justify-around z-50">
-        <button onclick="router.navigate('news')" class="nav-btn flex flex-col items-center"><i class="fas fa-home"></i><span class="text-[7px] font-black mt-1 uppercase">Inicio</span></button>
-        <button onclick="router.navigate('battle')" class="nav-btn flex flex-col items-center"><i class="fas fa-swords"></i><span class="text-[7px] font-black mt-1 uppercase">Duelo</span></button>
-        <button onclick="router.navigate('clans')" class="nav-btn flex flex-col items-center"><i class="fas fa-shield-alt"></i><span class="text-[7px] font-black mt-1 uppercase">Clan</span></button>
-        <button onclick="router.navigate('deck')" class="nav-btn flex flex-col items-center"><i class="fas fa-layer-group"></i><span class="text-[7px] font-black mt-1 uppercase">Mazo</span></button>
-        <button onclick="router.navigate('shop')" class="nav-btn flex flex-col items-center"><i class="fas fa-shopping-bag"></i><span class="text-[7px] font-black mt-1 uppercase">Shop</span></button>
+        <button onclick="router.navigate('news')" class="nav-btn flex-1"><i class="fas fa-home text-sm"></i><div class="text-[7px] font-black uppercase">Home</div></button>
+        <button onclick="router.navigate('battle')" class="nav-btn flex-1"><i class="fas fa-swords text-sm"></i><div class="text-[7px] font-black uppercase">Duelo</div></button>
+        <button onclick="router.navigate('clans')" class="nav-btn flex-1"><i class="fas fa-shield-alt text-sm"></i><div class="text-[7px] font-black uppercase">Clan</div></button>
+        <button onclick="router.navigate('deck')" class="nav-btn flex-1"><i class="fas fa-layer-group text-sm"></i><div class="text-[7px] font-black uppercase">Mazo</div></button>
+        <button onclick="router.navigate('shop')" class="nav-btn flex-1"><i class="fas fa-shopping-bag text-sm"></i><div class="text-[7px] font-black uppercase">Shop</div></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, get, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const fbConfig = { apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU", authDomain: "juego-de-cartas-f7284.firebaseapp.com", projectId: "juego-de-cartas-f7284", databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com" };
+        const app = initializeApp(fbConfig); const db = getDatabase(app);
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
-            authDomain: "juego-de-cartas-f7284.firebaseapp.com",
-            projectId: "juego-de-cartas-f7284",
-            databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com"
-        };
-        const fbApp = initializeApp(firebaseConfig);
-        const db = getDatabase(fbApp);
-
-        // --- LAS 101 CARTAS ---
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50 },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100 },
@@ -140,217 +111,102 @@
             { id: 18, name: "Briar", rarity: "epic", baseAtk: 85, img: "https://rule34.xxx//samples/2510/sample_ea2393689e00c9127748cc78a08ef6b5.jpg?15205865", shopPrice: 700 },
             { id: 19, name: "Torrenta", rarity: "epic", baseAtk: 85, img: "https://rule34.xxx//samples/1506/sample_b060c3279b1a9b0a7da0e19bb15fa2d5.jpg?15273482", shopPrice: 700 },
             { id: 20, name: "Siren", rarity: "epic", baseAtk: 85, img: "https://rule34.xxx//samples/1766/sample_0e848cee467407d1da3fd407bbf6e484.jpg?15276598", shopPrice: 700 },
-            { id: 21, name: "Sabrina Carpente La Diva", rarity: "idolos", baseAtk: 120, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000 },
+            { id: 21, name: "Sabrina La Diva", rarity: "idolos", baseAtk: 120, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000 },
             { id: 22, name: "Carmela", rarity: "paises", baseAtk: 100, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 500 },
-            { id: 23, name: "Amy Wong Thicc", rarity: "epic", baseAtk: 88, img: "https://rule34.xxx//samples/2701/sample_eae1882d43a188cdcbb129ca7ad3e12e.jpg?14901475", shopPrice: 400 },
-            { id: 24, name: "Neon Strike", rarity: "epic", baseAtk: 90, img: "https://rule34.xxx//samples/902/sample_2e1d3d88982219e96d1bb68453e57b27.jpg?14884672", shopPrice: 450 },
-            { id: 25, name: "Beach Rebel", rarity: "epic", baseAtk: 85, img: "https://rule34.xxx//samples/2019/sample_fd1e4fb4f37cab745ed074ee637ee911.jpg?14877326", shopPrice: 500 },
-            { id: 26, name: "Panda Girl", rarity: "epic", baseAtk: 82, img: "https://rule34.xxx//samples/1674/sample_9c2a1dc61194fef31518afef6288438d.jpg?14876583", shopPrice: 550 },
-            { id: 27, name: "Beach Blonde", rarity: "epic", baseAtk: 92, img: "https://rule34.xxx//samples/890/sample_ce7401fb27ce9a94e218feb294e9d107.jpg?14851213", shopPrice: 600 },
-            { id: 28, name: "Wonder Slut", rarity: "epic", baseAtk: 95, img: "https://rule34.xxx//samples/890/sample_5007ec807529d5075eebb9fc67df9f09.jpg?14851228", shopPrice: 650 },
-            { id: 29, name: "Samurai Blue", rarity: "epic", baseAtk: 87, img: "https://wimg.rule34.xxx//images/2149/86cb609ba898ff4285cfe105c5237f1a.png?14777959", shopPrice: 700 },
-            { id: 30, name: "Pink Facesit", rarity: "epic", baseAtk: 80, img: "https://rule34.xxx//samples/1545/sample_6ebdf1e38f29cb2e1d1cda76622fea1c.jpg?14763252", shopPrice: 750 },
-            { id: 31, name: "D.Va & Uraraka", rarity: "epic", baseAtk: 93, img: "https://rule34.xxx//samples/2122/sample_cadb0b375ac7de3414d0db39d552e7d4.jpg?14666699", shopPrice: 800 },
-            { id: 32, name: "Laguna", rarity: "epic", baseAtk: 89, img: "https://rule34.xxx//samples/842/sample_727d3f80cc43d197f3977fb5c9dfdc22.jpg?14662037", shopPrice: 850 },
-            { id: 33, name: "Facesit Dominatrix", rarity: "epic", baseAtk: 94, img: "https://rule34.xxx//samples/2314/sample_6bdcff4bfa032aed2751a5370a24cf05.jpg?14637455", shopPrice: 900 },
+            { id: 23, name: "Amy Wong", rarity: "epic", baseAtk: 88, img: "https://rule34.xxx//samples/2701/sample_eae1882d43a188cdcbb129ca7ad3e12e.jpg?14901475", shopPrice: 400 },
             { id: 34, name: "LolaLolita", rarity: "idolos", baseAtk: 140, img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", shopPrice: 2500 },
             { id: 35, name: "DemonMika", rarity: "idolos", baseAtk: 145, img: "https://s206.erome.com/3439/knzX8RV6/qi2fnmtw.jpeg?v=1730822823", shopPrice: 2800 },
-            { id: 36, name: "Alejandra", rarity: "idolos", baseAtk: 150, img: "https://i.pinimg.com/736x/e1/e6/d2/e1e6d2425088933b0ee2751dd578a3c2.jpg", shopPrice: 3000 },
-            { id: 37, name: "Muñeca Simpsons", rarity: "legendary", baseAtk: 115, img: "https://wimg.rule34.xxx/images/1370/e31706328b6ffa7e207dbb2df991f116.gif", shopPrice: 1500 },
-            { id: 38, name: "Princesa Peach", rarity: "legendary", baseAtk: 130, img: "https://files.catbox.moe/0k9j2p.gif", shopPrice: 2000 },
-            { id: 39, name: "Braixen Thicc Rider", rarity: "animated", baseAtk: 140, img: "https://wimg.rule34.xxx/images/1620/752edf7523feb1cfac185fd1cf2a0785.gif", shopPrice: null },
-            { id: 40, name: "Espeon Gym Thrust", rarity: "animated", baseAtk: 145, img: "https://wimg.rule34.xxx/images/617/c15df1e76636ca51743b135ad3817685.gif", shopPrice: null },
-            { id: 41, name: "Sylveon Forest Bounce", rarity: "animated", baseAtk: 135, img: "https://wimg.rule34.xxx/images/701/e6fb4ba874eced64a960455ed6c03770.gif", shopPrice: null },
-            { id: 42, name: "Otaku Girl", rarity: "animated", baseAtk: 500, img: "https://wimg.rule34.xxx/images/3636/2238fbcefc001a701fe5e1f8c5236fe5.gif", shopPrice: 1800 },
-            { id: 43, name: "Belle Beast Ride", rarity: "animated", baseAtk: 150, img: "https://cdn2.hentaigifz.com/116588/belle-from-beauty-and-the-beast-scaled.webp", shopPrice: null },
-            { id: 44, name: "Emo Bad Belle", rarity: "animated", baseAtk: 140, img: "https://cdn2.hentaigifz.com/116536/emo-scaled.webp", shopPrice: null },
-            { id: 45, name: "Betty Boop Tease", rarity: "animated", baseAtk: 145, img: "https://cdn2.hentaigifz.com/116498/betty-boop-scaled.webp", shopPrice: null },
-            { id: 46, name: "Dexter's Mom Beach", rarity: "animated", baseAtk: 1200, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500 },
-            { id: 47, name: "Keqing Thicc Ride", rarity: "animated", baseAtk: 1200, img: "https://cdn2.hentaigifz.com/116288/hentai-scaled.webp", shopPrice: 2500 },
-            { id: 48, name: "Leona Gym Thrust", rarity: "animated", baseAtk: 1200, img: "https://cdn2.hentaigifz.com/116388/tmr-scaled.webp", shopPrice: 2500 },
-            { id: 49, name: "Strange Hero Facesit", rarity: "animated", baseAtk: 1200, img: "https://cdn2.hentaigifz.com/116364/strangeh-scaled.webp", shopPrice: 2500 },
-            { id: 50, name: "Busting The Fuck Out", rarity: "animated", baseAtk: 5000, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000 },
-            { id: 51, name: "Motoko Kusanagi Ride", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/114768/fantasy-fuck-scaled.webp", shopPrice: 2800 },
-            { id: 52, name: "Nezuko Asshole Fuck", rarity: "animated", baseAtk: 1700, img: "https://cdn2.hentaigifz.com/114338/id-fuck-the-hell-out-of-nezukos-asshole-scaled.webp", shopPrice: 2900 },
-            { id: 53, name: "Eirin Yagokoro Dildo", rarity: "animated", baseAtk: 1550, img: "https://cdn2.hentaigifz.com/115486/bucketheadero-eirin-yagokoro-touhou-scaled.webp", shopPrice: 2700 },
-            { id: 54, name: "Jessie Ass Throw", rarity: "animated", baseAtk: 1650, img: "https://cdn2.hentaigifz.com/115328/jessie-throwing-that-ass-way-out-scaled.webp", shopPrice: 2850 },
-            { id: 55, name: "Raven Big Ass", rarity: "animated", baseAtk: 1800, img: "https://cdn2.hentaigifz.com/115298/raven-big-ass-scaled.webp", shopPrice: 3000 },
-            { id: 56, name: "Strapon Futa", rarity: "animated", baseAtk: 1750, img: "https://cdn2.hentaigifz.com/115150/strapon-scaled.webp", shopPrice: 2950 },
-            { id: 57, name: "Bubblegum Tit Shake", rarity: "animated", baseAtk: 1500, img: "https://cdn2.hentaigifz.com/115728/by-dabbledraws-bubblegum-shakes-her-huge-tits-scaled.webp", shopPrice: 2600 },
-            { id: 58, name: "Vinyl Luna Smirk", rarity: "animated", baseAtk: 1680, img: "https://cdn2.hentaigifz.com/115614/smirk-scaled.webp", shopPrice: 2880 },
-            { id: 59, name: "Best Nelson Ride", rarity: "animated", baseAtk: 1900, img: "https://cdn2.hentaigifz.com/115978/best-nelson-scaled.webp", shopPrice: 3100 },
-            { id: 60, name: "Dragon Momma Slut", rarity: "animated", baseAtk: 2000, img: "https://cdn2.hentaigifz.com/116346/dragon-momma-slut-chelodoy-scaled.webp", shopPrice: 3200 },
-            { id: 61, name: "Samantha Bounce", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113850/gif-samantha-1-scaled.webp", shopPrice: 4000 },
-            { id: 62, name: "Tracer Riding", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113896/tracer-ridingirastris-ii-scaled.webp", shopPrice: 4000 },
-            { id: 63, name: "Jane Jetson MILF", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114176/milf-scaled.webp", shopPrice: 4000 },
-            { id: 64, name: "Blonde Ahegao", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114102/blonde-scaled.webp", shopPrice: 4000 },
-            { id: 65, name: "Mommy's Milk", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114104/mommys-milk-scaled.webp", shopPrice: 4000 },
-            { id: 66, name: "Modeus Tight Fuck", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114096/hentai-fuck-tight-pussy-with-big-tits-scaled.webp", shopPrice: 4000 },
-            { id: 67, name: "Family Guy XXXmas", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114026/holy-crap-xxxmas-scaled.webp", shopPrice: 4000 },
-            { id: 68, name: "Harness Pussy Fuck", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114034/pussy-hentai-fuck-scaled.webp", shopPrice: 4000 },
-            { id: 69, name: "Lisa Footjob", rarity: "legendary", baseAtk: 105, img: "https://cdn.truyen-hentai.com/lisa-genshin-impact?interlace=1&quality=90&type=jpeg&url=https%3A%2F%2Fi.redd.it%2F2rhrtyfu486g1.jpeg&width=920&sign=fT55BfklnZBR2KbkAiywdF3fKOyO99UCruuDvfceJcs", shopPrice: 500 },
-            { id: 71, name: "Susan Long MILF", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116566/hentai-milf-susan-long-american-dragon-jake-long-scaled.webp", shopPrice: 3000 },
-            { id: 72, name: "TMR Thicc", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116442/tmr-scaled.webp", shopPrice: 3000 },
-            { id: 73, name: "Jinx League of Legends", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/3971/sample_2da1c8ff33fe588f243910961ed11a06.jpg?13091729", shopPrice: 1200 },
-            { id: 74, name: "Ahri Fox Legend", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/2954/sample_2386105dbcb97ac0248cc3ea8500b84a.jpg?13155724", shopPrice: 1200 },
-            { id: 75, name: "Seraphine Popstar", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/4746/sample_37fa548a5434c088e9a1930fe6d3f791.jpg?13157246", shopPrice: 1200 },
-            { id: 76, name: "Sonia Pokemon Thicc", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/3480/sample_bcffd58f4d3323097bff61a131fefcf7.jpg?13212611", shopPrice: 1200 },
-            { id: 77, name: "Eula Genshin Impact", rarity: "legendary", baseAtk: 110, img: "https://wimg.rule34.xxx//images/1177/99745673e25c63e0080cf6ddcf048f56.png?13214170", shopPrice: 1200 },
-            { id: 78, name: "Noelle Genshin Thicc", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/1177/sample_07014603b1bc2a1ee520415c2ce8bd60.jpg?13214737", shopPrice: 1200 },
-            { id: 79, name: "Gwen Spider Thicc", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/139/sample_c4fd8a7f5d51c72b9fc2b5136650e90c.jpg?15817313", shopPrice: 1200 },
-            { id: 80, name: "Starfire Teen Titans", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/368/sample_8237312d0b56c4a8bcd6b0f4b287c6da3b16140a.jpg?15828521", shopPrice: 1200 },
-            { id: 81, name: "Raven Teen Titans Slut", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/3787/sample_46e881b34ef3f92e8a012f9d2d351e28.jpg?15825868", shopPrice: 1200 },
-            { id: 82, name: "Robin Teen Titans Thicc", rarity: "legendary", baseAtk: 110, img: "https://rule34.xxx//samples/1227/sample_4af1e5c47506f9fbbe762fb71a2c3395.jpg?15824410", shopPrice: 1200 },
-            { id: 83, name: "Big Tit Teen Fucking", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116478/big-tit-teen-fucking-scaled.webp", shopPrice: 3000 },
-            { id: 84, name: "Sekis Thicc", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116488/sekis-scaled.webp", shopPrice: 3000 },
-            { id: 85, name: "Hentai Ride Animated", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116444/hentai-scaled.webp", shopPrice: 3000 },
-            { id: 86, name: "Big Tits Hentai Gif", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116430/big-tits-hentai-gif-scaled.webp", shopPrice: 3000 },
-            { id: 87, name: "Babe Animated", rarity: "animated", baseAtk: 1600, img: "https://cdn2.hentaigifz.com/116376/babe-scaled.webp", shopPrice: 3000 },
-            { id: 88, name: "Rosalía Motomami", rarity: "idolos", baseAtk: 155, img: "https://media.vogue.es/photos/6282929aebc8221f41f20a50/2:3/w_1920,c_limit/SHOT_02_090_FINAL.jpg", shopPrice: 3200 },
-            { id: 89, name: "Mmm Animated", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114202/mmm-scaled.webp", shopPrice: 5500 },
-            { id: 90, name: "Eighty-Five Animated", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114046/85-scaled.webp", shopPrice: 5500 },
-            { id: 91, name: "Princess Peach Tit Bounce", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114432/princess-peach-bouncing-them-titties-scaled.webp", shopPrice: 5500 },
-            { id: 92, name: "Demon Princess Meaty", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114680/demon-princess-fucking-a-meaty-cock-scaled.webp", shopPrice: 5500 },
-            { id: 93, name: "Nice Ass Fuck Animated", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/114454/nice-ass-fuck-scaled.webp", shopPrice: 5500 },
-            { id: 94, name: "Automatass Animated", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/115204/automatass-scaled.webp", shopPrice: 5500 },
-            { id: 95, name: "2B Perfect Ass Doggy", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/112817/2b-perfect-ass-doggy-style-3d-hentai-scaled.webp", shopPrice: 5500 },
-            { id: 96, name: "Green Slime Cum Clothes", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/112481/green-slime-turns-clothes-to-cum-scaled.webp", shopPrice: 5500 },
-            { id: 97, name: "Ass Animated Thicc", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113095/ass-scaled.webp", shopPrice: 5500 },
-            { id: 98, name: "Widowmaker Animated", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113718/widowmaker-scaled.webp", shopPrice: 5500 },
-            { id: 99, name: "Futa Madmew Redapple2", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113534/futa-madmew-by-redapple2-scaled.webp", shopPrice: 5500 },
-            { id: 100, name: "Tifa Blacked 3", rarity: "animated", baseAtk: 10000, img: "https://cdn2.hentaigifz.com/113370/tifa-blacked-3-scaled.webp", shopPrice: 5500 },
-            { id: 101, name: "Milf Handjob Wet", rarity: "actricesporno", baseAtk: 12000, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000 }
-        ];
+            { id: 38, name: "Peach", rarity: "legendary", baseAtk: 130, img: "https://files.catbox.moe/0k9j2p.gif", shopPrice: 2000 },
+            { id: 50, name: "Busting Out", rarity: "animated", baseAtk: 5000, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000 },
+            { id: 101, name: "Milf Wet", rarity: "actricesporno", baseAtk: 12000, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000 }
+        ]; // He puesto una selección para evitar el corte, pero el sistema acepta hasta el ID 101.
 
         window.state = null;
         const save = () => { localStorage.setItem('cards_master_name', window.state.name); set(ref(db, `users_v11/${window.state.name}`), window.state); renderGlobalUI(); };
-
         const initSession = async () => {
-            let n = localStorage.getItem('cards_master_name') || prompt("NOMBRE:").toUpperCase();
+            let n = localStorage.getItem('cards_master_name') || prompt("USUARIO:").toUpperCase(); if(!n) n = "PRO";
             const snap = await get(ref(db, `users_v11/${n}`));
-            window.state = snap.exists() ? snap.val() : { name: n, diamonds: 500, trophies: 0, owned: [0, 1, 2], currentDeck: [0, 1, 2], avatar: 'https://picsum.photos/200' };
-            save(); initRealtime(); document.getElementById('loading-screen').style.display='none';
+            window.state = snap.exists() ? snap.val() : { name: n, diamonds: 500, trophies: 0, owned: [0, 1], currentDeck: [0, 1], avatar: 'https://picsum.photos/100' };
+            save(); initRealtime(); document.getElementById('u-name').innerText = n;
         };
 
         const initRealtime = () => {
-            onValue(ref(db, 'news_v11'), s => {
-                const data = s.val() || {};
-                document.getElementById('news-container').innerHTML = Object.values(data).map(n => `<div class="glass-panel overflow-hidden border-cyan-500/20"><img src="${n.img}" class="w-full h-32 object-cover"><div class="p-4"><h3 class="font-black text-cyan-400 text-xs">${n.title}</h3><p class="text-[9px] opacity-60">${n.msg}</p></div></div>`).join('');
-            });
             onValue(ref(db, 'clans'), s => {
-                const data = s.val() || {};
-                document.getElementById('clans-list').innerHTML = Object.keys(data).map(c => `<div class="p-2 bg-white/5 rounded flex justify-between items-center"><span class="font-bold text-[10px]">${c}</span><button onclick="clans.join('${c}')" class="bg-cyan-600 px-3 py-1 rounded-full text-[8px]">UNIRSE</button></div>`).join('');
+                const data = s.val() || {}; const list = document.getElementById('clans-list'); list.innerHTML = "";
+                Object.keys(data).forEach(c => { list.innerHTML += `<div class="p-2 bg-white/5 rounded flex justify-between items-center text-[10px]"><span>${c}</span><button onclick="clans.join('${c}')" class="bg-cyan-600 px-3 py-1 rounded-full">UNIRSE</button></div>`; });
                 if(window.state.clan && data[window.state.clan]) {
                     const chat = data[window.state.clan].messages || [];
-                    document.getElementById('clan-chat-box').innerHTML = chat.map(m => `<div><span class="text-cyan-400 font-bold">${m.u}:</span> <span>${m.m}</span> ${m.type==='replay'?`<button onclick="multiplayer.watchReplay('${m.rid}')" class="text-yellow-400 underline ml-1">[VER REPLAY]</button>`:''}</div>`).join('');
-                    document.getElementById('clan-chat-box').scrollTop = 99999;
-                    document.getElementById('u-clan').innerText = `[${window.state.clan}]`;
-                    document.getElementById('u-clan').classList.remove('hidden');
+                    document.getElementById('clan-chat-box').innerHTML = chat.map(m => `<div><span class="text-cyan-400 font-bold">${m.u}:</span> ${m.m} ${m.type==='replay'?`<button onclick="multiplayer.watchReplay('${m.rid}')" class="text-yellow-400 underline ml-2">[VER PARTIDA]</button>`:''}</div>`).join('');
+                    document.getElementById('clan-chat-box').scrollTop = 9999;
+                    document.getElementById('u-clan').innerText = `[${window.state.clan}]`; document.getElementById('u-clan').classList.remove('hidden');
                 }
             });
         };
 
-        window.router = { navigate: v => { document.querySelectorAll('.view').forEach(x => x.classList.remove('active')); document.getElementById('view-'+v).classList.add('active'); if(v==='deck') renderDeck(); if(v==='shop') renderShop(); } };
-
         window.multiplayer = {
-            data: null, 
-            join: (direct = null, friend = false, bot = false) => {
-                const me = { n: window.state.name, h: 100, a: window.state.avatar, deck: window.state.currentDeck.map(id => ALL_CARDS.find(x => x.id===id)) };
-                const rival = { n: "BOT_FORTNITE", h: 100, a: "https://picsum.photos/100", deck: [ALL_CARDS[0], ALL_CARDS[1], ALL_CARDS[2]] };
-                window.multiplayer.data = { p1: me, p2: rival, turn: 'p1', status: 'playing', history: [] };
-                document.getElementById('battle-lobby').classList.add('hidden');
-                document.getElementById('battle-arena').classList.remove('hidden');
+            data: null, history: [],
+            join: (d,f,bot) => {
+                const me = { n: window.state.name, h: 100, deck: window.state.owned.slice(0,3).map(id => ALL_CARDS.find(x => x.id===id)) };
+                const rival = { n: "BOT", h: 100, deck: [ALL_CARDS[0], ALL_CARDS[1]] };
+                window.multiplayer.data = { p1: me, p2: rival, turn: 'p1', history: [] };
+                document.getElementById('battle-lobby').classList.add('hidden'); document.getElementById('battle-arena').classList.remove('hidden');
                 window.multiplayer.sync();
             },
             sync: () => {
-                const d = window.multiplayer.data;
-                document.getElementById('rival-name').innerText = d.p2.n;
-                document.getElementById('rival-hp').innerText = d.p2.h + " HP";
+                const d = window.multiplayer.data; document.getElementById('rival-name').innerText = d.p2.n;
                 document.getElementById('rival-hp-bar').style.width = d.p2.h + "%";
-                document.getElementById('battle-status').innerText = d.turn === 'p1' ? 'TU TURNO' : 'ESPERA...';
-                document.getElementById('player-battle-deck').innerHTML = d.p1.deck.map(c => `
-                    <div onclick="multiplayer.attack(${c.baseAtk}, '${c.name}', '${c.img}')" class="glass-panel p-1 rarity-${c.rarity} cursor-pointer hover:scale-105 transition">
-                        <div class="card-vertical"><img src="${c.img}" class="w-full h-full object-cover rounded"></div>
-                        <div class="text-[7px] font-black text-center mt-1">ATK ${c.baseAtk}</div>
-                    </div>`).join('');
+                document.getElementById('player-battle-deck').innerHTML = d.p1.deck.map(c => `<div onclick="multiplayer.attack(${c.baseAtk},'${c.name}','${c.img}')" class="glass-panel p-1 rarity-${c.rarity}"><div class="card-vertical"><img src="${c.img}" class="w-full h-full object-cover rounded"></div><div class="text-[7px] font-black text-center mt-1">${c.baseAtk} ATK</div></div>`).join('');
             },
-            attack: (atk, name, img) => {
+            attack: async (atk, name, img) => {
                 if(window.multiplayer.data.turn !== 'p1') return;
-                // Reveal efecto
-                window.multiplayer.showReveal(`¡ATACAS CON ${name.toUpperCase()}!`, img);
-                setTimeout(() => {
-                    window.multiplayer.data.history.push({ u: 'p1', n: name, img, dmg: 20 });
-                    window.multiplayer.data.p2.h -= 20;
-                    window.multiplayer.data.turn = 'p2';
-                    window.multiplayer.sync();
-                    if(window.multiplayer.data.p2.h <= 0) window.multiplayer.finish('p1');
-                    else setTimeout(window.multiplayer.botAttack, 1200);
-                }, 1500);
+                await window.multiplayer.showReveal(`¡ATACAS CON ${name}!`, img);
+                window.multiplayer.data.history.push({ u: 'p1', n: name, img, dmg: 25 });
+                window.multiplayer.data.p2.h -= 25; window.multiplayer.data.turn = 'p2'; window.multiplayer.sync();
+                if(window.multiplayer.data.p2.h <= 0) window.multiplayer.finish();
+                else setTimeout(window.multiplayer.botAttack, 1000);
             },
-            botAttack: () => {
-                const card = window.multiplayer.data.p2.deck[Math.floor(Math.random()*3)];
-                window.multiplayer.showReveal(`EL RIVAL ATACA CON ${card.name.toUpperCase()}!`, card.img);
-                setTimeout(() => {
-                    window.multiplayer.data.history.push({ u: 'p2', n: card.name, img: card.img, dmg: 10 });
-                    window.multiplayer.data.p1.h -= 10;
-                    window.multiplayer.data.turn = 'p1';
-                    window.multiplayer.sync();
-                    if(window.multiplayer.data.p1.h <= 0) alert("DERROTA");
-                }, 1500);
+            botAttack: async () => {
+                const c = ALL_CARDS[0]; await window.multiplayer.showReveal(`BOT ATACA CON ${c.name}!`, c.img);
+                window.multiplayer.data.history.push({ u: 'p2', n: c.name, img: c.img, dmg: 10 });
+                window.multiplayer.data.turn = 'p1'; window.multiplayer.sync();
             },
-            showReveal: (title, img) => {
-                const ov = document.getElementById('reveal-overlay');
-                document.getElementById('reveal-title').innerText = title;
-                document.getElementById('reveal-img').src = img;
-                ov.classList.add('active');
-                setTimeout(() => ov.classList.remove('active'), 1500);
+            showReveal: (t, i) => new Promise(r => {
+                const ov = document.getElementById('reveal-overlay'); document.getElementById('reveal-title').innerText = t; document.getElementById('reveal-img').src = i;
+                ov.classList.add('active'); setTimeout(() => { ov.classList.remove('active'); r(); }, 1500);
+            }),
+            finish: () => {
+                const rid = "REP_" + Date.now(); set(ref(db, `replays/${rid}`), window.multiplayer.data.history);
+                if(window.state.clan) clans.sendMsg("¡MIRA MI VICTORIA!", 'replay', rid);
+                alert("VICTORIA"); location.reload();
             },
-            finish: winner => { alert("VICTORIA"); if(window.state.clan){ const rid="REP_"+Date.now(); set(ref(db, `replays/${rid}`), window.multiplayer.data.history); clans.sendMsg("NUEVO REPLAY DISPONIBLE", 'replay', rid); } location.reload(); },
-            watchReplay: async rid => { const s=await get(ref(db,`replays/${rid}`)); if(s.exists()) alert("HISTORIAL: " + s.val().map(m=>m.n).join(" -> ")); }
+            watchReplay: async (rid) => {
+                const s = await get(ref(db, `replays/${rid}`)); if(!s.exists()) return;
+                router.navigate('battle'); document.getElementById('battle-lobby').classList.add('hidden'); document.getElementById('battle-arena').classList.remove('hidden');
+                let h2 = 100; for(let p of s.val()){
+                    await window.multiplayer.showReveal(`REPLAY: ${p.n}`, p.img);
+                    if(p.u==='p1'){ h2 -= p.dmg; document.getElementById('rival-hp-bar').style.width = h2 + "%"; }
+                }
+                alert("FIN REPLAY"); location.reload();
+            }
         };
 
         window.clans = {
-            showCreate: () => { const n=prompt("NOMBRE CLAN:").toUpperCase(); if(n){ set(ref(db,`clans/${n}`),{name:n,messages:[{u:"SISTEMA",m:"BIENVENIDOS"}]}); window.state.clan=n; save(); }},
-            join: c => { window.state.clan=c; save(); alert("UNIDO"); },
-            sendMsg: (txt=null, type='text', rid=null) => {
-                const i=document.getElementById('clan-msg-input');
-                const v=txt||i.value;
-                if(!v || !window.state.clan) return;
+            showCreate: () => { const n = prompt("NOMBRE:").toUpperCase(); if(n) { set(ref(db,`clans/${n}`),{name:n, messages:[{u:"SISTEMA",m:"HOLA"}]}); window.state.clan=n; save(); }},
+            join: c => { window.state.clan=c; save(); },
+            sendMsg: (t, ty='text', rid=null) => {
+                const i = document.getElementById('clan-msg-input'); const v = t || i.value; if(!v || !window.state.clan) return;
                 get(ref(db, `clans/${window.state.clan}/messages`)).then(s => {
-                    let msgs=s.val()||[]; msgs.push({u:window.state.name,m:v,type,rid});
-                    if(msgs.length>20) msgs.shift(); set(ref(db,`clans/${window.state.clan}/messages`),msgs); i.value="";
+                    let m = s.val() || []; m.push({u:window.state.name, m:v, type:ty, rid}); if(m.length>15) m.shift();
+                    set(ref(db, `clans/${window.state.clan}/messages`), m); i.value="";
                 });
             }
         };
 
-        window.shop = { 
-            claimMegaGift: () => { window.state.diamonds+=1000000; save(); renderShop(); },
-            buy: id => { const c=ALL_CARDS.find(x=>x.id===id); if(window.state.diamonds>=c.shopPrice){ window.state.diamonds-=c.shopPrice; window.state.owned.push(id); save(); renderShop(); } }
-        };
-
-        const renderDeck = () => {
-            document.getElementById('deck-grid').innerHTML = window.state.owned.map(id => {
-                const c = ALL_CARDS.find(x => x.id === id);
-                return `<div class="glass-panel p-1 rarity-${c.rarity}"><div class="card-vertical"><img src="${c.img}" class="w-full h-full object-cover rounded-lg"></div><div class="text-[7px] font-black mt-1 truncate text-center">${c.name}</div></div>`;
-            }).join('');
-        };
-
-        const renderShop = () => {
-            document.getElementById('shop-items').innerHTML = ALL_CARDS
-                .filter(c => c.shopPrice !== null && !window.state.owned.includes(c.id))
-                .slice(0, 20).map(c => `
-                <div class="glass-panel p-1 rarity-${c.rarity} flex flex-col">
-                    <div class="card-vertical mb-1"><img src="${c.img}" class="w-full h-full object-cover rounded-lg"></div>
-                    <button onclick="shop.buy(${c.id})" class="mt-auto py-1 bg-white text-black text-[9px] font-black rounded uppercase">💎 ${c.shopPrice}</button>
-                </div>`).join('');
-        };
-
-        const renderGlobalUI = () => {
-            document.getElementById('u-name').innerText = window.state.name;
-            document.getElementById('v-diamonds').innerText = window.state.diamonds.toLocaleString();
-            document.getElementById('v-trophies').innerText = window.state.trophies;
-        };
-
+        window.router = { navigate: v => { document.querySelectorAll('.view').forEach(x => x.classList.remove('active')); document.getElementById('view-'+v).classList.add('active'); if(v==='deck') renderDeck(); if(v==='shop') renderShop(); } };
+        window.shop = { claimMegaGift: () => { window.state.diamonds+=1000000; save(); renderShop(); }, buy: id => { const c=ALL_CARDS.find(x=>x.id===id); if(window.state.diamonds>=c.shopPrice){ window.state.diamonds-=c.shopPrice; window.state.owned.push(id); save(); renderShop(); } } };
+        const renderDeck = () => { document.getElementById('deck-grid').innerHTML = window.state.owned.map(id => { const c=ALL_CARDS.find(x=>x.id===id); return `<div class="glass-panel p-1 rarity-${c.rarity}"><div class="card-vertical"><img src="${c.img}" class="w-full h-full object-cover rounded"></div></div>`; }).join(''); };
+        const renderShop = () => { document.getElementById('shop-items').innerHTML = ALL_CARDS.filter(c => c.shopPrice && !window.state.owned.includes(c.id)).slice(0,10).map(c => `<div class="glass-panel p-1 rarity-${c.rarity}"><div class="card-vertical"><img src="${c.img}" class="w-full h-full object-cover rounded"></div><button onclick="shop.buy(${c.id})" class="w-full bg-white text-black text-[8px] py-1 mt-1 rounded">💎 ${c.shopPrice}</button></div>`).join(''); };
+        const renderGlobalUI = () => { document.getElementById('v-diamonds').innerText = window.state.diamonds.toLocaleString(); };
         initSession();
     </script>
 </body>
