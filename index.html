@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎄 Fortnite Cartas CLOUD - Persistencia Total</title>
+    <title>🎄 Fortnite Cartas CLOUD - Clan Update</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
 
         .clan-tag { font-family: monospace; font-weight: 900; color: #fbbf24; }
         
-        .profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .profile-modal.active { display: flex; }
 
         .animate-scroll { animation: scroll 40s linear infinite; }
@@ -58,14 +58,24 @@
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
         .revealed .card-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 0.75rem; }
-        .card-back { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.1); }
+        .card-back { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; color: rgba(255,255,255,0.1); }
         .card-front { transform: rotateY(180deg); }
+
+        .challenge-msg {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+            border: 2px solid rgba(220, 38, 38, 0.5);
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); }
+        }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3"
+    "react": "https://esm.sh/react@^19.2.3",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
@@ -80,12 +90,12 @@
     </div>
 
     <!-- MARQUESINA -->
-    <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-cyan-900 to-blue-900 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg">
+    <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-red-900 to-indigo-900 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg">
         <div class="animate-scroll flex gap-12 font-black text-[10px] uppercase tracking-widest px-4 text-white">
-            <span>🌐 PERSISTENCIA TOTAL ACTIVA - TUS DATOS SE GUARDAN EN LA NUBE</span>
-            <span>🛡️ PIDE CARTAS EN EL CHAT DEL CLAN Y SUBE DE NIVEL</span>
+            <span>⚔️ RETOS AMISTOSOS ACTIVOS EN EL CLAN - ¡PRACTICA SIN PERDER TROFEOS!</span>
+            <span>🛡️ VERIFICA EL MAZO DE TUS COMPAÑEROS EN TIEMPO REAL</span>
             <span>🎁 RECLAMA TU MILLÓN DE GEMAS EN LA TIENDA</span>
-            <span>⚔️ DUELOS ONLINE SINCRONIZADOS EN TIEMPO REAL</span>
+            <span>🌐 PERSISTENCIA TOTAL: TU PROGRESO ESTÁ ASEGURADO</span>
         </div>
     </div>
 
@@ -102,21 +112,21 @@
             </div>
             
             <div class="grid grid-cols-3 gap-2 w-full max-w-md mt-6">
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">TROFEOS</span><div id="v-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">GEMAS</span><div id="v-diamonds" class="text-cyan-400 font-black text-lg">0</div></div>
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">COPAS</span><div id="v-cups" class="text-orange-400 font-black text-lg">0</div></div>
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block uppercase">Trofeos</span><div id="v-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block uppercase">Gemas</span><div id="v-diamonds" class="text-cyan-400 font-black text-lg">0</div></div>
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block uppercase">Copas</span><div id="v-cups" class="text-orange-400 font-black text-lg">0</div></div>
             </div>
         </header>
 
         <!-- VISTAS -->
         <section id="view-news" class="view active">
             <div class="glass-panel p-10 text-center border-4 border-cyan-500/30 mb-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 text-9xl rotate-12">🛡️</div>
-                <h2 class="text-4xl font-black italic uppercase mb-2 text-cyan-400">BIENVENIDO DE VUELTA</h2>
-                <p id="welcome-msg" class="text-white/60 mb-8 font-bold italic">Cargando tus datos de batalla...</p>
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-9xl rotate-12">⚔️</div>
+                <h2 class="text-4xl font-black italic uppercase mb-2 text-cyan-400">MODO AMISTOSO</h2>
+                <p id="welcome-msg" class="text-white/60 mb-8 font-bold italic">¡Desafía a tu clan y demuestra quién manda!</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <button onclick="router.navigate('clans')" class="px-8 py-4 bg-yellow-500 text-black font-black rounded-2xl uppercase italic shadow-xl">Sección Clan 🛡️</button>
-                    <button onclick="router.navigate('battle')" class="px-8 py-4 bg-cyan-500 text-white font-black rounded-2xl uppercase italic shadow-xl">Duelo Online 🌐</button>
+                    <button onclick="router.navigate('battle')" class="px-8 py-4 bg-cyan-500 text-white font-black rounded-2xl uppercase italic shadow-xl">Duelo Ranked 🌐</button>
                 </div>
             </div>
         </section>
@@ -124,25 +134,27 @@
         <!-- CLANES -->
         <section id="view-clans" class="view">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Lista de Clanes -->
                 <div class="glass-panel p-6">
                     <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-4 italic">Clanes Disponibles</h3>
                     <div id="clans-list" class="space-y-2 max-h-96 overflow-y-auto chat-container pr-2"></div>
                     <button onclick="clans.showCreate()" class="w-full mt-4 py-3 bg-white/5 border border-white/10 rounded-xl font-black uppercase text-[10px] hover:bg-cyan-500/20">Crear Clan 🛡️</button>
                 </div>
 
-                <!-- Chat de Clan -->
-                <div class="glass-panel p-6 lg:col-span-2 flex flex-col h-[600px] border-cyan-500/10">
+                <div class="glass-panel p-6 lg:col-span-2 flex flex-col h-[650px] border-cyan-500/10">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Chat Clan: <span id="current-clan-name" class="text-cyan-400">...</span></h3>
+                        <button onclick="clans.leave()" class="text-[8px] text-red-500 font-bold uppercase hover:underline">Abandonar Clan</button>
                     </div>
                     <div id="clan-chat-box" class="flex-1 overflow-y-auto pr-2 space-y-4 chat-container mb-4">
-                        <div class="h-full flex items-center justify-center opacity-20 italic">Selecciona un clan</div>
+                        <div class="h-full flex items-center justify-center opacity-20 italic">Selecciona un clan para ver el chat</div>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="clans.requestCardUI()" id="btn-request" class="px-4 bg-purple-600 rounded-xl font-black text-[9px] uppercase italic">Pidir Carta</button>
-                        <input id="clan-msg-input" type="text" placeholder="Escribe..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none focus:border-cyan-500 text-xs" />
-                        <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="clans.sendChallenge()" class="flex-1 sm:flex-none px-4 py-3 bg-red-600 rounded-xl font-black text-[10px] uppercase italic shadow-lg shadow-red-900/30">⚔️ Retar a Duelo</button>
+                        <button onclick="clans.requestCardUI()" class="flex-1 sm:flex-none px-4 py-3 bg-purple-600 rounded-xl font-black text-[10px] uppercase italic shadow-lg shadow-purple-900/30">Pedir Carta</button>
+                        <div class="w-full flex gap-2 mt-1">
+                            <input id="clan-msg-input" type="text" placeholder="Chatear con el clan..." class="flex-1 bg-black/40 border border-white/10 p-3 rounded-xl outline-none focus:border-cyan-500 text-xs" />
+                            <button onclick="clans.sendMsg()" class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,9 +162,7 @@
 
         <!-- MAZO -->
         <section id="view-deck" class="view">
-            <div class="flex justify-between items-end mb-6">
-                <h2 class="text-3xl font-black uppercase italic tracking-tighter">COLECCIÓN <span class="text-cyan-400" id="deck-stats">0/101</span></h2>
-            </div>
+            <h2 class="text-3xl font-black uppercase italic tracking-tighter mb-6">TU ESCUADRÓN <span class="text-cyan-400" id="deck-stats">0/101</span></h2>
             <div id="deck-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
         </section>
 
@@ -164,10 +174,12 @@
 
         <!-- MULTIPLAYER -->
         <section id="view-battle" class="view">
-            <div id="battle-lobby" class="glass-panel p-10 text-center max-w-lg mx-auto">
-                <h2 class="text-3xl font-black italic mb-6">SALA DE DUELO</h2>
-                <input id="room-id-input" type="text" placeholder="CÓDIGO DE SALA" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-4 text-center font-black text-2xl uppercase" />
-                <button onclick="multiplayer.join()" class="w-full py-4 bg-cyan-500 rounded-xl font-black">ENTRAR AL DUELO ⚡</button>
+            <div id="battle-lobby" class="glass-panel p-10 text-center max-w-lg mx-auto border-2 border-cyan-400/20">
+                <div class="text-5xl mb-6">🌐</div>
+                <h2 class="text-3xl font-black italic mb-2 uppercase">MODO ARENA</h2>
+                <p class="text-white/40 text-[10px] mb-8 font-bold uppercase tracking-widest">Encuentra a un oponente online</p>
+                <input id="room-id-input" type="text" placeholder="CÓDIGO DE SALA" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-4 text-center font-black text-2xl uppercase tracking-tighter" />
+                <button onclick="multiplayer.join()" class="w-full py-4 bg-cyan-500 rounded-xl font-black uppercase italic tracking-widest shadow-xl">¡A LA BATALLA! ⚡</button>
             </div>
             <div id="battle-arena" class="hidden space-y-4 max-w-4xl mx-auto">
                 <div class="glass-panel p-4 border-2 border-red-500/20" id="rival-ui-box">
@@ -178,14 +190,17 @@
                                 <span id="rival-full-name">...</span>
                                 <span id="rival-hp-text" class="text-red-500">100 HP</span>
                             </div>
-                            <div class="w-full bg-black h-2 rounded-full overflow-hidden border border-white/5">
+                            <div class="w-full bg-black h-2 rounded-full overflow-hidden">
                                 <div id="rival-hp-bar" class="h-full bg-red-600 transition-all duration-500" style="width: 100%"></div>
                             </div>
                         </div>
                     </div>
                     <div id="rival-deck-display" class="grid grid-cols-3 gap-3 mt-4"></div>
                 </div>
-                <div id="battle-status" class="text-center font-black uppercase italic text-cyan-400">...</div>
+                <div class="flex flex-col items-center justify-center h-12">
+                   <div id="battle-status" class="text-center font-black uppercase italic text-cyan-400 animate-pulse text-sm">...</div>
+                   <div id="is-friendly-badge" class="hidden text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded font-black uppercase mt-1">Duelo Amistoso (Sin Trofeos)</div>
+                </div>
                 <div class="glass-panel p-4 border-2 border-cyan-500/20">
                     <div class="flex items-center gap-4">
                         <div class="flex-1 text-right">
@@ -193,13 +208,16 @@
                                 <span id="player-full-name">Tú</span>
                                 <span id="player-hp-text" class="text-cyan-400">100 HP</span>
                             </div>
-                            <div class="w-full bg-black h-2 rounded-full overflow-hidden border border-white/5">
+                            <div class="w-full bg-black h-2 rounded-full overflow-hidden">
                                 <div id="player-hp-bar" class="h-full bg-cyan-500 transition-all duration-500" style="width: 100%"></div>
                             </div>
                         </div>
                         <img id="player-avatar-battle" src="" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover" />
                     </div>
                     <div id="player-battle-deck" class="grid grid-cols-3 gap-3 mt-4"></div>
+                </div>
+                <div class="text-center">
+                    <button onclick="location.reload()" class="text-[8px] uppercase font-black text-white/20 hover:text-white transition-all tracking-widest">Abandonar Combate</button>
                 </div>
             </div>
         </section>
@@ -208,17 +226,31 @@
         <section id="view-ranking" class="view"><div id="ranking-list" class="max-w-lg mx-auto space-y-3"></div></section>
     </div>
 
-    <!-- MODALES -->
+    <!-- PERFIL PÚBLICO (MODAL) -->
     <div id="profile-modal" class="profile-modal" onclick="app.closeProfile()">
-        <div class="glass-panel p-8 max-w-sm w-full mx-4 text-center" onclick="event.stopPropagation()">
-            <img id="p-avatar" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-2xl mx-auto mb-4 object-cover" />
-            <div id="p-clan" class="clan-tag text-xs mb-1"></div>
-            <h3 id="p-name" class="text-2xl font-black uppercase italic mb-6">NOMBRE</h3>
-            <div class="grid grid-cols-2 gap-2 mb-6">
-                <div class="bg-black/40 p-3 rounded-xl"><span class="text-[8px] text-white/40 block uppercase">Trofeos</span><div id="p-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
-                <div class="bg-black/40 p-3 rounded-xl"><span class="text-[8px] text-white/40 block uppercase">Copas</span><div id="p-cups" class="text-orange-400 font-black text-lg">0</div></div>
+        <div class="glass-panel p-8 max-w-sm w-full mx-4 text-center border-2 border-cyan-500/40 relative overflow-hidden" onclick="event.stopPropagation()">
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+            <img id="p-avatar" src="" class="w-28 h-28 rounded-full border-4 border-white shadow-2xl mx-auto mb-4 object-cover bg-gray-900" />
+            <div id="p-clan" class="clan-tag text-sm mb-1 uppercase"></div>
+            <h3 id="p-name" class="text-3xl font-black uppercase italic italic tracking-tighter mb-6 leading-none">NOMBRE</h3>
+            
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+                    <span class="text-[7px] text-white/40 block mb-1 uppercase font-black">Trofeos</span>
+                    <div id="p-trophies" class="text-yellow-400 font-black text-xl leading-none">0</div>
+                </div>
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+                    <span class="text-[7px] text-white/40 block mb-1 uppercase font-black">Copas</span>
+                    <div id="p-cups" class="text-orange-400 font-black text-xl leading-none">0</div>
+                </div>
             </div>
-            <button onclick="app.closeProfile()" class="w-full py-3 bg-white text-black font-black rounded-xl uppercase text-xs">Cerrar</button>
+
+            <div class="text-[9px] font-black text-cyan-400/60 uppercase tracking-[0.3em] mb-4 italic">Mazo Actual</div>
+            <div id="p-deck" class="flex justify-center gap-2 mb-8">
+                <!-- Se inyectan las 3 cartas -->
+            </div>
+
+            <button onclick="app.closeProfile()" class="w-full py-4 bg-white text-black font-black rounded-2xl uppercase tracking-widest text-xs italic active:scale-95 transition-all">Cerrar</button>
         </div>
     </div>
 
@@ -251,15 +283,14 @@
         const fbApp = initializeApp(firebaseConfig);
         const db = getDatabase(fbApp);
 
-        // DATA CARTAS
+        // DATA CARTAS (101 CARTAS)
         const ALL_CARDS = [];
         for(let i=0; i<=101; i++) {
             ALL_CARDS.push({
                 id: i, name: `Skin #${i}`, rarity: i>90?"animated":i>70?"actricesporno":i>50?"idolos":i>30?"legendary":"rare",
-                baseAtk: 100+i, baseDef: 80+i, price: 100+(i*10), img: `https://picsum.photos/seed/${i+12}/200/300`
+                baseAtk: 100+i, baseDef: 80+i, price: 100+(i*10), img: `https://picsum.photos/seed/${i+45}/200/300`
             });
         }
-        // Overrides
         const overrides = [
             { id: 0, name: "Ramírez", img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg" },
             { id: 1, name: "Fortaleza", img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png" },
@@ -270,31 +301,21 @@
         // STATE SYSTEM (CLOUD-SYNC)
         window.state = null;
 
-        const syncToCloud = () => {
-            if(!window.state) return;
-            set(ref(db, `users_v11/${window.state.name}`), window.state);
-        };
-
-        const save = () => {
-            localStorage.setItem('cards_master_name', window.state.name);
-            renderGlobalUI();
-            syncToCloud();
-        };
+        const syncToCloud = () => { if(window.state) set(ref(db, `users_v11/${window.state.name}`), window.state); };
+        const save = () => { localStorage.setItem('cards_master_name', window.state.name); renderGlobalUI(); syncToCloud(); };
 
         const initSession = async () => {
             let storedName = localStorage.getItem('cards_master_name');
             if(!storedName) {
-                storedName = prompt("¡BIENVENIDO! Ingresa tu nombre de batalla:").toUpperCase().replace(/\s/g,'_').substring(0,12);
+                storedName = prompt("¡BIENVENIDO! Ingresa tu nombre:").toUpperCase().replace(/\s/g,'_').substring(0,12);
                 if(!storedName) storedName = "CADETE_" + Math.floor(Math.random()*999);
             }
-            
-            document.getElementById('loading-status').innerText = "Recuperando perfil: " + storedName;
-            
+            document.getElementById('loading-status').innerText = "Cargando perfil: " + storedName;
             const snap = await get(ref(db, `users_v11/${storedName}`));
             if(snap.exists()) {
                 window.state = snap.val();
                 if(!window.state.upgrades) window.state.upgrades = {};
-                document.getElementById('loading-status').innerText = "Perfil recuperado ✅";
+                if(!window.state.currentDeck) window.state.currentDeck = [0, 1, 2];
             } else {
                 window.state = {
                     name: storedName, diamonds: 500, trophies: 0, cups: 0,
@@ -302,15 +323,10 @@
                     avatar: 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037',
                     upgrades: {}
                 };
-                document.getElementById('loading-status').innerText = "Nuevo perfil creado ⚡";
             }
-            
             save();
             renderGlobalUI();
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('welcome-msg').innerText = `¡Listo para pelear, ${window.state.name}!`;
-            }, 1000);
+            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
         };
 
         const renderGlobalUI = () => {
@@ -319,7 +335,7 @@
             document.getElementById('u-avatar').src = window.state.avatar;
             const uClan = document.getElementById('u-clan');
             if(window.state.clan) { uClan.innerText = `[${window.state.clan}]`; uClan.classList.remove('hidden'); }
-            else { uClan.classList.add('hidden'); }
+            else uClan.classList.add('hidden');
             document.getElementById('v-diamonds').innerText = window.state.diamonds.toLocaleString();
             document.getElementById('v-trophies').innerText = window.state.trophies;
             document.getElementById('v-cups').innerText = window.state.cups;
@@ -340,7 +356,7 @@
             }
         };
 
-        // CLANES: DONACIÓN Y SOLICITUD
+        // CLANES & RETOS AMISTOSOS
         window.clans = {
             init: () => {
                 onValue(ref(db, 'clans_v11'), (snap) => {
@@ -348,7 +364,7 @@
                     document.getElementById('clans-list').innerHTML = Object.keys(list).map(name => `
                         <div class="glass-panel p-4 flex justify-between items-center border-white/5 hover:border-cyan-500 cursor-pointer" onclick="clans.join('${name}')">
                             <span class="clan-tag">[${name}]</span>
-                            <span class="text-[8px] opacity-40">${Object.keys(list[name].members || {}).length} M</span>
+                            <span class="text-[8px] opacity-40 uppercase font-black">${Object.keys(list[name].members || {}).length} miembros</span>
                         </div>
                     `).join('');
                 });
@@ -360,9 +376,15 @@
                 set(ref(db, `clans_v11/${name}/members/${window.state.name}`), true);
                 save(); clans.init();
             },
+            leave: () => {
+                if(window.state.clan && confirm("¿Salir del clan?")) {
+                    remove(ref(db, `clans_v11/${window.state.clan}/members/${window.state.name}`));
+                    window.state.clan = null; save(); clans.init();
+                }
+            },
             showCreate: () => {
-                const name = prompt("Siglas (3-5 letras):").toUpperCase().substring(0,5);
-                if(name && name.length > 2) clans.join(name);
+                const name = prompt("Siglas del Clan (3-5 letras):").toUpperCase().replace(/\s/g,'').substring(0,5);
+                if(name && name.length >= 3) clans.join(name);
             },
             listenChat: (name) => {
                 document.getElementById('current-clan-name').innerText = `[${name}]`;
@@ -370,30 +392,32 @@
                     const msgs = snap.val() || {};
                     const cont = document.getElementById('clan-chat-box');
                     cont.innerHTML = Object.entries(msgs).map(([mid, m]) => {
+                        if(m.type === 'challenge') {
+                            return `
+                                <div class="challenge-msg p-4 rounded-2xl mx-4 space-y-3">
+                                    <div class="text-[9px] font-black uppercase text-red-500">⚔️ RETO AMISTOSO</div>
+                                    <div class="font-bold text-xs"><b onclick="app.showProfile('${m.user}')" class="cursor-pointer underline text-cyan-400">${m.user}</b> te ha desafiado a una pelea rápida</div>
+                                    ${m.user !== window.state.name ? `<button onclick="clans.acceptChallenge('${mid}', '${m.roomId}')" class="w-full py-2 bg-white text-black rounded-lg font-black text-[10px] uppercase italic active:scale-95 transition-all">Aceptar Reto ⚡</button>` : `<div class="text-[8px] opacity-40 uppercase font-black text-center italic animate-pulse">Esperando rival...</div>`}
+                                </div>
+                            `;
+                        }
                         if(m.type === 'request') {
                             const c = ALL_CARDS.find(x => x.id === m.cardId);
-                            const percent = (m.current / 5) * 100;
                             return `
-                                <div class="bg-indigo-600/20 border-2 border-indigo-600/40 p-4 rounded-2xl mx-4">
-                                    <div class="text-[8px] font-black uppercase opacity-60 mb-2">Solicitud de ${m.user}</div>
-                                    <div class="flex gap-4 items-center">
-                                        <img src="${c.img}" class="w-12 h-16 object-cover rounded-lg border border-white/20">
-                                        <div class="flex-1">
-                                            <div class="font-black text-xs uppercase mb-1">${c.name}</div>
-                                            <div class="w-full bg-black h-1.5 rounded-full overflow-hidden mb-2"><div class="h-full bg-indigo-400" style="width:${percent}%"></div></div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-[10px] font-bold">${m.current}/5</span>
-                                                ${m.user !== window.state.name && m.current < 5 ? `<button onclick="clans.donate('${mid}', '${m.cardId}')" class="px-3 py-1 bg-white text-black font-black text-[9px] rounded-lg">DONAR 💎+10</button>` : ''}
-                                            </div>
-                                        </div>
+                                <div class="bg-indigo-600/20 border border-indigo-600/40 p-3 rounded-2xl mx-4 flex gap-4 items-center">
+                                    <img src="${c.img}" class="w-10 h-12 object-cover rounded-lg">
+                                    <div class="flex-1">
+                                        <div class="text-[8px] opacity-40 uppercase font-black">Pedido por ${m.user}</div>
+                                        <div class="text-[10px] font-black uppercase">${c.name} (${m.current}/5)</div>
+                                        ${m.user !== window.state.name && m.current < 5 ? `<button onclick="clans.donate('${mid}')" class="mt-1 px-2 py-0.5 bg-white text-black font-black text-[8px] rounded uppercase">Donar</button>` : ''}
                                     </div>
                                 </div>
                             `;
                         }
                         return `
-                            <div class="flex flex-col ${m.user === window.state.name ? 'items-end' : 'items-start'}">
-                                <span class="text-[8px] opacity-20 uppercase font-black">${m.user}</span>
-                                <div class="p-3 ${m.user === window.state.name ? 'bg-cyan-600 rounded-l-2xl' : 'bg-white/5 rounded-r-2xl'} border border-white/5 text-xs">${m.text}</div>
+                            <div class="flex flex-col ${m.user === window.state.name ? 'items-end' : 'items-start'} px-4">
+                                <span onclick="app.showProfile('${m.user}')" class="text-[8px] opacity-40 uppercase font-black cursor-pointer hover:text-cyan-400">${m.user}</span>
+                                <div class="p-3 ${m.user === window.state.name ? 'bg-cyan-600 rounded-l-2xl' : 'bg-white/5 rounded-r-2xl'} border border-white/5 text-xs font-medium">${m.text}</div>
                             </div>
                         `;
                     }).join('');
@@ -401,101 +425,89 @@
                 });
             },
             sendMsg: () => {
-                if(!window.state.clan) return alert("Entra en un clan");
+                if(!window.state.clan) return alert("Únete a un clan primero");
                 const input = document.getElementById('clan-msg-input');
                 if(!input.value.trim()) return;
-                push(ref(db, `clans_v11/${window.state.clan}/chat`), { user: window.state.name, text: input.value.trim() });
+                push(ref(db, `clans_v11/${window.state.clan}/chat`), { user: window.state.name, text: input.value.trim(), time: Date.now() });
                 input.value = '';
             },
+            sendChallenge: () => {
+                if(!window.state.clan) return alert("Necesitas clan para retar");
+                const roomId = 'AMISTOSO_' + Math.floor(Math.random()*9999);
+                push(ref(db, `clans_v11/${window.state.clan}/chat`), { 
+                    user: window.state.name, type: 'challenge', roomId: roomId, time: Date.now() 
+                });
+                // Unirse automáticamente
+                multiplayer.join(roomId, true);
+            },
+            acceptChallenge: (mid, roomId) => {
+                remove(ref(db, `clans_v11/${window.state.clan}/chat/${mid}`)); // Limpiar reto aceptado
+                multiplayer.join(roomId, true);
+            },
             requestCardUI: () => {
-                if(!window.state.clan) return alert("Necesitas clan");
-                const cardId = prompt("Ingresa ID de la carta a pedir (ver en mazo):");
-                if(cardId && window.state.owned.includes(parseInt(cardId))) {
-                    push(ref(db, `clans_v11/${window.state.clan}/chat`), { 
-                        user: window.state.name, type: 'request', cardId: parseInt(cardId), current: 0 
-                    });
+                if(!window.state.clan) return alert("Sin clan no hay cartas");
+                const id = prompt("ID de la carta (0-101):");
+                if(id && window.state.owned.includes(parseInt(id))) {
+                    push(ref(db, `clans_v11/${window.state.clan}/chat`), { user: window.state.name, type: 'request', cardId: parseInt(id), current: 0 });
                 }
             },
-            donate: (mid, cid) => {
-                const chatRef = ref(db, `clans_v11/${window.state.clan}/chat/${mid}`);
-                get(chatRef).then(snap => {
-                    const data = snap.val();
-                    if(data && data.current < 5) {
-                        update(chatRef, { current: data.current + 1 });
-                        window.state.diamonds += 10; save();
-                        alert("¡Gracias por donar! Recibiste 10 gemas 💎");
-                        if(data.current + 1 >= 5) {
-                            // Si se completa, premiar al dueño con una mejora de nivel automática o similar
-                            // Por ahora solo se queda ahí como completado.
-                        }
+            donate: (mid) => {
+                const path = `clans_v11/${window.state.clan}/chat/${mid}`;
+                get(ref(db, path)).then(snap => {
+                    const d = snap.val();
+                    if(d && d.current < 5) {
+                        update(ref(db, path), { current: d.current + 1 });
+                        window.state.diamonds += 25; save();
+                        alert("¡Gracias por donar! +25 💎");
                     }
                 });
             }
         };
 
-        // MAZO Y MEJORAS
-        const renderDeck = () => {
-            const cont = document.getElementById('deck-grid');
-            document.getElementById('deck-stats').innerText = `${window.state.owned.length}/101`;
-            cont.innerHTML = window.state.owned.map(id => {
-                const c = ALL_CARDS.find(x => x.id === id);
-                const level = window.state.upgrades[id] || 1;
-                const atk = c.baseAtk + (level * 10);
-                const inDeck = window.state.currentDeck.includes(id);
-                return `
-                    <div class="glass-panel p-3 rarity-${c.rarity} ${inDeck?'border-yellow-400':''}">
-                        <div class="relative h-32 rounded-xl overflow-hidden mb-2">
-                            <img src="${c.img}" class="w-full h-full object-cover">
-                            <div class="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black">NV.${level}</div>
-                        </div>
-                        <div class="text-[9px] font-black uppercase mb-1 truncate italic">${c.name}</div>
-                        <div class="text-[7px] text-cyan-400 font-bold mb-3 uppercase italic">ATK ${atk} | ID:${id}</div>
-                        <div class="grid grid-cols-2 gap-1">
-                            <button onclick="app.toggleDeck(${id})" class="w-full py-2 ${inDeck?'bg-red-600':'bg-cyan-600'} text-[7px] font-black rounded uppercase">${inDeck?'Quitar':'Poner'}</button>
-                            <button onclick="app.upgrade(${id})" class="w-full py-2 bg-green-600 text-[7px] font-black rounded uppercase">Mejorar</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        };
-
-        // MULTIPLAYER (BÁSICO SINCRONIZADO)
+        // MULTIPLAYER (RANKED & FRIENDLY)
         window.multiplayer = {
-            room: '', role: '', ref: null, data: null,
-            join: () => {
-                const code = document.getElementById('room-id-input').value.toUpperCase().trim();
-                if(code.length < 3) return alert("Código corto");
+            room: '', role: '', ref: null, data: null, isFriendly: false,
+            join: (directCode, friendly = false) => {
+                const code = directCode || document.getElementById('room-id-input').value.toUpperCase().trim();
+                if(!code || code.length < 3) return alert("Código inválido");
+                
                 window.multiplayer.room = code;
+                window.multiplayer.isFriendly = friendly;
                 window.multiplayer.ref = ref(db, `rooms_v11/${code}`);
-                const deckInfo = window.state.currentDeck.map(id => {
+                
+                const myDeck = window.state.currentDeck.map(id => {
                     const c = ALL_CARDS.find(x => x.id === id);
-                    const level = window.state.upgrades[id] || 1;
-                    return { ...c, atk: c.baseAtk + (level * 10) };
+                    const lvl = window.state.upgrades[id] || 1;
+                    return { ...c, atk: c.baseAtk + (lvl * 10), level: lvl };
                 });
 
                 onValue(window.multiplayer.ref, (snap) => {
                     const val = snap.val();
                     if(!val) {
                         set(window.multiplayer.ref, { 
-                            p1: { n: window.state.name, c: window.state.clan, h: 100, a: window.state.avatar, deck: deckInfo },
-                            status: 'waiting', turn: 'p1', logs: ['Esperando...']
+                            p1: { n: window.state.name, c: window.state.clan, h: 100, a: window.state.avatar, deck: myDeck },
+                            status: 'waiting', turn: 'p1', logs: ['Esperando rival...'], friendly: friendly
                         });
                         window.multiplayer.role = 'p1';
                     } else if(val.status === 'waiting' && !window.multiplayer.role) {
                         update(window.multiplayer.ref, { 
-                            p2: { n: window.state.name, c: window.state.clan, h: 100, a: window.state.avatar, deck: deckInfo },
+                            p2: { n: window.state.name, c: window.state.clan, h: 100, a: window.state.avatar, deck: myDeck },
                             status: 'playing', logs: ['¡Duelo iniciado!']
                         });
                         window.multiplayer.role = 'p2';
                     }
                     if(snap.val()) window.multiplayer.sync(snap.val());
                 });
+
                 document.getElementById('battle-lobby').classList.add('hidden');
                 document.getElementById('battle-arena').classList.remove('hidden');
+                document.getElementById('is-friendly-badge').classList.toggle('hidden', !friendly);
+                router.navigate('battle');
                 onDisconnect(window.multiplayer.ref).remove();
             },
             sync: (data) => {
                 window.multiplayer.data = data;
+                window.multiplayer.isFriendly = data.friendly || false;
                 const me = data[window.multiplayer.role];
                 const rivalRole = window.multiplayer.role === 'p1' ? 'p2' : 'p1';
                 const rival = data[rivalRole];
@@ -503,32 +515,36 @@
                 document.getElementById('player-full-name').innerText = (me.c?`[${me.c}] `:'') + me.n;
                 document.getElementById('player-avatar-battle').src = me.a;
                 document.getElementById('player-hp-text').innerText = `${me.h} HP`;
-                document.getElementById('player-hp-bar').style.width = `${me.h}%`;
+                document.getElementById('player-hp-bar').style.width = me.h + '%';
 
                 if(rival) {
                     document.getElementById('rival-full-name').innerText = (rival.c?`[${rival.c}] `:'') + rival.n;
                     document.getElementById('rival-avatar').src = rival.a;
                     document.getElementById('rival-hp-text').innerText = `${rival.h} HP`;
-                    document.getElementById('rival-hp-bar').style.width = `${rival.h}%`;
+                    document.getElementById('rival-hp-bar').style.width = rival.h + '%';
                 }
 
                 const status = document.getElementById('battle-status');
                 const isMyTurn = data.status === 'playing' && data.turn === window.multiplayer.role;
                 status.innerText = isMyTurn ? '¡ATACA AHORA!' : 'ESPERANDO RIVAL...';
-                if(data.status === 'finished') status.innerText = data.winner === window.multiplayer.role ? '¡GANASTE! 🏆' : 'DERROTA... 💀';
+                if(data.status === 'finished') status.innerText = data.winner === window.multiplayer.role ? '¡VICTORIA! 🏆' : 'DERROTA... 💀';
 
+                // Tu Mazo
                 document.getElementById('player-battle-deck').innerHTML = (me.deck || []).map(c => `
-                    <div onclick="multiplayer.attack(${c.atk}, ${c.id})" class="glass-panel p-2 flex flex-col items-center ${!isMyTurn?'opacity-30':'cursor-pointer hover:scale-105'}">
+                    <div onclick="multiplayer.attack(${c.atk})" class="glass-panel p-2 flex flex-col items-center ${!isMyTurn?'opacity-30':'cursor-pointer hover:scale-105'} transition-all rarity-${c.rarity}">
                         <img src="${c.img}" class="w-full h-16 object-cover rounded mb-1">
-                        <span class="text-[7px] font-black">ATK ${c.atk}</span>
+                        <span class="text-[7px] font-black uppercase">ATK ${c.atk}</span>
                     </div>
                 `).join('');
 
-                document.getElementById('rival-deck-display').innerHTML = (rival?.deck || []).map(c => `
-                    <div class="h-16 rounded glass-panel flex items-center justify-center font-black text-xl">?</div>
+                // Mazo Rival (Misterio)
+                document.getElementById('rival-deck-display').innerHTML = (rival?.deck || [1,2,3]).map(c => `
+                    <div class="h-20 glass-panel card-inner revealed">
+                         <div class="card-back">?</div>
+                    </div>
                 `).join('');
             },
-            attack: (atk, id) => {
+            attack: (atk) => {
                 if(window.multiplayer.data.status !== 'playing' || window.multiplayer.data.turn !== window.multiplayer.role) return;
                 const rivalRole = window.multiplayer.role === 'p1' ? 'p2' : 'p1';
                 const dmg = Math.floor(atk / 10) + 5;
@@ -536,20 +552,91 @@
                 const updates = {};
                 updates[`${rivalRole}/h`] = newHp;
                 updates[`turn`] = rivalRole;
-                if(newHp <= 0) { updates[`status`] = 'finished'; updates[`winner`] = window.multiplayer.role; window.state.trophies += 50; save(); }
+                if(newHp <= 0) { 
+                    updates[`status`] = 'finished'; updates[`winner`] = window.multiplayer.role; 
+                    if(!window.multiplayer.isFriendly) { window.state.trophies += 50; window.state.diamonds += 100; save(); }
+                }
                 update(window.multiplayer.ref, updates);
             }
         };
 
-        // SHOP
+        // PERFIL PÚBLICO
+        window.app = {
+            showProfile: async (name) => {
+                const snap = await get(ref(db, `users_v11/${name}`));
+                if(!snap.exists()) return alert("Jugador no encontrado");
+                const u = snap.val();
+                document.getElementById('p-name').innerText = u.name;
+                document.getElementById('p-avatar').src = u.avatar;
+                document.getElementById('p-clan').innerText = u.clan ? `[${u.clan}]` : 'Sin Clan';
+                document.getElementById('p-trophies').innerText = u.trophies;
+                document.getElementById('p-cups').innerText = u.cups;
+                
+                const deckHtml = (u.currentDeck || []).map(id => {
+                    const c = ALL_CARDS.find(x => x.id === id);
+                    const lvl = (u.upgrades && u.upgrades[id]) || 1;
+                    return `
+                        <div class="w-16 glass-panel p-1 rarity-${c.rarity}">
+                            <img src="${c.img}" class="w-full aspect-[3/4] object-cover rounded">
+                            <div class="text-[6px] font-black text-center mt-0.5">NV.${lvl}</div>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('p-deck').innerHTML = deckHtml || '<p class="text-[8px] opacity-40">Mazo no configurado</p>';
+                document.getElementById('profile-modal').classList.add('active');
+            },
+            showSelfProfile: () => app.showProfile(window.state.name),
+            closeProfile: () => document.getElementById('profile-modal').classList.remove('active'),
+            upgrade: (id) => {
+                const cost = 100;
+                if(window.state.diamonds >= cost) {
+                    window.state.diamonds -= cost;
+                    window.state.upgrades[id] = (window.state.upgrades[id] || 1) + 1;
+                    save(); renderDeck();
+                } else alert("Reclama gemas en la tienda!");
+            },
+            toggleDeck: (id) => {
+                if(window.state.currentDeck.includes(id)) window.state.currentDeck = window.state.currentDeck.filter(x => x !== id);
+                else { if(window.state.currentDeck.length >= 3) return alert("Máximo 3 cartas"); window.state.currentDeck.push(id); }
+                save(); renderDeck();
+            }
+        };
+
+        // UI AUXILIAR
+        const renderDeck = () => {
+            const cont = document.getElementById('deck-grid');
+            document.getElementById('deck-stats').innerText = `${window.state.owned.length}/101`;
+            cont.innerHTML = window.state.owned.map(id => {
+                const c = ALL_CARDS.find(x => x.id === id);
+                const lvl = window.state.upgrades[id] || 1;
+                const atk = c.baseAtk + (lvl * 10);
+                const inDeck = window.state.currentDeck.includes(id);
+                return `
+                    <div class="glass-panel p-3 rarity-${c.rarity} ${inDeck?'border-yellow-400 scale-[1.02]':''}">
+                        <div class="relative h-32 rounded-xl overflow-hidden mb-2">
+                            <img src="${c.img}" class="w-full h-full object-cover">
+                            <div class="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black">NV.${lvl}</div>
+                        </div>
+                        <div class="text-[9px] font-black uppercase mb-1 truncate italic">${c.name}</div>
+                        <div class="text-[7px] text-cyan-400 font-bold mb-3">ATK ${atk} | ID:${id}</div>
+                        <div class="grid grid-cols-2 gap-1">
+                            <button onclick="app.toggleDeck(${id})" class="w-full py-2 ${inDeck?'bg-red-600':'bg-cyan-600'} text-[7px] font-black rounded uppercase">${inDeck?'Quitar':'Equipar'}</button>
+                            <button onclick="app.upgrade(${id})" class="w-full py-2 bg-green-600 text-[7px] font-black rounded uppercase">Mejorar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
         window.shop = {
-            claimMegaGift: () => { window.state.diamonds += 1000000; save(); alert("¡Millonario de por vida! 💎"); renderShop(); },
+            claimMegaGift: () => { window.state.diamonds += 1000000; save(); alert("¡Millonario! 💎"); renderShop(); },
             buy: (id) => {
                 const c = ALL_CARDS.find(x => x.id === id);
                 if(window.state.diamonds >= c.price) { window.state.diamonds -= c.price; window.state.owned.push(id); save(); renderShop(); }
-                else alert("Te faltan gemas bb.");
+                else alert("Faltan gemas");
             }
         };
+
         const renderShop = () => {
             document.getElementById('shop-items').innerHTML = ALL_CARDS.filter(c => !window.state.owned.includes(c.id)).map(c => `
                 <div class="glass-panel p-3 rarity-${c.rarity}"><img src="${c.img}" class="h-32 w-full object-cover rounded-lg mb-2">
@@ -557,12 +644,11 @@
             `).join('');
         };
 
-        // RANKING CLOUD
         const renderRanking = () => {
             onValue(ref(db, 'users_v11'), (snap) => {
                 const users = Object.values(snap.val() || {}).sort((a,b) => b.trophies - a.trophies).slice(0, 10);
                 document.getElementById('ranking-list').innerHTML = users.map((u, i) => `
-                    <div class="glass-panel p-4 flex items-center gap-4">
+                    <div class="glass-panel p-4 flex items-center gap-4 cursor-pointer hover:bg-white/5" onclick="app.showProfile('${u.name}')">
                         <div class="font-black text-xl opacity-20 w-6">${i+1}</div>
                         <img src="${u.avatar}" class="w-10 h-10 rounded-full object-cover">
                         <div class="flex-1 font-bold text-[10px] uppercase">${u.clan?`[${u.clan}]`:''} ${u.name}</div>
@@ -570,33 +656,6 @@
                     </div>
                 `).join('');
             });
-        };
-
-        // APP CORE
-        window.app = {
-            upgrade: (id) => {
-                const cost = 100;
-                if(window.state.diamonds >= cost) {
-                    window.state.diamonds -= cost;
-                    window.state.upgrades[id] = (window.state.upgrades[id] || 1) + 1;
-                    save(); renderDeck();
-                    alert("¡CARTA MEJORADA! +10 ATK permanente ⚡");
-                } else alert("Faltan 100 gemas");
-            },
-            toggleDeck: (id) => {
-                if(window.state.currentDeck.includes(id)) { window.state.currentDeck = window.state.currentDeck.filter(x => x !== id); }
-                else { if(window.state.currentDeck.length >= 3) return alert("Máx 3 cartas"); window.state.currentDeck.push(id); }
-                save(); renderDeck();
-            },
-            showSelfProfile: () => {
-                document.getElementById('p-name').innerText = window.state.name;
-                document.getElementById('p-avatar').src = window.state.avatar;
-                document.getElementById('p-clan').innerText = window.state.clan ? `[${window.state.clan}]` : 'SIN CLAN';
-                document.getElementById('p-trophies').innerText = window.state.trophies;
-                document.getElementById('p-cups').innerText = window.state.cups;
-                document.getElementById('profile-modal').classList.add('active');
-            },
-            closeProfile: () => document.getElementById('profile-modal').classList.remove('active')
         };
 
         // START
