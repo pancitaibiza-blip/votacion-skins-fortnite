@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎄 Fortnite Cartas - Online Winterfest</title>
+    <title>🎄 Fortnite Cartas - Online Winterfest MASTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root { --accent: #00e5ff; }
         body {
             font-family: 'Montserrat', sans-serif;
             background: radial-gradient(circle at center, #1a2a3a 0%, #050505 100%);
@@ -20,21 +21,33 @@
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 2rem;
+            border-radius: 1.5rem;
         }
         .view { display: none; animation: fadeIn 0.4s ease-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .hp-bar-fill { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-scroll { animation: scroll 40s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        .card-glow { position: absolute; inset: -2px; border-radius: 1.5rem; z-index: -1; opacity: 0.5; filter: blur(10px); }
+        .rarity-common { border-color: #94a3b8; }
+        .rarity-rare { border-color: #22c55e; }
+        .rarity-epic { border-color: #a855f7; }
+        .rarity-legendary { border-color: #f97316; }
+        .rarity-animated { border-color: #fbbf24; animation: borderPulse 2s infinite; }
+        @keyframes borderPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .nav-btn.active { color: white; background: rgba(255, 255, 255, 0.1); }
+        /* Estilos de navegación */
+        .nav-btn { color: rgba(255,255,255,0.4); transition: all 0.3s; }
+        .nav-btn.active { color: white; background: rgba(255,255,255,0.1); transform: scale(1.1); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 <script type="importmap">
 {
@@ -47,151 +60,230 @@
 </head>
 <body>
 
-    <!-- MARQUESINA SUPERIOR -->
-    <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-red-600 to-green-600 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg">
+    <!-- MARQUESINA NOTICIAS -->
+    <div class="fixed top-0 inset-x-0 h-10 bg-gradient-to-r from-red-600 to-green-600 z-[60] flex items-center overflow-hidden border-b border-white/20 shadow-lg cursor-pointer" onclick="app.showView('news')">
         <div class="animate-scroll flex gap-12 font-black text-[10px] uppercase tracking-widest px-4">
-            <span>🎄 WINTERFEST ONLINE ACTIVO - DUELOS EN TIEMPO REAL</span>
-            <span>🎁 RECLAMA TUS GEMAS EN LA TIENDA Y EMPIEZA A COMPRAR</span>
-            <span>🔥 PELEA CONTRA TUS AMIGOS USANDO EL CÓDIGO DE SALA</span>
+            <span>🎄 WINTERFEST MASTER ONLINE - DUELOS EN TIEMPO REAL ACTIVA</span>
+            <span>🎁 RECLAMA TU MILLÓN DE GEMAS EN LA TIENDA - REGALO DE NAVIDAD</span>
+            <span>🔥 DERROTA AL JEFE EN DUELO DE SKINS PARA GANAR CARTAS</span>
+            <span>🏆 RANKING ACTUALIZADO: ¿QUIÉN SERÁ EL REY DE LAS SKINS?</span>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 pt-20 pb-32">
-        <!-- HEADER DE USUARIO -->
-        <header class="flex flex-col items-center mb-10">
+    <div class="container mx-auto px-4 pt-16 pb-32">
+        <!-- HEADER USUARIO -->
+        <header class="flex flex-col items-center mb-8">
             <div class="relative group">
-                <div class="absolute -inset-2 bg-white rounded-full blur opacity-20 group-hover:opacity-40 transition-all"></div>
-                <img id="user-avatar" src="" class="relative w-24 h-24 rounded-full border-4 border-white shadow-2xl object-cover" />
+                <div class="absolute -inset-2 bg-white rounded-full blur opacity-10 group-hover:opacity-30 transition-all"></div>
+                <img id="header-avatar" src="" class="relative w-24 h-24 rounded-full border-4 border-white shadow-2xl object-cover bg-black" />
             </div>
-            <h2 id="user-name" class="text-3xl font-black mt-4 italic uppercase tracking-tighter">Cargando...</h2>
-            <div class="grid grid-cols-3 gap-3 w-full max-w-md mt-6">
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">TROFEOS</span><div id="stat-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">GEMAS</span><div id="stat-diamonds" class="text-cyan-400 font-black text-lg">0</div></div>
-                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">COPAS</span><div id="stat-cups" class="text-orange-400 font-black text-lg">0</div></div>
+            <h2 id="header-name" class="text-3xl font-black mt-4 italic uppercase tracking-tighter">Cargando...</h2>
+            
+            <div class="grid grid-cols-3 gap-2 w-full max-w-md mt-6">
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">TROFEOS</span><div id="val-trophies" class="text-yellow-400 font-black text-lg">0</div></div>
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">GEMAS</span><div id="val-diamonds" class="text-cyan-400 font-black text-lg">0</div></div>
+                <div class="glass-panel p-3 text-center"><span class="text-[7px] text-white/40 block">COPAS</span><div id="val-cups" class="text-orange-400 font-black text-lg">0</div></div>
             </div>
         </header>
 
-        <!-- VISTA: NOTICIAS -->
-        <section id="view-news" class="view active">
-            <div class="glass-panel p-10 text-center border-4 border-yellow-400/30">
-                <div class="text-8xl mb-6">🎁</div>
-                <h3 class="text-4xl font-black italic uppercase mb-2 text-yellow-400">¡WINTERFEST ONLINE!</h3>
-                <p class="text-white/60 mb-8 max-w-sm mx-auto">Ya puedes jugar con tus amigos en tiempo real. Ve a la TIENDA para reclamar tu MILLÓN de gemas.</p>
-                <button onclick="changeView('battle')" class="px-10 py-4 bg-white text-black font-black rounded-2xl uppercase italic hover:scale-105 transition-all shadow-xl">¡IR AL DUELO! 🔥</button>
+        <!-- VISTA: NEWS -->
+        <section id="view-news" class="view">
+            <div class="glass-panel p-8 text-center border-2 border-red-500/30 mb-6">
+                <div class="text-6xl mb-4">🎁</div>
+                <h3 class="text-3xl font-black italic uppercase mb-2">¡REGALO DE NAVIDAD!</h3>
+                <p class="text-white/60 text-sm mb-6">Hemos habilitado un botón en la TIENDA para que reclames 1,000,000 de gemas. ¡Compra todo lo que quieras!</p>
+                <button onclick="app.showView('shop')" class="px-8 py-3 bg-white text-black font-black rounded-xl uppercase italic hover:scale-105 transition-all">Ir a la Tienda 🔥</button>
             </div>
+            <div class="grid gap-4" id="news-container"></div>
         </section>
 
         <!-- VISTA: DUELO ONLINE -->
         <section id="view-battle" class="view">
-            <!-- Selector de Sala -->
-            <div id="battle-setup" class="glass-panel p-10 text-center max-w-lg mx-auto border-2 border-cyan-500/30">
+            <div id="battle-setup" class="glass-panel p-8 text-center max-w-lg mx-auto border-2 border-cyan-500/30">
                 <h2 class="text-3xl font-black italic mb-6 uppercase">DUELO ONLINE 🌐</h2>
-                <input id="input-room-code" type="text" placeholder="CÓDIGO SALA" class="w-full bg-black/40 border-2 border-white/10 p-5 rounded-2xl mb-6 text-center font-black text-2xl uppercase outline-none focus:border-cyan-400 text-white" />
-                <button id="btn-join" onclick="multiplayer.joinOrCreate()" class="w-full py-5 bg-cyan-500 rounded-3xl font-black text-xl hover:scale-105 transition-all shadow-xl uppercase">Entrar al Campo 🔥</button>
+                <p class="text-[10px] text-white/40 mb-6 font-bold uppercase tracking-widest">Crea una sala y dile a tu amigo que use el mismo código</p>
+                <input id="room-input" type="text" placeholder="CÓDIGO SALA" class="w-full bg-black/40 border-2 border-white/10 p-5 rounded-2xl mb-6 text-center font-black text-2xl uppercase outline-none focus:border-cyan-400 text-white" />
+                <button onclick="multiplayer.init()" class="w-full py-5 bg-cyan-500 rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-xl uppercase">Entrar al Campo 🔥</button>
             </div>
 
-            <!-- Campo de Batalla -->
-            <div id="battle-field" class="hidden space-y-8 max-w-2xl mx-auto">
-                <div class="glass-panel p-4 flex justify-between items-center border-white/10">
-                    <div id="battle-room-id" class="text-xs font-black text-cyan-400">SALA: --</div>
-                    <button onclick="multiplayer.leave()" class="text-red-500 text-[10px] font-black uppercase tracking-widest bg-red-500/10 px-4 py-2 rounded-full">Salir</button>
+            <div id="battle-field" class="hidden space-y-6 max-w-2xl mx-auto">
+                <div class="flex justify-between items-center glass-panel p-4 border-white/10">
+                    <div id="room-display" class="text-xs font-black text-cyan-400">SALA: --</div>
+                    <button onclick="location.reload()" class="text-red-500 text-[9px] font-black uppercase bg-red-500/10 px-4 py-2 rounded-full">Salir</button>
                 </div>
 
-                <!-- RIVAL -->
-                <div id="rival-card" class="glass-panel p-6 border-2 border-white/5 transition-all">
+                <div class="glass-panel p-6 border-2 border-white/5" id="rival-area">
                     <div class="flex items-center gap-4">
                         <img id="rival-avatar" src="" class="w-16 h-16 rounded-full border-2 border-white/10 bg-gray-900 object-cover" />
                         <div class="flex-1">
-                            <div class="flex justify-between font-black uppercase italic text-sm mb-1">
+                            <div class="flex justify-between font-black uppercase italic text-xs mb-1">
                                 <span id="rival-name">Buscando...</span>
-                                <span id="rival-hp-text" class="text-red-500">100%</span>
+                                <span id="rival-hp-text" class="text-red-500">100/100</span>
                             </div>
-                            <div class="w-full bg-black h-3 rounded-full overflow-hidden border border-white/5">
-                                <div id="rival-hp-bar" class="hp-bar-fill h-full bg-gradient-to-r from-red-600 to-red-400" style="width: 100%"></div>
+                            <div class="w-full bg-black h-2.5 rounded-full overflow-hidden border border-white/5">
+                                <div id="rival-hp-bar" class="hp-bar-fill h-full bg-red-600" style="width: 100%"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ACCIÓN -->
-                <div class="flex flex-col items-center py-10 relative">
-                    <div id="battle-status" class="text-xl font-black animate-pulse uppercase italic text-cyan-400 mb-6">Conectando...</div>
-                    <button id="btn-attack" onclick="multiplayer.attack()" class="w-44 h-44 rounded-full font-black text-4xl shadow-2xl transition-all active:scale-90 border-[12px] bg-white text-black border-cyan-400 hidden animate-bounce">
-                        ¡PUM!
-                    </button>
+                <div class="flex flex-col items-center py-6">
+                    <div id="battle-status" class="text-lg font-black animate-pulse uppercase italic text-cyan-400 mb-4">Conectando...</div>
+                    <button id="attack-btn" onclick="multiplayer.attack()" class="w-40 h-40 rounded-full font-black text-4xl shadow-2xl transition-all active:scale-90 border-[10px] bg-white text-black border-cyan-400 hidden animate-bounce">¡PUM!</button>
                 </div>
 
-                <!-- JUGADOR -->
-                <div id="player-card" class="glass-panel p-6 border-2 border-white/5 transition-all">
+                <div class="glass-panel p-6 border-2 border-white/5" id="player-area">
                     <div class="flex items-center gap-4">
                         <div class="flex-1 text-right">
-                            <div class="flex flex-row-reverse justify-between font-black uppercase italic text-sm mb-1">
-                                <span id="player-name-battle">Tú</span>
-                                <span id="player-hp-text" class="text-cyan-400">100%</span>
+                            <div class="flex flex-row-reverse justify-between font-black uppercase italic text-xs mb-1">
+                                <span id="player-battle-name">Tú</span>
+                                <span id="player-hp-text" class="text-cyan-400">100/100</span>
                             </div>
-                            <div class="w-full bg-black h-3 rounded-full overflow-hidden border border-white/5">
-                                <div id="player-hp-bar" class="hp-bar-fill h-full bg-gradient-to-r from-cyan-600 to-cyan-400" style="width: 100%"></div>
+                            <div class="w-full bg-black h-2.5 rounded-full overflow-hidden border border-white/5">
+                                <div id="player-hp-bar" class="hp-bar-fill h-full bg-cyan-500" style="width: 100%"></div>
                             </div>
                         </div>
-                        <img id="player-avatar-battle" src="" class="w-16 h-16 rounded-full border-2 border-white/10 bg-gray-900 object-cover" />
+                        <img id="player-battle-avatar" src="" class="w-16 h-16 rounded-full border-2 border-white/10 bg-gray-900 object-cover" />
                     </div>
                 </div>
 
-                <!-- LOGS -->
-                <div id="battle-logs" class="glass-panel p-4 bg-black/40 text-center text-[9px] font-bold text-white/30 uppercase tracking-widest space-y-1">
-                    <div>Historial de combate vacío</div>
+                <div id="battle-logs" class="glass-panel p-4 bg-black/40 text-center text-[8px] font-bold text-white/30 uppercase tracking-widest space-y-1"></div>
+            </div>
+        </section>
+
+        <!-- VISTA: ARENA -->
+        <section id="view-arena" class="view">
+            <div class="glass-panel p-8 mb-8 border-blue-500/30">
+                <h2 class="text-2xl font-black italic mb-4 uppercase">MODO ARENA 🏟️</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <span id="arena-rank-name" class="font-black text-blue-400">Rango 1</span>
+                    <span id="arena-rank-progress" class="text-xs font-bold">0/5 Victorias</span>
+                </div>
+                <div class="w-full bg-black h-3 rounded-full overflow-hidden border border-white/10 mb-8">
+                    <div id="arena-bar" class="h-full bg-blue-500 hp-bar-fill" style="width: 0%"></div>
+                </div>
+                <button onclick="arena.start()" class="w-full py-4 bg-blue-600 rounded-xl font-black text-lg uppercase shadow-xl hover:scale-105 active:scale-95 transition-all">Desafiar Arena ⚔️</button>
+            </div>
+            <div id="arena-battle" class="hidden glass-panel p-8 border-red-500/20">
+                <div class="text-center mb-6">
+                    <h3 id="arena-enemy-name" class="text-xl font-black text-red-500 uppercase italic">Enemigo</h3>
+                    <div class="w-full bg-black h-2 rounded-full mt-2 overflow-hidden">
+                        <div id="arena-enemy-hp" class="h-full bg-red-600 hp-bar-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="flex justify-center py-10">
+                    <button onclick="arena.attack()" class="w-32 h-32 rounded-full bg-white text-black font-black text-4xl border-8 border-blue-400 shadow-2xl animate-pulse">¡ATACA!</button>
                 </div>
             </div>
         </section>
 
-        <!-- VISTA: TIENDA -->
-        <section id="view-shop" class="view">
-            <div class="text-center py-10">
-                <div class="relative inline-block mb-12 group">
-                    <div class="absolute -inset-4 bg-yellow-400 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
-                    <button onclick="claimMillion()" class="relative px-12 py-6 bg-yellow-400 text-black font-black rounded-3xl text-2xl uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all border-b-4 border-yellow-600">
-                        🎁 RECLAMAR 1,000,000 GEMAS
-                    </button>
+        <!-- VISTA: COLISEO -->
+        <section id="view-coliseum" class="view">
+            <div class="glass-panel p-10 text-center border-yellow-500/30">
+                <div class="text-7xl mb-6">🏟️</div>
+                <h2 class="text-3xl font-black italic uppercase mb-2">COLISEO DE ORO</h2>
+                <p class="text-white/40 text-sm mb-8">Vence a 5 oponentes seguidos para ganar el multiplicador X5</p>
+                <div id="coliseum-status" class="mb-6 hidden">
+                    <div class="text-yellow-400 font-black text-2xl mb-4" id="col-round">RONDA 1/5</div>
+                    <button onclick="coliseum.fight()" class="px-12 py-4 bg-yellow-500 text-black font-black rounded-xl uppercase hover:scale-110 transition-all">Atacar Oponente ⚔️</button>
                 </div>
-                
-                <h3 class="text-2xl font-black italic uppercase text-cyan-400 mb-10 tracking-widest">Tienda de Winterfest</h3>
-                <div id="shop-cards" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <!-- Se llena con JS -->
+                <button id="col-start-btn" onclick="coliseum.start()" class="px-12 py-4 bg-white text-black font-black rounded-xl uppercase hover:scale-110 transition-all">Entrar (100 Gemas) 💎</button>
+            </div>
+        </section>
+
+        <!-- VISTA: SKINS DUEL -->
+        <section id="view-skins" class="view">
+            <div class="glass-panel p-8 text-center border-purple-500/30 mb-8">
+                <h2 class="text-2xl font-black italic uppercase mb-2">DUELO DE SKINS ⚔️</h2>
+                <p class="text-white/40 text-[10px] uppercase font-bold tracking-widest mb-6">Encuentra parejas para derrotar al jefe</p>
+                <div class="flex justify-between gap-4 mb-6">
+                    <div class="flex-1"><span class="text-[8px] block opacity-40">TU VIDA</span><div class="h-2 bg-black rounded-full overflow-hidden"><div id="skin-player-hp" class="h-full bg-cyan-500 hp-bar-fill" style="width: 100%"></div></div></div>
+                    <div class="flex-1"><span class="text-[8px] block opacity-40">JEFE</span><div class="h-2 bg-black rounded-full overflow-hidden"><div id="skin-boss-hp" class="h-full bg-red-600 hp-bar-fill" style="width: 100%"></div></div></div>
                 </div>
+                <div id="skins-grid" class="grid grid-cols-4 gap-2"></div>
+                <button id="skin-start-btn" onclick="skins.start()" class="mt-8 w-full py-4 bg-purple-600 rounded-xl font-black text-lg uppercase shadow-xl">Iniciar Duelo</button>
             </div>
         </section>
 
         <!-- VISTA: MAZO -->
         <section id="view-deck" class="view">
-            <h2 class="text-3xl font-black italic uppercase mb-10 text-center">Tu Colección 🎴</h2>
-            <div id="deck-cards" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <!-- Se llena con JS -->
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-black italic uppercase">TU MAZO</h2>
+                <div class="text-[10px] font-bold text-white/40 uppercase tracking-widest" id="deck-count">0/101 Cartas</div>
             </div>
+            <div id="deck-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- VISTA: SHOP -->
+        <section id="view-shop" class="view">
+            <div class="text-center mb-12">
+                <div class="relative inline-block mb-10 group">
+                    <div class="absolute -inset-4 bg-yellow-400 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
+                    <button onclick="app.claimMillion()" class="relative px-12 py-6 bg-yellow-400 text-black font-black rounded-3xl text-2xl uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all">
+                        🎁 RECLAMAR 1,000,000 GEMAS
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                <div onclick="app.openChest('rare')" class="glass-panel p-6 text-center cursor-pointer hover:border-green-500 transition-all">
+                    <div class="text-4xl mb-2">📦</div><div class="font-black text-xs">COFRE RARO</div><div class="text-cyan-400 font-bold">💎 150</div>
+                </div>
+                <div onclick="app.openChest('epic')" class="glass-panel p-6 text-center cursor-pointer hover:border-purple-500 transition-all">
+                    <div class="text-4xl mb-2">🎁</div><div class="font-black text-xs">COFRE ÉPICO</div><div class="text-cyan-400 font-bold">💎 400</div>
+                </div>
+                <div onclick="app.openChest('legendary')" class="glass-panel p-6 text-center cursor-pointer hover:border-yellow-500 transition-all">
+                    <div class="text-4xl mb-2">💎</div><div class="font-black text-xs">COFRE LEGENDARIO</div><div class="text-cyan-400 font-bold">💎 800</div>
+                </div>
+            </div>
+            <div id="shop-container" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- VISTA: RANKING -->
+        <section id="view-ranking" class="view">
+            <h2 class="text-2xl font-black italic uppercase text-center mb-8">RANKING GLOBAL 🏆</h2>
+            <div id="ranking-container" class="space-y-3 max-w-lg mx-auto"></div>
+        </section>
+
+        <!-- VISTA: LOGROS -->
+        <section id="view-achievements" class="view">
+            <h2 class="text-2xl font-black italic uppercase text-center mb-8">LOGROS 🏅</h2>
+            <div id="achievements-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
     </div>
 
-    <!-- NAVEGACIÓN INFERIOR -->
-    <nav class="fixed bottom-6 inset-x-4 max-w-md mx-auto h-20 glass-panel border-2 border-white/20 flex items-center justify-around px-2 z-50 shadow-2xl">
-        <button onclick="changeView('news')" id="nav-news" class="nav-btn flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-white/40 active:scale-95 transition-all">
-            <i class="fas fa-bullhorn mb-1"></i><span class="text-[7px] font-black uppercase">News</span>
+    <!-- NAVEGACIÓN -->
+    <nav class="fixed bottom-0 inset-x-0 h-24 bg-black/60 backdrop-blur-3xl border-t border-white/10 flex items-center justify-around px-2 z-50">
+        <button onclick="app.showView('news')" id="btn-news" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-bullhorn mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">News</span>
         </button>
-        <button onclick="changeView('battle')" id="nav-battle" class="nav-btn flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-white/40 active:scale-95 transition-all">
-            <i class="fas fa-swords mb-1"></i><span class="text-[7px] font-black uppercase">Duelo</span>
+        <button onclick="app.showView('battle')" id="btn-battle" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-swords mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Duelo</span>
         </button>
-        <button onclick="changeView('deck')" id="nav-deck" class="nav-btn flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-white/40 active:scale-95 transition-all">
-            <i class="fas fa-layer-group mb-1"></i><span class="text-[7px] font-black uppercase">Mazo</span>
+        <button onclick="app.showView('arena')" id="btn-arena" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-fire mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Arena</span>
         </button>
-        <button onclick="changeView('shop')" id="nav-shop" class="nav-btn flex flex-col items-center justify-center flex-1 h-14 rounded-2xl text-white/40 active:scale-95 transition-all">
-            <i class="fas fa-shopping-bag mb-1"></i><span class="text-[7px] font-black uppercase">Tienda</span>
+        <button onclick="app.showView('coliseum')" id="btn-coliseum" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-chess-rook mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Coliseo</span>
+        </button>
+        <button onclick="app.showView('skins')" id="btn-skins" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-gamepad mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Skins</span>
+        </button>
+        <button onclick="app.showView('deck')" id="btn-deck" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-layer-group mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Mazo</span>
+        </button>
+        <button onclick="app.showView('shop')" id="btn-shop" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-shopping-bag mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Tienda</span>
+        </button>
+        <button onclick="app.showView('ranking')" id="btn-ranking" class="nav-btn flex flex-col items-center justify-center flex-1 h-full rounded-2xl">
+            <i class="fas fa-list-ol mb-1 text-sm"></i><span class="text-[7px] font-black uppercase">Rank</span>
         </button>
     </nav>
 
-    <!-- FIREBASE SDK -->
+    <!-- JS SCRIPTS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIGURACIÓN DE TU PROYECTO
         const firebaseConfig = {
             apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
             authDomain: "juego-de-cartas-f7284.firebaseapp.com",
@@ -203,232 +295,366 @@
             databaseURL: "https://juego-de-cartas-f7284-default-rtdb.firebaseio.com"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const fbApp = initializeApp(firebaseConfig);
+        const db = getDatabase(fbApp);
 
-        // --- DATOS DEL JUEGO ---
-        
+        // --- CONSTANTES DE CARTAS (101 Cartas) ---
         const ALL_CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", price: 50 },
             { id: 1, name: "Fortaleza", rarity: "rare", img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", price: 100 },
             { id: 2, name: "Escudera", rarity: "common", img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", price: 50 },
+            { id: 3, name: "Azulita", rarity: "rare", img: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", price: 80 },
+            { id: 4, name: "Tormenta", rarity: "epic", img: "https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", price: 120 },
             { id: 5, name: "Furia", rarity: "legendary", img: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", price: 200 },
             { id: 34, name: "LolaLolita", rarity: "idolos", img: "https://s204.erome.com/2280/sMLLJHdM/kYJtDcuQ.jpeg?v=1709700685", price: 2500 },
-            { id: 50, name: "Busting The Fuck Out", rarity: "animated", img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", price: 5000 }
+            { id: 50, name: "Busting The Fuck Out", rarity: "animated", img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", price: 5000 },
+            { id: 61, name: "Samantha Bounce", rarity: "animated", img: "https://cdn2.hentaigifz.com/113850/gif-samantha-1-scaled.webp", price: 4000 },
+            { id: 62, name: "Tracer Riding", rarity: "animated", img: "https://cdn2.hentaigifz.com/113896/tracer-ridingirastris-ii-scaled.webp", price: 4000 },
+            { id: 101, name: "Milf Handjob", rarity: "actricesporno", img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", price: 7000 }
+            // ... (Se asumen las demás cartas para no saturar el código, se pueden autogenerar o completar)
         ];
 
-        let state = JSON.parse(localStorage.getItem('game_state_vanilla')) || {
-            playerName: 'Jugador_' + Math.floor(Math.random() * 9999),
-            diamonds: 100, trophies: 0, cups: 0,
-            avatar: 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037',
-            owned: [0, 1, 2]
-        };
+        // Llenar faltantes si es necesario
+        for(let i=0; i<102; i++) {
+            if(!ALL_CARDS.find(c => c.id === i)) {
+                ALL_CARDS.push({ id: i, name: `Carta #${i}`, rarity: i % 5 === 0 ? "epic" : "common", img: `https://picsum.photos/seed/${i}/200/300`, price: 100 });
+            }
+        }
 
-        // --- FUNCIONES CORE ---
+        const ACHIEVEMENTS = [
+            { id: 1, name: "Primer Paso", icon: "⭐", desc: "Gana tu primera batalla online" },
+            { id: 2, name: "Gladiador", icon: "⚔️", desc: "Vence a 10 enemigos en Arena" },
+            { id: 3, name: "Millonario", icon: "💰", desc: "Ten 1,000,000 de gemas" },
+            { id: 4, name: "Coleccionista", icon: "🎴", desc: "Obtén 50 cartas diferentes" }
+        ];
 
-        const save = () => {
-            localStorage.setItem('game_state_vanilla', JSON.stringify(state));
-            renderUI();
-        };
+        // --- APP ENGINE ---
+        window.app = {
+            state: JSON.parse(localStorage.getItem('cards_master_state')) || {
+                name: 'Player_' + Math.floor(Math.random()*999),
+                diamonds: 100, trophies: 0, cups: 0,
+                owned: [0, 1, 2],
+                arenaRank: 0, arenaProgress: 0,
+                achievements: [],
+                avatar: 'https://rule34.xxx//samples/1888/sample_4387d777c732825ae6e377664c2ce885.jpg?15738037'
+            },
 
-        const renderUI = () => {
-            document.getElementById('user-name').innerText = state.playerName;
-            document.getElementById('user-avatar').src = state.avatar;
-            document.getElementById('stat-diamonds').innerText = state.diamonds.toLocaleString();
-            document.getElementById('stat-trophies').innerText = state.trophies;
-            document.getElementById('stat-cups').innerText = state.cups;
+            save() {
+                localStorage.setItem('cards_master_state', JSON.stringify(this.state));
+                this.renderAll();
+                this.syncRanking();
+            },
 
-            // Tienda
-            const shopContainer = document.getElementById('shop-cards');
-            shopContainer.innerHTML = '';
-            ALL_CARDS.forEach(card => {
-                if (state.owned.includes(card.id)) return;
-                const div = document.createElement('div');
-                div.className = 'glass-panel p-4 text-center border-white/10 group hover:border-yellow-400/50 transition-all';
-                div.innerHTML = `
-                    <img src="${card.img}" class="w-full h-32 object-cover rounded-xl mb-3 shadow-lg">
-                    <div class="text-[10px] font-black mb-2 uppercase italic text-white/80">${card.name}</div>
-                    <button onclick="buyCard(${card.id})" class="w-full py-2 bg-white text-black text-[9px] font-black rounded-lg uppercase hover:bg-yellow-400 transition-colors">💎 ${card.price}</button>
+            showView(viewId) {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + viewId).classList.add('active');
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('btn-' + viewId).classList.add('active');
+                this.renderAll();
+            },
+
+            renderAll() {
+                // Header
+                document.getElementById('header-name').innerText = this.state.name;
+                document.getElementById('header-avatar').src = this.state.avatar;
+                document.getElementById('val-diamonds').innerText = this.state.diamonds.toLocaleString();
+                document.getElementById('val-trophies').innerText = this.state.trophies;
+                document.getElementById('val-cups').innerText = this.state.cups;
+
+                // Deck
+                const deckCont = document.getElementById('deck-container');
+                deckCont.innerHTML = '';
+                this.state.owned.forEach(id => {
+                    const card = ALL_CARDS.find(c => c.id === id);
+                    if(!card) return;
+                    deckCont.innerHTML += this.cardHTML(card, false);
+                });
+                document.getElementById('deck-count').innerText = `${this.state.owned.length}/${ALL_CARDS.length} Cartas`;
+
+                // Shop
+                const shopCont = document.getElementById('shop-container');
+                shopCont.innerHTML = '';
+                ALL_CARDS.forEach(card => {
+                    if(this.state.owned.includes(card.id)) return;
+                    shopCont.innerHTML += this.cardHTML(card, true);
+                });
+
+                // Ranking
+                const rankCont = document.getElementById('ranking-container');
+                const rankings = JSON.parse(localStorage.getItem('cards_rankings') || '[]');
+                rankings.sort((a,b) => b.trophies - a.trophies);
+                rankCont.innerHTML = rankings.map((r, i) => `
+                    <div class="glass-panel p-4 flex items-center gap-4 ${r.name === this.state.name ? 'border-cyan-500' : ''}">
+                        <div class="text-xl font-black w-6">${i+1}</div>
+                        <img src="${r.avatar}" class="w-10 h-10 rounded-full object-cover">
+                        <div class="flex-1 font-bold">${r.name}</div>
+                        <div class="text-yellow-400 font-black">${r.trophies} 🏆</div>
+                    </div>
+                `).join('');
+
+                // Achievements
+                const achCont = document.getElementById('achievements-container');
+                achCont.innerHTML = ACHIEVEMENTS.map(a => {
+                    const unlocked = this.state.achievements.includes(a.id);
+                    return `
+                        <div class="glass-panel p-4 flex items-center gap-4 ${unlocked ? 'border-green-500 bg-green-500/10' : 'opacity-40'}">
+                            <div class="text-3xl">${a.icon}</div>
+                            <div><div class="font-black text-xs">${a.name}</div><div class="text-[8px] uppercase font-bold text-white/40">${a.desc}</div></div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            cardHTML(card, isShop) {
+                return `
+                    <div class="glass-panel p-3 border-2 rarity-${card.rarity} relative group overflow-hidden">
+                        <img src="${card.img}" class="w-full h-32 object-cover rounded-xl mb-2">
+                        <div class="text-[9px] font-black uppercase italic truncate">${card.name}</div>
+                        <div class="text-[7px] text-white/40 uppercase mb-2">${card.rarity}</div>
+                        ${isShop ? 
+                            `<button onclick="app.buyCard(${card.id})" class="w-full py-2 bg-white text-black text-[8px] font-black rounded-lg uppercase">💎 ${card.price}</button>` 
+                            : `<div class="text-[8px] font-black text-green-400 uppercase">Obtenida</div>`
+                        }
+                    </div>
                 `;
-                shopContainer.appendChild(div);
-            });
+            },
 
-            // Mazo
-            const deckContainer = document.getElementById('deck-cards');
-            deckContainer.innerHTML = '';
-            state.owned.forEach(id => {
+            buyCard(id) {
                 const card = ALL_CARDS.find(c => c.id === id);
-                if(!card) return;
-                const div = document.createElement('div');
-                div.className = 'glass-panel p-4 text-center border-white/10';
-                div.innerHTML = `
-                    <img src="${card.img}" class="w-full h-32 object-cover rounded-xl mb-2 shadow-inner">
-                    <div class="text-[9px] font-black uppercase text-white/60">${card.name}</div>
-                `;
-                deckContainer.appendChild(div);
-            });
-        };
-
-        window.buyCard = (id) => {
-            const card = ALL_CARDS.find(c => c.id === id);
-            if (state.diamonds >= card.price) {
-                state.diamonds -= card.price;
-                state.owned.push(id);
-                save();
-            } else alert("¡Faltan gemas, BB!");
-        };
-
-        window.claimMillion = () => {
-            state.diamonds += 1000000;
-            save();
-            alert("¡Regalo de Navidad reclamado! Ya eres millonario 💎🔥");
-        };
-
-        window.changeView = (viewId) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('nav-' + viewId).classList.add('active');
-        };
-
-        // --- LÓGICA MULTIJUGADOR ---
-        
-        window.multiplayer = {
-            roomCode: '',
-            role: null,
-            roomRef: null,
-            rewarded: false,
-
-            joinOrCreate: function() {
-                const input = document.getElementById('input-room-code');
-                const code = input.value.toUpperCase().trim();
-                if (code.length < 3) return alert("Código muy corto.");
-                
-                this.roomCode = code;
-                this.roomRef = ref(db, `rooms/${code}`);
-                this.rewarded = false;
-
-                // Bloquear botón para evitar doble entrada
-                document.getElementById('btn-join').innerText = "CONECTANDO...";
-                document.getElementById('btn-join').disabled = true;
-
-                onValue(this.roomRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data) {
-                        // Crear sala como Jugador 1
-                        set(this.roomRef, {
-                            p1: { name: state.playerName, hp: 100, avatar: state.avatar },
-                            status: 'waiting', turn: 'p1', log: ['Esperando rival...']
-                        });
-                        this.role = 'p1';
-                    } else if (data.status === 'waiting' && !this.role) {
-                        // Unirse como Jugador 2
-                        update(this.roomRef, {
-                            p2: { name: state.playerName, hp: 100, avatar: state.avatar },
-                            status: 'playing', log: ['¡Rival conectado! La batalla empieza.']
-                        });
-                        this.role = 'p2';
-                    }
-                    this.setupBattle();
-                }, { onlyOnce: true });
-
-                // Escucha continua de cambios en la sala
-                onValue(this.roomRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) this.sync(data);
-                    else if (this.role) this.leave();
-                });
-
-                onDisconnect(this.roomRef).remove();
+                if(this.state.diamonds >= card.price) {
+                    this.state.diamonds -= card.price;
+                    this.state.owned.push(id);
+                    this.save();
+                } else alert("No tienes gemas suficientes BB!");
             },
 
-            setupBattle: function() {
-                document.getElementById('battle-setup').classList.add('hidden');
-                document.getElementById('battle-field').classList.remove('hidden');
-                document.getElementById('battle-room-id').innerText = 'SALA: ' + this.roomCode;
+            claimMillion() {
+                this.state.diamonds += 1000000;
+                this.unlockAchievement(3);
+                this.save();
+                alert("¡Regalo reclamado! Eres millonario 🔥💎");
             },
 
-            sync: function(data) {
-                const me = this.role === 'p1' ? data.p1 : data.p2;
-                const rival = this.role === 'p1' ? data.p2 : data.p1;
-
-                // Tú
-                document.getElementById('player-name-battle').innerText = me?.name || 'Cargando...';
-                document.getElementById('player-avatar-battle').src = me?.avatar || '';
-                document.getElementById('player-hp-text').innerText = (me?.hp || 0) + '%';
-                document.getElementById('player-hp-bar').style.width = (me?.hp || 0) + '%';
-
-                // Rival
-                document.getElementById('rival-name').innerText = rival?.name || 'Esperando...';
-                document.getElementById('rival-avatar').src = rival?.avatar || '';
-                document.getElementById('rival-hp-text').innerText = (rival?.hp || 0) + '%';
-                document.getElementById('rival-hp-bar').style.width = (rival?.hp || 0) + '%';
-
-                const statusEl = document.getElementById('battle-status');
-                const btnAttack = document.getElementById('btn-attack');
-
-                if (data.status === 'finished') {
-                    const iWon = data.winner === this.role;
-                    statusEl.innerText = iWon ? '¡HAS GANADO! 🏆' : 'HAS CAÍDO EN COMBATE... 💀';
-                    btnAttack.classList.add('hidden');
-                    
-                    if(iWon && !this.rewarded) {
-                        state.trophies += 100;
-                        state.diamonds += 500;
-                        this.rewarded = true;
-                        save();
-                    }
-                } else if (data.status === 'playing') {
-                    const isMyTurn = data.turn === this.role;
-                    statusEl.innerText = isMyTurn ? '¡ES TU TURNO! 🔥' : 'EL RIVAL ESTÁ PENSANDO...';
-                    if (isMyTurn) btnAttack.classList.remove('hidden');
-                    else btnAttack.classList.add('hidden');
+            openChest(type) {
+                const costs = { rare: 150, epic: 400, legendary: 800 };
+                if(this.state.diamonds < costs[type]) return alert("No hay gemas.");
+                this.state.diamonds -= costs[type];
+                // Simulación de ganar 3 cartas
+                for(let i=0; i<3; i++) {
+                    const randId = ALL_CARDS[Math.floor(Math.random()*ALL_CARDS.length)].id;
+                    if(!this.state.owned.includes(randId)) this.state.owned.push(randId);
                 }
-
-                // Logs
-                const logContainer = document.getElementById('battle-logs');
-                logContainer.innerHTML = '';
-                (data.log || []).forEach(msg => {
-                    const d = document.createElement('div');
-                    d.innerText = msg;
-                    logContainer.appendChild(d);
-                });
+                this.save();
+                alert("¡Cofre abierto con éxito! Mira tu mazo.");
             },
 
-            attack: function() {
-                onValue(this.roomRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data || data.turn !== this.role || data.status !== 'playing') return;
-
-                    const opponent = this.role === 'p1' ? 'p2' : 'p1';
-                    const dmg = 15 + Math.floor(Math.random() * 20); // Daño aleatorio
-                    const newHp = Math.max(0, data[opponent].hp - dmg);
-                    
-                    const updates = {};
-                    updates[`rooms/${this.roomCode}/${opponent}/hp`] = newHp;
-                    updates[`rooms/${this.roomCode}/turn`] = opponent;
-                    updates[`rooms/${this.roomCode}/log`] = [`${state.playerName} asestó ${dmg} de daño!`, ...(data.log || [])].slice(0, 5);
-
-                    if (newHp <= 0) {
-                        updates[`rooms/${this.roomCode}/status`] = 'finished';
-                        updates[`rooms/${this.roomCode}/winner`] = this.role;
-                    }
-
-                    update(ref(db), updates);
-                }, { onlyOnce: true });
+            unlockAchievement(id) {
+                if(!this.state.achievements.includes(id)) {
+                    this.state.achievements.push(id);
+                    this.save();
+                }
             },
 
-            leave: function() {
-                if (this.roomRef) remove(this.roomRef);
-                location.reload(); // Recarga simple para limpiar estado
+            syncRanking() {
+                let rankings = JSON.parse(localStorage.getItem('cards_rankings') || '[]');
+                const idx = rankings.findIndex(r => r.name === this.state.name);
+                const data = { name: this.state.name, trophies: this.state.trophies, avatar: this.state.avatar };
+                if(idx !== -1) rankings[idx] = data; else rankings.push(data);
+                localStorage.setItem('cards_rankings', JSON.stringify(rankings));
             }
         };
 
-        // INICIO
-        renderUI();
-        changeView('news');
+        // --- MULTIJUGADOR ---
+        window.multiplayer = {
+            room: '',
+            role: '',
+            ref: null,
 
+            init() {
+                const code = document.getElementById('room-input').value.toUpperCase().trim();
+                if(code.length < 3) return alert("Código inválido");
+                this.room = code;
+                this.ref = ref(db, `rooms/${code}`);
+
+                onValue(this.ref, (snap) => {
+                    const data = snap.val();
+                    if(!data) {
+                        set(this.ref, { p1: { name: app.state.name, hp: 100, avatar: app.state.avatar }, status: 'waiting', turn: 'p1', log: ['Esperando rival...'] });
+                        this.role = 'p1';
+                    } else if(data.status === 'waiting' && !this.role) {
+                        update(this.ref, { p2: { name: app.state.name, hp: 100, avatar: app.state.avatar }, status: 'playing', log: ['¡Rival conectado! Que empiece el duelo.'] });
+                        this.role = 'p2';
+                    }
+                    this.setupField();
+                }, { onlyOnce: true });
+
+                onValue(this.ref, (snap) => { if(snap.val()) this.sync(snap.val()); });
+                onDisconnect(this.ref).remove();
+            },
+
+            setupField() {
+                document.getElementById('battle-setup').classList.add('hidden');
+                document.getElementById('battle-field').classList.remove('hidden');
+                document.getElementById('room-display').innerText = 'SALA: ' + this.room;
+            },
+
+            sync(data) {
+                const me = data[this.role];
+                const rival = this.role === 'p1' ? data.p2 : data.p1;
+                
+                document.getElementById('player-battle-name').innerText = me.name;
+                document.getElementById('player-battle-avatar').src = me.avatar;
+                document.getElementById('player-hp-text').innerText = `${me.hp}/100`;
+                document.getElementById('player-hp-bar').style.width = me.hp + '%';
+
+                if(rival) {
+                    document.getElementById('rival-name').innerText = rival.name;
+                    document.getElementById('rival-avatar').src = rival.avatar;
+                    document.getElementById('rival-hp-text').innerText = `${rival.hp}/100`;
+                    document.getElementById('rival-hp-bar').style.width = rival.hp + '%';
+                }
+
+                const status = document.getElementById('battle-status');
+                const btn = document.getElementById('attack-btn');
+
+                if(data.status === 'finished') {
+                    status.innerText = data.winner === this.role ? '¡GANASTE! 🏆' : 'PERDISTE... 💀';
+                    btn.classList.add('hidden');
+                    if(data.winner === this.role && !this.rewarded) { app.state.trophies += 50; app.unlockAchievement(1); app.save(); this.rewarded = true; }
+                } else if(data.status === 'playing') {
+                    const isMyTurn = data.turn === this.role;
+                    status.innerText = isMyTurn ? '¡TU TURNO! 🔥' : 'EL RIVAL ATACA...';
+                    if(isMyTurn) btn.classList.remove('hidden'); else btn.classList.add('hidden');
+                }
+
+                document.getElementById('battle-logs').innerHTML = (data.log || []).map(l => `<div>${l}</div>`).join('');
+            },
+
+            attack() {
+                onValue(this.ref, (snap) => {
+                    const data = snap.val();
+                    if(data.turn !== this.role || data.status !== 'playing') return;
+                    const opponent = this.role === 'p1' ? 'p2' : 'p1';
+                    const dmg = 10 + Math.floor(Math.random()*15);
+                    const newHp = Math.max(0, data[opponent].hp - dmg);
+                    const updates = {};
+                    updates[`rooms/${this.room}/${opponent}/hp`] = newHp;
+                    updates[`rooms/${this.room}/turn`] = opponent;
+                    updates[`rooms/${this.room}/log`] = [`${app.state.name} atacó por ${dmg}!`, ...(data.log || [])].slice(0,5);
+                    if(newHp <= 0) { updates[`rooms/${this.room}/status`] = 'finished'; updates[`rooms/${this.room}/winner`] = this.role; }
+                    update(ref(db), updates);
+                }, { onlyOnce: true });
+            }
+        };
+
+        // --- ARENA ---
+        window.arena = {
+            active: false,
+            enemyHp: 100,
+            start() {
+                this.active = true;
+                this.enemyHp = 100;
+                document.getElementById('arena-battle').classList.remove('hidden');
+                document.getElementById('arena-enemy-name').innerText = 'Rival Rango ' + (app.state.arenaRank + 1);
+            },
+            attack() {
+                const dmg = 15 + Math.floor(Math.random()*10);
+                this.enemyHp -= dmg;
+                document.getElementById('arena-enemy-hp').style.width = Math.max(0, this.enemyHp) + '%';
+                if(this.enemyHp <= 0) {
+                    app.state.arenaProgress++;
+                    if(app.state.arenaProgress >= 5) { app.state.arenaRank++; app.state.arenaProgress = 0; }
+                    app.state.diamonds += 20;
+                    app.save();
+                    alert("¡Victoria! Has ganado 20 gemas.");
+                    document.getElementById('arena-battle').classList.add('hidden');
+                    this.active = false;
+                }
+            }
+        };
+
+        // --- COLISEO ---
+        window.coliseum = {
+            round: 1,
+            start() {
+                if(app.state.diamonds < 100) return alert("Faltan gemas");
+                app.state.diamonds -= 100;
+                app.save();
+                this.round = 1;
+                document.getElementById('col-start-btn').classList.add('hidden');
+                document.getElementById('coliseum-status').classList.remove('hidden');
+            },
+            fight() {
+                if(Math.random() > 0.3) {
+                    this.round++;
+                    if(this.round > 5) {
+                        app.state.diamonds += 1000;
+                        alert("¡CAMPEÓN DEL COLISEO! +1000 Gemas");
+                        app.save();
+                        document.getElementById('col-start-btn').classList.remove('hidden');
+                        document.getElementById('coliseum-status').classList.add('hidden');
+                    } else {
+                        document.getElementById('col-round').innerText = `RONDA ${this.round}/5`;
+                    }
+                } else {
+                    alert("Perdiste en el Coliseo...");
+                    document.getElementById('col-start-btn').classList.remove('hidden');
+                    document.getElementById('coliseum-status').classList.add('hidden');
+                }
+            }
+        };
+
+        // --- SKINS MEMORY ---
+        window.skins = {
+            playerHp: 100, bossHp: 100,
+            flipped: [],
+            start() {
+                this.playerHp = 100; this.bossHp = 100;
+                document.getElementById('skin-start-btn').classList.add('hidden');
+                this.render();
+            },
+            render() {
+                const grid = document.getElementById('skins-grid');
+                grid.innerHTML = '';
+                const ids = [0,1,2,3,0,1,2,3].sort(() => 0.5 - Math.random());
+                ids.forEach((id, i) => {
+                    const card = ALL_CARDS.find(c => c.id === id);
+                    grid.innerHTML += `<div onclick="skins.flip(this, ${id})" class="h-20 bg-white/10 rounded-lg flex items-center justify-center cursor-pointer font-black border border-white/10">?</div>`;
+                });
+                this.updateUI();
+            },
+            flip(el, id) {
+                if(this.flipped.length >= 2 || el.innerText !== '?') return;
+                const card = ALL_CARDS.find(c => c.id === id);
+                el.innerHTML = `<img src="${card.img}" class="w-full h-full object-cover rounded-lg">`;
+                this.flipped.push({ el, id });
+                if(this.flipped.length === 2) {
+                    setTimeout(() => {
+                        if(this.flipped[0].id === this.flipped[1].id) {
+                            this.bossHp -= 25;
+                        } else {
+                            this.playerHp -= 20;
+                            this.flipped[0].el.innerText = '?';
+                            this.flipped[1].el.innerText = '?';
+                        }
+                        this.flipped = [];
+                        this.updateUI();
+                        this.checkEnd();
+                    }, 500);
+                }
+            },
+            updateUI() {
+                document.getElementById('skin-player-hp').style.width = this.playerHp + '%';
+                document.getElementById('skin-boss-hp').style.width = this.bossHp + '%';
+            },
+            checkEnd() {
+                if(this.bossHp <= 0) { alert("¡Derrotaste al jefe!"); app.state.diamonds += 100; app.save(); location.reload(); }
+                if(this.playerHp <= 0) { alert("El jefe te derrotó..."); location.reload(); }
+            }
+        };
+
+        // INICIAR
+        app.showView('news');
     </script>
 </body>
 </html>
