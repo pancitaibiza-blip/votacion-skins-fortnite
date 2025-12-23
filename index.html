@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,11 +11,11 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Firebase Legacy para compatibilidad directa -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-    <!-- Configuración de Módulos -->
+    <!-- Import Map (Crucial para Gemini en navegador) -->
     <script type="importmap">
 {
   "imports": {
@@ -32,15 +31,15 @@
         body {
             background-color: #020202;
             color: white;
-            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
         }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0a0a0a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* Animaciones de Combate */
+        /* Animaciones de Batalla */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px) rotate(-1deg); }
@@ -50,7 +49,7 @@
 
         @keyframes jump-attack {
             0% { transform: translateY(0); }
-            50% { transform: translateY(-50px) scale(1.1); filter: brightness(1.5); }
+            50% { transform: translateY(-50px) scale(1.1); filter: brightness(1.3); }
             100% { transform: translateY(0); }
         }
         .animate-attack { animation: jump-attack 0.4s cubic-bezier(.36,.07,.19,.97); }
@@ -66,18 +65,19 @@
             pointer-events: none;
             z-index: 100;
             animation: float-dmg 0.8s forwards;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            text-shadow: 0 0 10px rgba(0,0,0,0.9);
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <!-- EL TRUCO: data-type="module" permite usar 'import' dentro de Babel -->
+    <script type="text/babel" data-type="module">
         const { useState, useEffect, useCallback, useRef } = React;
         import { GoogleGenAI } from "@google/genai";
 
-        // CONFIGURACIÓN FIREBASE
+        // Configuración
         const firebaseConfig = {
             apiKey: "AIzaSyAgYrcmcSzz2umxAUp5UqCL3pgNKKR08lU",
             authDomain: "juego-de-cartas-f7284.firebaseapp.com",
@@ -87,295 +87,155 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // DATOS DEL JUEGO
+        // Datos
         const CARDS = [
             { id: 0, name: "Ramírez", rarity: "common", baseAtk: 60, baseDef: 50, img: "https://s93.erome.com/5472/K3IRZbxx/Y8DPmT76.jpeg?v=1764825894", shopPrice: 50 },
             { id: 1, name: "Fortaleza", rarity: "rare", baseAtk: 60, baseDef: 70, img: "https://s93.erome.com/5472/K3IRZbxx/1FvcJ5u7.png?v=1764809177", shopPrice: 100 },
-            { id: 2, name: "Escudera", rarity: "common", baseAtk: 55, baseDef: 65, img: "https://s93.erome.com/5472/K3IRZbxx/9RweIpam.jpeg?v=1764813677", shopPrice: 50 },
-            { id: 3, name: "Azulita", rarity: "rare", baseAtk: 70, baseDef: 55, img: "https://s93.erome.com/5472/K3IRZbxx/0B8OzReu.jpeg?v=1764815871", shopPrice: 80 },
             { id: 4, name: "Tormenta", rarity: "epic", baseAtk: 80, baseDef: 45, img: "https://s93.erome.com/5472/K3IRZbxx/7GmdJa3U.jpeg?v=1764802552", shopPrice: 120 },
             { id: 5, name: "Furia", rarity: "legendary", baseAtk: 90, baseDef: 40, img: "https://s93.erome.com/5472/K3IRZbxx/LsMURibY.jpeg?v=1764812622", shopPrice: 200 },
-            { id: 6, name: "Asesina", rarity: "legendary", baseAtk: 95, baseDef: 30, img: "https://s206.erome.com/4699/lpRzYjBO/Z5Tc5k2v.jpeg?v=1745795818", shopPrice: 250 },
-            { id: 21, name: "Sabrina La Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000 },
-            { id: 46, name: "Dexter's Mom", rarity: "animated", baseAtk: 1200, baseDef: 1000, img: "https://cdn2.hentaigifz.com/116308/dm-scaled.webp", shopPrice: 2500 },
+            { id: 21, name: "Sabrina Diva", rarity: "idolos", baseAtk: 120, baseDef: 80, img: "https://i.pinimg.com/736x/4d/c9/b3/4dc9b3acdf2ab04c3c783d3fb2730a0c.jpg", shopPrice: 2000 },
             { id: 50, name: "Busting Out", rarity: "animated", baseAtk: 5000, baseDef: 2500, img: "https://cdn2.hentaigifz.com/115480/busting-the-fuck-out-scaled.webp", shopPrice: 5000 },
             { id: 101, name: "Wet Handjob", rarity: "actricesporno", baseAtk: 12000, baseDef: 6000, img: "https://s2.pictoa.com/media/galleries/269/410/269410603155505d89c/393371260315552a7156.gif", shopPrice: 7000 }
         ];
 
         const TOURNAMENT_ENEMIES = [
-            { phase: 1, name: "Novato Timmy", atk: 40, hp: 100, reward: 100, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-            { phase: 2, name: "Soldado Dave", atk: 65, hp: 150, reward: 250, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-            { phase: 3, name: "Comandante Tom", atk: 100, hp: 250, reward: 500, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
-            { phase: 4, name: "REY SHADOW", atk: 150, hp: 500, reward: 2500, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" }
+            { phase: 1, name: "Timmy Novato", atk: 40, hp: 100, reward: 100, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
+            { phase: 2, name: "Soldado Dave", atk: 70, hp: 180, reward: 300, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" },
+            { phase: 3, name: "REY SHADOW", atk: 180, hp: 600, reward: 5000, avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" }
         ];
 
-        const STYLES = {
-            common: 'border-slate-400',
-            rare: 'border-green-500',
-            epic: 'border-purple-500',
-            legendary: 'border-orange-500',
-            idolos: 'border-pink-500',
-            animated: 'border-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]',
-            actricesporno: 'border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.7)]'
+        const RARITY_CLASS = {
+            common: 'border-slate-400', rare: 'border-green-500', epic: 'border-purple-500', 
+            legendary: 'border-orange-500', idolos: 'border-pink-500', 
+            animated: 'border-amber-400', actricesporno: 'border-red-600'
         };
 
-        // COMPONENTE CARD
-        const Card = ({ card, onClick, label, active, disabled }) => (
-            <div className={`relative flex flex-col bg-zinc-900 border-2 rounded-2xl p-1.5 transition-all ${STYLES[card.rarity] || 'border-zinc-700'} ${disabled ? 'opacity-40 grayscale' : ''}`}>
-                <img src={card.img} className="aspect-[3/4] object-cover rounded-xl mb-2" />
-                <div className="px-1 mb-2">
-                    <h4 className="text-[10px] font-black uppercase truncate">{card.name}</h4>
-                    <div className="flex justify-between text-[8px] font-bold mt-1">
-                        <span className="text-red-400">⚔️ {card.baseAtk}</span>
-                        <span className="text-cyan-400">🛡️ {card.baseDef}</span>
-                    </div>
-                </div>
-                {onClick && (
-                    <button onClick={onClick} className={`py-2 rounded-lg text-[9px] font-black uppercase ${active ? 'bg-red-600' : 'bg-cyan-600 shadow-lg active:scale-95'}`}>
-                        {label || 'Seleccionar'}
-                    </button>
-                )}
-            </div>
-        );
-
-        // APP PRINCIPAL
         const App = () => {
             const [view, setView] = useState('news');
             const [diamonds, setDiamonds] = useState(1000);
-            const [owned, setOwned] = useState([0, 1, 2]);
+            const [owned, setOwned] = useState([0, 1]);
             const [deck, setDeck] = useState([0]);
             const [userName, setUserName] = useState('');
             const [userAvatar, setUserAvatar] = useState(CARDS[0].img);
             const [loading, setLoading] = useState(true);
 
-            // Perfil
-            const [isSelectingAvatar, setIsSelectingAvatar] = useState(false);
-
-            // Combate
+            // Batalla
             const [tournamentPhase, setTournamentPhase] = useState(0);
-            const [currentEnemy, setCurrentEnemy] = useState(null);
-            const [playerHp, setPlayerHp] = useState(100);
             const [enemyHp, setEnemyHp] = useState(100);
-            const [battleResult, setBattleResult] = useState(null);
+            const [playerHp, setPlayerHp] = useState(100);
             const [isAttacking, setIsAttacking] = useState(false);
             const [attackerIdx, setAttackerIdx] = useState(null);
             const [enemyHit, setEnemyHit] = useState(false);
-            const [playerHit, setPlayerHit] = useState(false);
             const [dmgPopups, setDmgPopups] = useState([]);
-
-            // IA
-            const [aiAdvice, setAiAdvice] = useState('');
-            const [isAiLoading, setIsAiLoading] = useState(false);
+            const [battleResult, setBattleResult] = useState(null);
 
             useEffect(() => {
-                let user = localStorage.getItem('ft_user');
-                if (!user) {
-                    user = prompt("Ingresa tu Nickname:") || "Player_" + Math.floor(Math.random()*100);
-                    localStorage.setItem('ft_user', user);
-                }
+                let user = localStorage.getItem('ft_user') || prompt("Tu nombre:") || "Player";
+                localStorage.setItem('ft_user', user);
                 setUserName(user);
-                
-                db.ref('users/' + user).once('value', (snap) => {
-                    const d = snap.val();
-                    if (d) {
-                        setDiamonds(d.diamonds || 0);
-                        setOwned(d.owned || [0, 1, 2]);
-                        setDeck(d.deck || [0]);
-                        setUserAvatar(d.avatar || CARDS[0].img);
-                    }
+                db.ref('users/' + user).once('value', (s) => {
+                    const d = s.val();
+                    if(d) { setDiamonds(d.diamonds); setOwned(d.owned); setDeck(d.deck); setUserAvatar(d.avatar); }
                     setLoading(false);
                 });
             }, []);
 
-            const sync = useCallback((upd) => {
-                if (userName) db.ref('users/' + userName).update(upd);
-            }, [userName]);
-
-            const spawnDmg = (val, x, y, color) => {
-                const id = Date.now();
-                setDmgPopups(p => [...p, {id, val, x, y, color}]);
-                setTimeout(() => setDmgPopups(p => p.filter(x => x.id !== id)), 800);
-            };
+            const sync = (upd) => db.ref('users/' + userName).update(upd);
 
             const attack = async () => {
-                if (!currentEnemy || battleResult || isAttacking) return;
+                if (isAttacking || battleResult) return;
                 setIsAttacking(true);
-                
                 const idx = Math.floor(Math.random() * deck.length);
-                const pCard = CARDS.find(c => c.id === deck[idx]);
-                
+                const card = CARDS.find(c => c.id === deck[idx]);
                 setAttackerIdx(idx);
-                await new Promise(r => setTimeout(r, 200));
                 
-                const pDmg = Math.floor(pCard.baseAtk / 5 + Math.random() * 5);
-                const nEHp = Math.max(0, enemyHp - pDmg);
-                setEnemyHit(true);
-                spawnDmg(pDmg, 50, 30, 'text-red-500');
+                await new Promise(r => setTimeout(r, 200));
+                const dmg = Math.floor(card.baseAtk / 5 + Math.random() * 10);
+                const nEHp = Math.max(0, enemyHp - dmg);
                 setEnemyHp(nEHp);
-
+                setEnemyHit(true);
+                setDmgPopups(p => [...p, { id: Date.now(), val: dmg, x: 50, y: 30, color: 'text-red-500' }]);
+                
                 await new Promise(r => setTimeout(r, 400));
                 setEnemyHit(false); setAttackerIdx(null);
-
-                if (nEHp <= 0) {
-                    const nD = diamonds + currentEnemy.reward;
-                    setDiamonds(nD); sync({ diamonds: nD });
-                    setBattleResult({ win: true, msg: `¡VICTORIA! +${currentEnemy.reward} 💎` });
-                    setIsAttacking(false); return;
+                if(nEHp <= 0) {
+                    const rew = TOURNAMENT_ENEMIES[tournamentPhase-1].reward;
+                    setDiamonds(d => d + rew); sync({ diamonds: diamonds + rew });
+                    setBattleResult({ win: true, msg: `¡GANASTE! +${rew} 💎` });
+                } else {
+                    // Contraataque enemigo simplificado
+                    const eDmg = Math.floor(TOURNAMENT_ENEMIES[tournamentPhase-1].atk / 5);
+                    setPlayerHp(h => Math.max(0, h - eDmg));
+                    setDmgPopups(p => [...p, { id: Date.now()+1, val: eDmg, x: 50, y: 70, color: 'text-cyan-400' }]);
+                    if(playerHp - eDmg <= 0) setBattleResult({ win: false, msg: "DERROTA" });
                 }
-
-                // Contraataque
-                await new Promise(r => setTimeout(r, 400));
-                const eDmg = Math.floor(currentEnemy.atk / 5 + Math.random() * 3);
-                const nPHp = Math.max(0, playerHp - eDmg);
-                setPlayerHit(true);
-                spawnDmg(eDmg, 50, 70, 'text-cyan-500');
-                setPlayerHp(nPHp);
-                
-                await new Promise(r => setTimeout(r, 400));
-                setPlayerHit(false);
-                if (nPHp <= 0) setBattleResult({ win: false, msg: "DERROTA." });
                 setIsAttacking(false);
             };
 
-            const getAdvice = async () => {
-                setIsAiLoading(true);
-                try {
-                    const ai = new GoogleGenAI({ apiKey: "TU_CLAVE_AQUI" }); // Opcional si no usas process.env
-                    const msg = `Soy ${userName} y tengo ${diamonds} gemas. Dame un consejo para mi mazo.`;
-                    const res = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: msg });
-                    setAiAdvice(res.text);
-                } catch { setAiAdvice("¡Sigue luchando, soldado!"); }
-                finally { setIsAiLoading(false); }
-            };
-
-            if (loading) return <div className="h-screen flex items-center justify-center bg-black font-black italic animate-pulse">CARGANDO...</div>;
+            if (loading) return <div className="h-screen flex items-center justify-center bg-black font-black">CARGANDO...</div>;
 
             return (
-                <div className="max-w-md mx-auto min-h-screen pb-28 bg-[#020202] text-white flex flex-col font-sans">
-                    
-                    {/* Modal Selector Avatar */}
-                    {isSelectingAvatar && (
-                        <div className="fixed inset-0 z-[100] bg-black/95 p-8 flex flex-col animate-in fade-in duration-300">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-black italic text-cyan-500 uppercase">Cambiar Avatar</h2>
-                                <button onClick={() => setIsSelectingAvatar(false)} className="bg-zinc-800 w-10 h-10 rounded-full font-bold">✕</button>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 overflow-y-auto custom-scrollbar">
-                                {owned.map(id => {
-                                    const c = CARDS.find(x => x.id === id);
-                                    return (
-                                        <button key={id} onClick={() => { setUserAvatar(c.img); sync({ avatar: c.img }); setIsSelectingAvatar(false); }}
-                                            className="aspect-square rounded-2xl overflow-hidden border-2 border-zinc-800 hover:border-cyan-500 active:scale-90 transition-all">
-                                            <img src={c.img} className="w-full h-full object-cover" />
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    <header className="p-4 flex justify-between items-center bg-zinc-950/80 border-b border-zinc-800 sticky top-0 z-50 backdrop-blur-md">
+                <div className="max-w-md mx-auto min-h-screen pb-24 bg-black flex flex-col shadow-2xl">
+                    <header className="p-4 bg-zinc-900/90 border-b border-zinc-800 flex justify-between items-center sticky top-0 z-50">
                         <div className="flex items-center gap-3">
-                            <button onClick={() => setIsSelectingAvatar(true)} className="relative group">
-                                <img src={userAvatar} className="w-12 h-12 rounded-full border-2 border-cyan-500 shadow-lg object-cover" />
-                                <div className="absolute -bottom-1 -right-1 bg-cyan-600 text-[8px] w-4 h-4 flex items-center justify-center rounded-full border border-black group-hover:scale-110">✎</div>
-                            </button>
-                            <div className="leading-none">
-                                <h1 className="text-xs font-black italic text-white uppercase opacity-40">FT Cloud v2</h1>
-                                <p className="text-sm font-black truncate max-w-[120px]">{userName}</p>
-                            </div>
+                            <img src={userAvatar} className="w-10 h-10 rounded-full border-2 border-cyan-500 object-cover" />
+                            <span className="font-black text-xs uppercase tracking-tighter">{userName}</span>
                         </div>
-                        <div className="bg-zinc-900/50 px-3 py-1.5 rounded-2xl text-xs font-black border border-zinc-800 text-amber-500">
-                            💎 {diamonds.toLocaleString()}
-                        </div>
+                        <div className="text-amber-500 font-black text-xs italic">💎 {diamonds.toLocaleString()}</div>
                     </header>
 
                     <main className="flex-1 p-4 overflow-y-auto custom-scrollbar">
                         {view === 'news' && (
-                            <div className="space-y-6">
-                                <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-[2.5rem] text-center shadow-2xl relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-cyan-500/5 group-hover:bg-cyan-500/10 transition-all" />
-                                    <img src={userAvatar} className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-cyan-500 shadow-xl object-cover" />
-                                    <h2 className="text-xl font-black italic uppercase tracking-tighter">Bienvenido</h2>
-                                    <p className="text-[10px] opacity-40 uppercase tracking-widest mb-6">Operativo Cloud Listo</p>
-                                    <button onClick={() => { setDiamonds(d => d + 10000); alert("¡Bono!"); }} className="w-full bg-cyan-600 py-4 rounded-3xl font-black text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">🎁 RECOGER GEMAS</button>
-                                </div>
+                            <div className="bg-zinc-900 border border-zinc-800 p-10 rounded-[2.5rem] text-center space-y-6">
+                                <h2 className="text-2xl font-black italic uppercase">Base de Operaciones</h2>
+                                <button onClick={() => { setDiamonds(d => d + 5000); alert("¡Bono!"); }} className="w-full bg-cyan-600 py-4 rounded-3xl font-black text-xs">🎁 RECOGER 5,000 GEMAS</button>
                             </div>
                         )}
 
                         {view === 'tournament' && (
                             <div className="h-full flex flex-col space-y-4">
                                 {tournamentPhase === 0 ? (
-                                    <div className="flex-1 flex flex-col items-center justify-center bg-zinc-900/40 rounded-[3rem] border border-zinc-800 p-10 text-center space-y-8">
-                                        <div className="text-7xl drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">🏆</div>
-                                        <h2 className="text-2xl font-black italic text-amber-500 uppercase tracking-tighter">Arena de Combate</h2>
-                                        <button onClick={() => {
-                                            if(!deck.length) return alert("Carga tu mazo");
-                                            setTournamentPhase(1); const e = TOURNAMENT_ENEMIES[0];
-                                            setCurrentEnemy(e); setEnemyHp(e.hp); setPlayerHp(100); setBattleResult(null);
-                                        }} className="w-full py-5 bg-amber-600 text-black font-black rounded-3xl shadow-xl active:scale-95 transition-all uppercase text-xs tracking-widest">Entrar a la Arena</button>
+                                    <div className="flex-1 flex flex-col items-center justify-center bg-zinc-900/50 rounded-[3rem] p-10 text-center space-y-6 border border-zinc-800">
+                                        <div className="text-6xl">🏆</div>
+                                        <h2 className="text-xl font-black italic text-amber-500 uppercase">Arena de Combate</h2>
+                                        <button onClick={() => { setTournamentPhase(1); setEnemyHp(100); setPlayerHp(100); setBattleResult(null); }} className="w-full bg-amber-600 py-4 rounded-3xl font-black text-xs text-black">ENTRAR A LUCHAR</button>
                                     </div>
                                 ) : (
-                                    <div className="flex-1 flex flex-col space-y-4 relative">
-                                        {/* HUD BOSS */}
-                                        <div className={`transition-all ${enemyHit ? 'animate-shake' : ''}`}>
-                                            <div className="bg-zinc-900/90 border border-zinc-800 p-4 rounded-3xl flex items-center justify-between shadow-2xl relative">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-red-500/50">
-                                                        <img src={currentEnemy?.avatar} className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <h3 className="text-xs font-black uppercase text-red-500 italic">{currentEnemy?.name}</h3>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="text-[10px] font-black mb-1">{enemyHp} HP</div>
-                                                    <div className="w-24 h-1.5 bg-black rounded-full overflow-hidden border border-zinc-800">
-                                                        <div className="h-full bg-red-600 transition-all duration-500" style={{ width: `${(enemyHp/(currentEnemy?.hp||100))*100}%` }} />
-                                                    </div>
+                                    <div className="space-y-4 relative flex flex-col h-full min-h-[500px]">
+                                        {/* Boss */}
+                                        <div className={`bg-zinc-900 p-4 rounded-3xl border border-zinc-800 flex justify-between items-center ${enemyHit ? 'animate-shake' : ''}`}>
+                                            <img src={TOURNAMENT_ENEMIES[tournamentPhase-1].avatar} className="w-12 h-12 rounded-lg border-2 border-red-500" />
+                                            <div className="flex-1 px-4 text-right">
+                                                <div className="text-[10px] font-black">{enemyHp} HP</div>
+                                                <div className="h-1.5 bg-black rounded-full overflow-hidden mt-1">
+                                                    <div className="h-full bg-red-600 transition-all" style={{ width: `${(enemyHp/TOURNAMENT_ENEMIES[tournamentPhase-1].hp)*100}%` }} />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* ARENA CENTRAL */}
-                                        <div className="flex-1 relative flex items-center justify-center min-h-[140px] overflow-visible">
+                                        {/* Arena */}
+                                        <div className="flex-1 relative flex items-center justify-center">
                                             {dmgPopups.map(p => (
                                                 <div key={p.id} className={`dmg-popup ${p.color} text-4xl`} style={{ left: `${p.x}%`, top: `${p.y}%` }}>-{p.val}</div>
                                             ))}
-                                            <div className="text-zinc-900 text-6xl font-black italic select-none opacity-20 uppercase tracking-tighter">VS</div>
+                                            <div className="opacity-10 font-black italic text-6xl italic select-none">VERSUS</div>
                                         </div>
 
-                                        {/* HUD PLAYER */}
-                                        <div className={`transition-all ${playerHit ? 'animate-shake' : ''}`}>
-                                            <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-3xl space-y-4">
-                                                <div className="flex justify-between items-center text-[10px] font-black uppercase text-cyan-500 px-1">
-                                                    <span>Tu Mazo</span>
-                                                    <span>{playerHp}% HP</span>
-                                                </div>
-                                                <div className="flex justify-center gap-2 h-28 items-end">
-                                                    {deck.map((id, idx) => {
-                                                        const c = CARDS.find(x => x.id === id);
-                                                        return (
-                                                            <div key={idx} className={`w-16 h-24 rounded-lg overflow-hidden border-2 bg-black shadow-xl transition-all ${attackerIdx === idx ? 'animate-attack border-cyan-400 z-50' : 'border-zinc-800'}`}>
-                                                                <img src={c.img} className="w-full h-full object-cover" />
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                                {!battleResult ? (
-                                                    <button onClick={attack} disabled={isAttacking} className="w-full py-4 bg-cyan-600 rounded-2xl font-black uppercase text-xs tracking-widest active:scale-95 disabled:opacity-50 transition-all shadow-xl shadow-cyan-900/20">💥 LANZAR ATAQUE</button>
-                                                ) : (
-                                                    <div className="text-center space-y-4 animate-in zoom-in-95">
-                                                        <div className={`text-2xl font-black italic ${battleResult.win ? 'text-green-500' : 'text-red-500'}`}>{battleResult.msg}</div>
-                                                        <button onClick={battleResult.win ? () => {
-                                                            const nP = tournamentPhase + 1;
-                                                            if (nP > 4) { alert("¡CAMPEÓN!"); setTournamentPhase(0); }
-                                                            else {
-                                                                setTournamentPhase(nP); const e = TOURNAMENT_ENEMIES.find(x => x.phase === nP);
-                                                                setCurrentEnemy(e); setEnemyHp(e.hp); setPlayerHp(100); setBattleResult(null);
-                                                            }
-                                                        } : () => setTournamentPhase(0)} className="w-full py-3 bg-zinc-800 rounded-xl font-black text-[10px] uppercase tracking-widest">Siguiente</button>
-                                                    </div>
-                                                )}
+                                        {/* Player */}
+                                        <div className="bg-zinc-900 p-4 rounded-3xl border border-zinc-800 space-y-4">
+                                            <div className="flex justify-center gap-2 items-end h-24">
+                                                {deck.map((id, i) => (
+                                                    <img key={i} src={CARDS.find(c => c.id === id).img} className={`w-14 h-20 rounded-lg border-2 ${attackerIdx === i ? 'animate-attack border-cyan-400' : 'border-zinc-800'}`} />
+                                                ))}
                                             </div>
+                                            {!battleResult ? (
+                                                <button onClick={attack} disabled={isAttacking} className="w-full bg-cyan-600 py-4 rounded-2xl font-black text-xs">💥 ATACAR</button>
+                                            ) : (
+                                                <div className="text-center space-y-3">
+                                                    <div className={`text-xl font-black ${battleResult.win ? 'text-green-500' : 'text-red-500'}`}>{battleResult.msg}</div>
+                                                    <button onClick={() => setTournamentPhase(0)} className="w-full bg-zinc-800 py-3 rounded-xl font-black text-[10px]">SALIR</button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -385,65 +245,60 @@
                         {view === 'shop' && (
                             <div className="grid grid-cols-2 gap-3 pb-4">
                                 {CARDS.filter(c => !owned.includes(c.id)).map(card => (
-                                    <Card key={card.id} card={card} onClick={() => {
-                                        if (diamonds >= card.shopPrice) {
-                                            const nO = [...owned, card.id]; const nD = diamonds - card.shopPrice;
-                                            setOwned(nO); setDiamonds(nD); sync({ owned: nO, diamonds: nD });
-                                        } else alert("Gemas insuficientes");
-                                    }} label={`💎 ${card.shopPrice}`} />
+                                    <div key={card.id} className={`bg-zinc-900 border-2 rounded-2xl p-2 ${RARITY_CLASS[card.rarity]}`}>
+                                        <img src={card.img} className="aspect-[3/4] object-cover rounded-xl mb-2" />
+                                        <button onClick={() => {
+                                            if(diamonds >= card.shopPrice) {
+                                                const nO = [...owned, card.id];
+                                                setOwned(nO); setDiamonds(d => d - card.shopPrice);
+                                                sync({ owned: nO, diamonds: diamonds - card.shopPrice });
+                                            } else alert("Faltan gemas");
+                                        }} className="w-full bg-green-600 py-2 rounded-lg font-black text-[10px]">💎 {card.shopPrice}</button>
+                                    </div>
                                 ))}
                             </div>
                         )}
 
                         {view === 'deck' && (
                             <div className="space-y-6">
-                                <h3 className="text-[10px] font-black text-zinc-600 uppercase tracking-widest italic px-2">Unidad de Élite ({deck.length}/3)</h3>
-                                <div className="grid grid-cols-3 gap-3 bg-zinc-900/30 border-2 border-dashed border-zinc-800 rounded-[2rem] p-4 min-h-[160px]">
-                                    {deck.map(id => {
-                                        const c = CARDS.find(x => x.id === id);
-                                        return <Card key={id} card={c} onClick={() => { const nD = deck.filter(x => x !== id); setDeck(nD); sync({ deck: nD }); }} label="ELIMINAR" active />;
-                                    })}
+                                <h3 className="text-[10px] font-black text-zinc-500 px-2 uppercase tracking-widest italic">Mazo ({deck.length}/3)</h3>
+                                <div className="grid grid-cols-3 gap-3 bg-zinc-900/30 border-2 border-dashed border-zinc-800 p-4 rounded-3xl min-h-[140px]">
+                                    {deck.map(id => (
+                                        <div key={id} onClick={() => { const n = deck.filter(x => x !== id); setDeck(n); sync({ deck: n }); }} className="relative">
+                                            <img src={CARDS.find(c => c.id === id).img} className="rounded-xl border-2 border-red-500/50 grayscale hover:grayscale-0 transition-all cursor-pointer" />
+                                            <div className="absolute top-0 right-0 bg-red-600 rounded-full w-4 h-4 text-[8px] flex items-center justify-center font-bold">✕</div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <h3 className="text-[10px] font-black text-zinc-600 uppercase tracking-widest italic px-2">Arsenal ({owned.length})</h3>
-                                <div className="grid grid-cols-3 gap-3 pr-1">
+                                <h3 className="text-[10px] font-black text-zinc-500 px-2 uppercase tracking-widest italic">Colección</h3>
+                                <div className="grid grid-cols-3 gap-3">
                                     {owned.map(id => {
-                                        const c = CARDS.find(x => x.id === id); const isIn = deck.includes(id);
-                                        return <Card key={id} card={c} onClick={() => {
-                                            if (isIn) { const nD = deck.filter(x => x !== id); setDeck(nD); sync({ deck: nD }); }
-                                            else if (deck.length < 3) { const nD = [...deck, id]; setDeck(nD); sync({ deck: nD }); }
-                                        }} label={isIn ? "✓" : "AÑADIR"} active={isIn} />;
+                                        const c = CARDS.find(x => x.id === id);
+                                        const isIn = deck.includes(id);
+                                        return (
+                                            <div key={id} onClick={() => { if(!isIn && deck.length < 3) { const n = [...deck, id]; setDeck(n); sync({ deck: n }); } }} className={`relative cursor-pointer transition-all ${isIn ? 'opacity-30' : 'hover:scale-105'}`}>
+                                                <img src={c.img} className={`rounded-xl border-2 ${RARITY_CLASS[c.rarity]}`} />
+                                            </div>
+                                        );
                                     })}
                                 </div>
-                            </div>
-                        )}
-
-                        {view === 'ai-strategy' && (
-                            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-8 bg-zinc-900/30 rounded-[3rem] border border-purple-500/20">
-                                <div className="text-7xl drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">🧙‍♂️</div>
-                                <h2 className="text-2xl font-black italic text-purple-400 uppercase tracking-tighter leading-none">El Gran Oráculo</h2>
-                                <div className="bg-black/60 p-6 rounded-2xl border border-zinc-800 min-h-[140px] text-[10px] italic opacity-80 leading-relaxed shadow-inner">
-                                    {isAiLoading ? "Consultando dimensiones..." : (aiAdvice || "Invoca al Sabio para perfeccionar tu estrategia de combate.")}
-                                </div>
-                                <button onClick={getAdvice} disabled={isAiLoading} className="w-full py-5 bg-purple-600 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl disabled:opacity-30 active:scale-95 transition-all">INVOCAR CONSEJO</button>
                             </div>
                         )}
                     </main>
 
-                    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-zinc-950/95 border-t border-zinc-800 py-6 flex justify-around items-center z-50 rounded-t-[2.5rem] shadow-[0_-15px_40px_rgba(0,0,0,0.8)] px-4 backdrop-blur-xl">
-                        <Btn act={view === 'news'} onClick={() => setView('news')} ico="🏠" label="BASE" />
-                        <Btn act={view === 'tournament'} onClick={() => setView('tournament')} ico="🏆" label="ARENA" />
-                        <Btn act={view === 'shop'} onClick={() => setView('shop')} ico="🛒" label="TIENDA" />
-                        <Btn act={view === 'deck'} onClick={() => setView('deck')} ico="🃏" label="MAZO" />
-                        <Btn act={view === 'ai-strategy'} onClick={() => setView('ai-strategy')} ico="🧙‍♂️" label="SABIO" />
+                    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-zinc-950/95 border-t border-zinc-800 py-6 flex justify-around items-center rounded-t-[2.5rem] backdrop-blur-xl px-2">
+                        <NavBtn act={view === 'news'} onClick={() => setView('news')} ico="🏠" />
+                        <NavBtn act={view === 'tournament'} onClick={() => setView('tournament')} ico="🏆" />
+                        <NavBtn act={view === 'shop'} onClick={() => setView('shop')} ico="🛒" />
+                        <NavBtn act={view === 'deck'} onClick={() => setView('deck')} ico="🃏" />
                     </nav>
                 </div>
             );
         };
 
-        const Btn = ({ act, onClick, ico, label }) => (
-            <button onClick={onClick} className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${act ? 'scale-110' : 'opacity-20 hover:opacity-50'}`}>
-                <span className={`text-xl w-10 h-10 flex items-center justify-center rounded-2xl transition-all ${act ? 'bg-cyan-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'bg-zinc-900 text-zinc-400'}`}>{ico}</span>
-                <span className={`text-[7px] font-black tracking-widest ${act ? 'text-cyan-400' : 'text-zinc-600'}`}>{label}</span>
+        const NavBtn = ({ act, onClick, ico }) => (
+            <button onClick={onClick} className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-all ${act ? 'bg-cyan-600 shadow-[0_0_15px_rgba(6,182,212,0.4)] scale-110' : 'bg-zinc-900 opacity-30 hover:opacity-100'}`}>
+                {ico}
             </button>
         );
 
